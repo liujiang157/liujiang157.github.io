@@ -16,11 +16,11 @@
     <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
     <title>
         
-          Maybelence&#39;s Blog
+          JVM垃圾回收与内存分配 - Maybelence&#39;s Blog
         
     </title>
 
-    <link rel="canonical" href="https://maybelence.cn/categories/生活/">
+    <link rel="canonical" href="https://maybelence.cn/2020/09/27/JVM垃圾回收与内存分配/">
 
     <!-- Bootstrap Core CSS -->
     
@@ -90,8 +90,8 @@
     header.intro-header{
         
             
-                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/undefined')
-                /*page*/
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('../../../../img/default.jpg')
+                /*post*/
             
         
     }
@@ -109,10 +109,25 @@
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                 
-                    <div class="site-heading">
-                        <h1>Maybelence&#39;s Blog</h1>
-                        <!--<hr class="small">-->
-                        <span id="subdusi" class="subheading">记录学习笔记，记录日常生活 未来路还很长 ，且行且珍惜</span>
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#JVM" title="JVM">JVM</a>
+                            
+                              <a class="tag" href="/tags/#GC" title="GC">GC</a>
+                            
+                              <a class="tag" href="/tags/#垃圾回收" title="垃圾回收">垃圾回收</a>
+                            
+                        </div>
+                        <h1>JVM垃圾回收与内存分配</h1>
+                        <h2 class="subheading">记一次被面试官击穿的经历</h2>
+                        <span class="meta">
+                            Posted by maybelence on
+                            2020-09-27
+                        </span>
+
+                        
+
                     </div>
                 
 
@@ -236,296 +251,231 @@
 
 
     <!-- Main Content -->
-    <!-- Main Content -->
-<div class="container">
-    <div class="row">
-        
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
 
-    <!-- Post Container -->
+            <!-- Post Container -->
             <div class="
-                col-lg-8 col-lg-offset-1
-                col-md-8 col-md-offset-1
-                col-sm-12
-                col-xs-12
-                post-container
-            ">
-                
-<!-- Main Content -->
-<div class="container">
-    <div class="row">
-        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <!-- 归档列表 -->
-            
-            
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
 
-             <!-- 归档列表 -->
+                <h1 id="JVM垃圾回收与内存分配"><a href="#JVM垃圾回收与内存分配" class="headerlink" title="JVM垃圾回收与内存分配"></a>JVM垃圾回收与内存分配</h1><p>Java与C++之间有一堵由内存动态分配和垃圾收集技术所围成的高墙，外面的人想进来，里面的人想出去。</p>
+<blockquote id="fn_引用">
+<sup>引用</sup>. 《深入理解JAVA虚拟机》<a href="#reffn_引用" title="Jump back to footnote [引用] in the text."> &#8617;</a>
+</blockquote>
+<p>JAVA相对于C/C++而言引入了GC机制，使程序员更加去关注程序本身，不需要再对每个new的对象去进行delete/free操作。C++就好像你在家里自己恰饭，需要去自己做好。吃完之后还要自己收拾。而JAVA更像是在餐厅中吃饭，你不需要去关注饭是如何做好的，以及吃完以后服务员是如何收拾的，你只要负责享用美食就可以了。</p>
+<hr>
+<h2 id="JVM内存区域"><a href="#JVM内存区域" class="headerlink" title="JVM内存区域"></a>JVM内存区域</h2><p>了解GC之前，我们需要先了解JVM的内存模型，搞清楚被回收的数据一般存在在哪些区域。</p>
+<p><img src="jvmncqy.png" alt="JVM内存区域"></p>
 
-            
-            <div class="one-tag-list">
-                <span class="fa fa-calendar-times-o listing-seperator" id="2020">
-                    <span class="tag-text">2020</span>
-                </span>
-                <ul>
                 
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <li >
-                    09-27
-                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-                    <a href="/2020/09/27/锁底层以及优化技术/" style="color: #0085a1">
-                        <span>
-                            锁底层以及优化技术
-                        </span>
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </li>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <li >
-                    09-27
-                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-                    <a href="/2020/09/27/JVM垃圾回收与内存分配/" style="color: #0085a1">
-                        <span>
-                            JVM垃圾回收与内存分配
-                        </span>
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </li>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <li >
-                    09-25
-                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-                    <a href="/2020/09/25/那些年我们学过的设计模式，你还记得几个（一）/" style="color: #0085a1">
-                        <span>
-                            那些年我们学过的设计模式，你还记得几个（一）
-                        </span>
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </li>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <li >
-                    09-23
-                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-                    <a href="/2020/09/23/第一篇博客，记录我的絮絮叨叨/" style="color: #0085a1">
-                        <span>
-                            第一篇博客，记录我的絮絮叨叨
-                        </span>
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </li>
-                
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2020/09/27/锁底层以及优化技术/" data-toggle="tooltip" data-placement="top" title="锁底层以及优化技术">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2020/09/25/那些年我们学过的设计模式，你还记得几个（一）/" data-toggle="tooltip" data-placement="top" title="那些年我们学过的设计模式，你还记得几个（一）">Next Post &rarr;</a>
+                    </li>
+                    
                 </ul>
-            </div>
-            
 
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Music start-->
+                
+                
+<link rel="stylesheet" href="/css/music-player/fonts/iconfont.css">
+
+
+<link rel="stylesheet" href="/css/music-player/css/reset.css">
+
+
+<link rel="stylesheet" href="/css/music-player/css/player.css">
+
+
+<div class="music-player">
+    <audio class="music-player__audio" ></audio>
+    <div class="music-player__main">
+        <div class="music-player__blur"></div>
+        <div class="music-player__disc">
+            <div class="music-player__image">
+                <img width="100%" src="" alt="">
+            </div>
+            <div class="music-player__pointer"><img width="100%" src="/img/cd_tou.png" alt=""></div>
+        </div>
+        <div class="music-player__controls">
+            <div class="music__info">
+                <h3 class="music__info--title">...</h3>
+                <p class="music__info--singer">...</p>
+            </div>
+            <div class="player-control">
+                <div class="player-control__content">
+                    <div class="player-control__btns">
+                        <div class="player-control__btn player-control__btn--prev"><i class="iconfont icon-prev"></i></div>
+                        <div class="player-control__btn player-control__btn--play"><i class="iconfont icon-play"></i></div>
+                        <div class="player-control__btn player-control__btn--next"><i class="iconfont icon-next"></i></div>
+                        <div class="player-control__btn player-control__btn--mode"><i class="iconfont icon-loop"></i></div>
+                    </div>
+                    <div class="player-control__volume">
+                        <div class="control__volume--icon player-control__btn"><i class="iconfont icon-volume"></i></div>
+                        <div class="control__volume--progress player_progress"></div>
+                    </div>
+                </div>
+                <div class="player-control__content">
+                    <div class="player__song--progress player_progress"></div>
+                    <div class="player__song--timeProgess nowTime">00:00</div>
+                    <div class="player__song--timeProgess totalTime">00:00</div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
-            </div>
 
-            <!-- Sidebar Container -->
-<div class="
-    col-lg-3 col-lg-offset-0
-    col-md-3 col-md-offset-0
-    col-sm-12
-    col-xs-12
-    sidebar-container
-">
-    
-        
+
+<script src="/js/music-player/utill.js"></script>
+
+
+<script src="/js/music-player/jquery.min.js"></script>
+
+<!-- netease; qqkg -->
 <!--
-<h5>SEARCH</h5>
-<div class="search-article" class="tags">
-	<input id="search-kw" type="text" name="search_article" placeholder="Enter keywords for search" />
-	<div class="search-img">
-		<img 
-			src="/img/search.png" 
-			alt="search" 
-			onMouseOver="this.src='/img/search-focus.png'" 
-			onMouseOut="this.src='/img/search.png'"/>
-	</div>
-</div>-->
+<script src="/js/music-player/player.js?library=config.music.library.js"></script>
+-->
+<script src="../../../../js/music-player/player.js?library=netease&music=https://music.163.com/#/song?id=1325896303"></script>
+                
+                <!-- Music end -->
 
-<h5>SEARCH</h5>
-<div id="site_search">
-	<div class="form-group">
-		<input type="text" id="local-search-input" name="q" results="0" placeholder="search" class="st-search-input st-default-search-input form-control"/>
-	</div>  
-	<div id="local-search-result"></div>
-</div>
+                <!-- Sharing -->
+                
+                <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                <!--  css & js -->
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!-- Sharing -->
 
-        <hr>
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
     
-        <!-- Featured Tags -->
-
-<section>
-    <!-- no hr -->
-    <h5><a href="/tags/">FEATURED TAGS</a></h5>
-    <div class="tags">
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-            
-        
-    </div>
-</section>
-
-        <hr>
-    
-        <!-- Short About -->
-<section class="visible-md visible-lg">
-    <h5><a href="/about/">ABOUT ME</a></h5>
-    <div class="short-about">
-
-        
-            <img id = "avatar_pic" src="/img/ironman-draw.jpg" />
-        
-
-        
-            <p>Welcome to visit, I&#39;m Maybelence!</p>
-        
-
-        <!-- SNS Link -->
-        <ul class="list-inline">
-
-            
-                <li>
-                    <a target="_blank"  href="https://github.com/liujiang157">
-                        <span class="fa-stack fa-lg">
-                            <i class="fa fa-circle fa-stack-2x"></i>
-                            <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                        </span>
-                    </a>
-                </li>
-            
-
-            
-
-            
-
-            
-                <li>
-                    <a target="_blank" href="https://www.zhihu.com/people/maybelence">
-                        <span class="fa-stack fa-lg">
-                            <i class="fa fa-circle fa-stack-2x"></i>
-                            <i class="fa  fa-stack-1x fa-inverse">知</i>
-                        </span>
-                    </a>
-                </li>
-            
-
-            
-
-            
-
-            
-
-        </ul>
-    </div>
-</section>
-        <hr>
-    
-        
-  <h5>VISITORS</h5>
-  <div class="widget">
-    <span>
-    	Viewed <b><i><span id="busuanzi_value_site_pv"><i class="fa fa-spinner fa-spin"></i></span></i></b> Times
-	</span>
-	<br/>
-	<span>
-		<b><i><span id="busuanzi_value_site_uv"><i class="fa fa-spinner fa-spin"></i></span></i></b> Visitors In Total
-	</span>
-  </div>
-
-        <hr>
-    
-        
-  <h5>RECENT POSTS</h5>
-  <div class="widget">
-    <ul>
       
-        <li>
-          <a href="/2020/09/27/%E9%94%81%E5%BA%95%E5%B1%82%E4%BB%A5%E5%8F%8A%E4%BC%98%E5%8C%96%E6%8A%80%E6%9C%AF/">锁底层以及优化技术</a>
-        </li>
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            
+              <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#JVM垃圾回收与内存分配"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">JVM垃圾回收与内存分配</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#JVM内存区域"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">JVM内存区域</span></a></li></ol></li></ol>
+            
+          
+          </div>
+        </aside>
       
-        <li>
-          <a href="/2020/09/27/JVM%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E4%B8%8E%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D/">JVM垃圾回收与内存分配</a>
-        </li>
-      
-        <li>
-          <a href="/2020/09/25/%E9%82%A3%E4%BA%9B%E5%B9%B4%E6%88%91%E4%BB%AC%E5%AD%A6%E8%BF%87%E7%9A%84%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%EF%BC%8C%E4%BD%A0%E8%BF%98%E8%AE%B0%E5%BE%97%E5%87%A0%E4%B8%AA%EF%BC%88%E4%B8%80%EF%BC%89/">那些年我们学过的设计模式，你还记得几个（一）</a>
-        </li>
-      
-        <li>
-          <a href="/2020/09/23/%E7%AC%AC%E4%B8%80%E7%AF%87%E5%8D%9A%E5%AE%A2%EF%BC%8C%E8%AE%B0%E5%BD%95%E6%88%91%E7%9A%84%E7%B5%AE%E7%B5%AE%E5%8F%A8%E5%8F%A8/">第一篇博客，记录我的絮絮叨叨</a>
-        </li>
-      
-    </ul>
-  </div>
-
-        <hr>
     
-        <!-- Friends Blog -->
 
-<h5>FRIENDS</h5>
-<ul class="list-inline">
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
 
-    
-        <li><a href="http://meandni.com/" target="_blank">Joker&#39;s Blog</a></li>
-    
-</ul>
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#JVM" title="JVM">JVM</a>
+                        
+                          <a class="tag" href="/tags/#GC" title="GC">GC</a>
+                        
+                          <a class="tag" href="/tags/#垃圾回收" title="垃圾回收">垃圾回收</a>
+                        
+                    </div>
+                </section>
+                
 
-        <hr>
-    
-        
-    <h5>ARCHIVES</h5>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">4</span></li></ul>
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://meandni.com/" target="_blank">Joker&#39;s Blog</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
     </div>
+</article>
 
-        <hr>
-    
-        <!-- Categories -->
 
-    <h5>categories</h5>
-    <div class="widget">
-      <ul>
-        
-          <a href="categories/#生活"><li>生活</li></a>
-        
-          <a href="categories/#Java"><li>Java</li></a>
-        
-      </ul>
-    </div>
 
-        <hr>
-    
-</div>
 
-        
-    </div>
-</div>
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+
+
+<style  type="text/css">
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
 
 
     <!-- Footer -->
