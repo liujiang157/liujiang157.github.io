@@ -270,7 +270,46 @@
 <hr>
 <h2 id="JVM内存区域"><a href="#JVM内存区域" class="headerlink" title="JVM内存区域"></a>JVM内存区域</h2><p>了解GC之前，我们需要先了解JVM的内存模型，搞清楚被回收的数据一般存在在哪些区域。</p>
 <p><img src="jvmncqy.png" alt="JVM内存区域"></p>
-
+<ul>
+<li>虚拟机栈：描述方法执行时的内存模型，属于线程私有，生命周期同线程一样。主要保存执行方法时的局部变量表、操作数栈、动态连接和方法返回地址等信息,方法执行时入栈，方法执行完出栈，出栈之后数据清空，不需要GC。</li>
+<li>本地方法栈：主要存储虚拟机调用native方法/服务相关信息。大体逻辑和虚拟机栈相同，也不需要GC。</li>
+<li>程序技术器：主要记录当前线程执行字节码的行号。是<code>唯一一个</code>在 Java 虚拟机规范中没有规定任何 OOM 情况的区域，所以也不需要GC。</li>
+<li>本地内存：线程共享区域。在JAVA8之前，方法区是在堆内的实现的。受GC管理，JAVA8把方法区的实现移到了本地内存中的元空间。这样方法区就不受JVM控制，也不会进行GC，也提升了性能，因为发生 GC 会发生 Stop The Word,造成性能受到一定影响，也方便在元空间中统一管理。</li>
+<li>堆：堆是GC 发生的主要区域，对象实例和数组都是在堆上分配的，GC 也主要对这两类数据进行回收。接下来我们也终点分析这块区域。</li>
+</ul>
+<h2 id="如何判断垃圾"><a href="#如何判断垃圾" class="headerlink" title="如何判断垃圾"></a>如何判断垃圾</h2><h3 id="引用计数法"><a href="#引用计数法" class="headerlink" title="引用计数法"></a>引用计数法</h3><p>简单来说就是对每个对象去添加一个引用计数器，每当有一个地方引用他，计数器就加一，当引用失效就减一。如果没有被引用（引用次数为 0），则此对象可回收。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">String ref = <span class="keyword">new</span> String(<span class="string">"Java"</span>);</span><br></pre></td></tr></table></figure>
+<p><img src="630.png" alt="引用计数"></p>
+<p>ref 引用了右侧定义的对象，所以引用次数是 1 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ref &#x3D; null;</span><br></pre></td></tr></table></figure>
+<p>对象没被引用，引用次数置为 0，由于不被任何变量引用，此时即被回收</p>
+<p><img src="640.gif" alt="引用计数"></p>
+<p>但单纯的引用计数无法解决对象之间的相互循环引用的问题。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestRCGC</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    TestRCGC instance;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TestRCGC</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span>  <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 第一步</span></span><br><span class="line">    A a = <span class="keyword">new</span> TestRCGC(<span class="string">"a"</span>);</span><br><span class="line">    B b = <span class="keyword">new</span> TestRCGC(<span class="string">"b"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 第二步</span></span><br><span class="line">    a.instance = b;</span><br><span class="line">    b.instance = a;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 第三步</span></span><br><span class="line">    a = <span class="keyword">null</span>;</span><br><span class="line">    b = <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="650.png" alt="循环引用"></p>
+<p>虽然最后 a，b 都被置为 null 了，但是由于之前它们指向的对象互相指向了对方（引用计数都为 1），所以无法回收，也正是由于无法解决循环引用的问题，所以现代JAVA虚拟机都不用引用计数法来判断对象是否应该被回收。</p>
+<h3 id="可达性分析法"><a href="#可达性分析法" class="headerlink" title="可达性分析法"></a>可达性分析法</h3><p>当前主流的内存管理系统基本都是采用的可达性分析算法来判定对象是否存活。它的原理是通过一系列“GC Roots”的根对象作为起始节点集。从这个节点开始，通过引用向下搜索，搜索过程走的路被称为“引用链”，如果对象到“GC Roots”之间没有引用链相连的话，则说明这个对象是不可达的，也就是死亡的。</p>
+<p><img src="660.png" alt="可达性分析"></p>
+<p>如图所示：对象a和对象b之间，虽然存在循环引用，但是a，b之间不存在与GC Root想关联的引用，因此a,b是可回收的。<br>但是此时a,b并没有真正的死亡，而是处于一个“缓刑”的阶段。一个对象真正死亡需要同时满足两个条件，一个是对象与GC Roots没有相连接的引用链。另一个是对象是否有必要执行finallize()方法。如果对象未执行，则会先执行finallize()方法。如果执行该方法后对象仍不可达，则回收该对象，反之不回收该对象。<br>但是finallize只会被执行<code>一次</code>，如果在第一次执行了finallize之后对象仍然是可达的。那么下一次对象再被GC的时候会忽略finallize方法，会被回收。</p>
+<p>那么这些 GC Roots 到底是什么东西呢，哪些对象可以作为 GC Root 呢，有以下几类</p>
+<ul>
+<li>虚拟机栈（栈帧中的本地变量表）中引用的对象</li>
+<li>方法区中类静态属性引用的对象</li>
+<li>方法区中常量引用的对象</li>
+<li>本地方法栈中 JNI（即一般说的 Native 方法）引用的对象</li>
+</ul>
+<h4 id="虚拟机栈中引用的对象"><a href="#虚拟机栈中引用的对象" class="headerlink" title="虚拟机栈中引用的对象"></a>虚拟机栈中引用的对象</h4><p>a 是栈帧中的本地变量，当 a = null 时，由于此时 a 充当了 <strong>GC Root</strong> 的作用，a 与原来指向的实例 <strong>new Test()</strong> 断开了连接，所以对象会被回收。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span>  <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    Test a = <span class="keyword">new</span> Test();</span><br><span class="line">    a = <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="方法区中类静态属性引用对象"><a href="#方法区中类静态属性引用对象" class="headerlink" title="方法区中类静态属性引用对象"></a>方法区中类静态属性引用对象</h4><p>当栈帧中的本地变量 a = null 时，由于 a 原来指向的对象与 GC Root (变量 a) 断开了连接，所以 a 原来指向的对象会被回收，而由于我们给 s 赋值了变量的引用，s 在此时是类静态属性引用，充当了 GC Root 的作用，它指向的对象依然存活。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Test s;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span>  <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    Test a = <span class="keyword">new</span> Test();</span><br><span class="line">    a.s = <span class="keyword">new</span> Test();</span><br><span class="line">    a = <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="方法区中常量引用对象"><a href="#方法区中常量引用对象" class="headerlink" title="方法区中常量引用对象"></a>方法区中常量引用对象</h4><p>常量 s 指向的对象并不会因为 a 指向的对象被回收而回收</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Test</span> </span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> Test s = <span class="keyword">new</span> Test();</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Test a = <span class="keyword">new</span> Test();</span><br><span class="line">        a = <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="本地方法栈中-JNI-引用的对象"><a href="#本地方法栈中-JNI-引用的对象" class="headerlink" title="本地方法栈中 JNI 引用的对象"></a>本地方法栈中 JNI 引用的对象</h4><p>本地方法就是一个 java 调用非 java 代码的接口，该方法并非 Java 实现的，可能由 C 或 Python等其他语言实现的， Java 通过 JNI 来调用本地方法， 而本地方法是以库文件的形式存放的（在 WINDOWS 平台上是 DLL 文件形式，在 UNIX 机器上是 SO 文件形式）。通过调用本地的库文件的内部方法，使 JAVA 可以实现和本地机器的紧密联系，调用系统级的各接口方法。</p>
+<p>当调用 Java 方法时，虚拟机会创建一个栈桢并压入 Java 栈，而当它调用的是本地方法时，虚拟机会保持 Java 栈不变，不会在 Java 栈祯中压入新的祯，虚拟机只是简单地动态连接并直接调用指定的本地方法。</p>
+<p><img src="670.png" alt="栈帧"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">JNIEXPORT <span class="keyword">void</span> JNICALL <span class="title">Java_com_pecuyu_jnirefdemo_MainActivity_newStringNative</span><span class="params">(JNIEnv *env, jobject instance，jstring jmsg)</span> </span>&#123;</span><br><span class="line">...</span><br><span class="line">   <span class="comment">// 缓存String的class</span></span><br><span class="line">   jclass jc = (*env)-&gt;FindClass(env, STRING_PATH);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当 java 调用以上本地方法时，jc 会被本地方法栈压入栈中, jc 就是我们说的本地方法栈中 JNI 的对象引用，因此只会在此本地方法执行完成后才会被释放。</p>
+<h2 id="垃圾回收算法"><a href="#垃圾回收算法" class="headerlink" title="垃圾回收算法"></a>垃圾回收算法</h2>
                 
                 <hr>
                 <!-- Pager -->
@@ -389,7 +428,7 @@
           <strong class="toc-title">Contents</strong>
           
             
-              <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#JVM垃圾回收与内存分配"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">JVM垃圾回收与内存分配</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#JVM内存区域"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">JVM内存区域</span></a></li></ol></li></ol>
+              <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#JVM垃圾回收与内存分配"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">JVM垃圾回收与内存分配</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#JVM内存区域"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">JVM内存区域</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#如何判断垃圾"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">如何判断垃圾</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#引用计数法"><span class="toc-nav-number">1.2.1.</span> <span class="toc-nav-text">引用计数法</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#可达性分析法"><span class="toc-nav-number">1.2.2.</span> <span class="toc-nav-text">可达性分析法</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#虚拟机栈中引用的对象"><span class="toc-nav-number">1.2.2.1.</span> <span class="toc-nav-text">虚拟机栈中引用的对象</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#方法区中类静态属性引用对象"><span class="toc-nav-number">1.2.2.2.</span> <span class="toc-nav-text">方法区中类静态属性引用对象</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#方法区中常量引用对象"><span class="toc-nav-number">1.2.2.3.</span> <span class="toc-nav-text">方法区中常量引用对象</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#本地方法栈中-JNI-引用的对象"><span class="toc-nav-number">1.2.2.4.</span> <span class="toc-nav-text">本地方法栈中 JNI 引用的对象</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#垃圾回收算法"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">垃圾回收算法</span></a></li></ol></li></ol>
             
           
           </div>
@@ -646,7 +685,7 @@
         
 
         
-            <script type="text/javascript" src="/js/mouse-click.js" content='[&quot;🌱&quot;,&quot;just do it&quot;,&quot;🍀&quot;,&quot;心中有党，成绩理想&quot;]' color='[&quot;rgb(121,93,179)&quot; ,&quot;rgb(76,180,231)&quot; ,&quot;rgb(184,90,154)&quot;]'></script>
+            <script type="text/javascript" src="/js/mouse-click.js" content='[&#34;🌱&#34;,&#34;just do it&#34;,&#34;🍀&#34;,&#34;心中有党，成绩理想&#34;]' color='[&#34;rgb(121,93,179)&#34; ,&#34;rgb(76,180,231)&#34; ,&#34;rgb(184,90,154)&#34;]'></script>
         
 
         <!-- background effects end -->
@@ -656,21 +695,6 @@
     
         <script src="/js/ribbonDynamic.js"></script>
     
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-            processEscapes: true
-        }
-    });
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax();
-        for (var i = 0; i < all.length; ++i)
-            all[i].SourceElement().parentNode.className += ' has-jax';
-    });
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </body>
 
 </html>
