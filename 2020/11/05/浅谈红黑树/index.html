@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="一个用来絮絮叨叨的地方">
+    <meta name="keyword"  content="maybelence, 学习, 生活">
+    <link rel="shortcut icon" href="/img/ironman-draw.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          浅谈红黑树 - Maybelence&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://maybelence.cn/2020/11/05/浅谈红黑树/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+        
+<link rel="stylesheet" href="/css/dusign-light.css">
+
+        
+<link rel="stylesheet" href="/css/dusign-common-light.css">
+
+        
+<link rel="stylesheet" href="/css/font-awesome.css">
+
+        
+<link rel="stylesheet" href="/css/toc.css">
+
+        <!-- background effects end -->
+    
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+    <!-- photography -->
+    
+<link rel="stylesheet" href="/css/photography.css">
+
+
+    <!-- ga & ba script hoook -->
+    <script data-ad-client="ca-pub-9951682438363353" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- background effects start -->
+    
+    <!-- background effects end -->
+
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('../../../../img/default.jpg')
+                /*post*/
+            
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/maybelence.png');
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#红黑树" title="红黑树">红黑树</a>
+                            
+                              <a class="tag" href="/tags/#HashMap" title="HashMap">HashMap</a>
+                            
+                        </div>
+                        <h1>浅谈红黑树</h1>
+                        <h2 class="subheading">面试拦路虎，对方不想和你说话并向你丢了一个红黑树，让你写代码实现</h2>
+                        <span class="meta">
+                            Posted by maybelence on
+                            2020-11-05
+                        </span>
+
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+    <div class="waveWrapper">
+        <div class="wave wave_before" style="background-image: url('/img/wave-light.png')"></div>
+        <div class="wave wave_after" style="background-image: url('/img/wave-light.png')"></div>
+    </div>
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Maybelence&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">首页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">目录</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">分类</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/photography/">随手拍</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">标签</a>
+                        </li>
+                        
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p>在网上很多博客上面看到有些讲红黑树的文章都不能完整描述它的体系，对于树的调平染色也没有很详细的介绍，因此让很多人觉得红黑树很难理解。但红黑树的应用场景还是很常见的。</p>
+<p>JAVA8中HashMap的底层实现，就为了解决过度哈希冲突而造成的长链表，从而将链表转换为红黑树；Linux中的CFS进程调度算法，vruntime利用红黑树来存储；多路复用EPoll核心结构也是采用红黑树和双向链表来存储。</p>
+<p>了解红黑树的结构，有助于我们去理解一些底层实现，并且红黑树本身也是对树结构的一种高度应用。包括多叉树、树平衡调整、树节点旋转。其实红黑树的本质就是对2-3-4树的概念模型一种具体实现。</p>
+<h3 id="2-3-4树"><a href="#2-3-4树" class="headerlink" title="2-3-4树"></a>2-3-4树</h3><p>2-3-4树是<code>阶数</code>为4的B树，B树，全名BalanceTree，平衡树。这种结构主要用来做查找。它最重要的特性在于平衡，这使得我们能够在最坏情况下也保持O(LogN)的时间复杂度实现查找（一个不具备平衡性的查找树可能退化成单链表，时间复杂度会到O（N））。</p>
+<blockquote>
+<p>平衡的定义是说从空链接到根节点距离相等，此处一定要用心理解。（也就是说非叶子节点是不会存在空链接的）</p>
+</blockquote>
+<p>因为2-3-4是一个<code>阶数</code>为4的数，所以他会存在以下几个节点：</p>
+<ul>
+<li>2结点 2节点中存放着一个key[X]，两个指针，分别指向小于X的子节点和大于X的子节点；</li>
+<li>3结点 3节点中存放在两个key[X,Y],三个指针，分别指向小于X的子节点，介于X~Y之间的子节点和大于Y的子节点；</li>
+<li>4结点 4节点中存放在两个key[X,Y,Z],四个指针，理论同上</li>
+</ul>
+<p><img src="49.png" alt="2-3-4数图解"></p>
+<h3 id="红黑树"><a href="#红黑树" class="headerlink" title="红黑树"></a>红黑树</h3><p>红黑树是对概念模型2-3-4树的一种实现，由于直接进行不同节点间的转化会造成较大的开销，所以选择以二叉树为基础，在二叉树的属性中加入一个<code>颜色</code>属性来表示2-3-4树中不同的节点。<br>2-3-4树中的2节点对应着红黑树中的<code>黑色节点</code>，而2-3-4树中的非2节点是以<code>红节点+黑节点</code>的方式存在，红节点的意义是与黑色父节点结合，表达着2-3-4树中的3，4节点。</p>
+<p>我们先看2-3-4树到红黑树的节点转换。2节点直接转化为黑色节点；3节点这里可以有两种表现形式，左倾红节点或者右倾红节点。而4节点被强制要求转化为一个黑父带着左右两个红色儿子。</p>
+<p><img src="50.png" alt="2-3-4树转红黑树"></p>
+<p>本文主要针对2-3树的左倾红黑树进行探讨，也就是说，如果一个树中出现了<code>红色</code>结点，那么这个结点一定是<code>左儿子</code>，这也是<code>算法4</code>中给出的红黑树的实现方式。</p>
+<ul>
+<li>这种实现方式不用考虑2-3-4树中复杂的4节点分裂</li>
+<li>这种限定能够很大的减少红黑树调整过程中的复杂性</li>
+</ul>
+<p><img src="51.png" alt="2-3树转红黑树"></p>
+<p>如果说这样还是比较抽象的话，那下面这个左倾红黑树转2-3树应该能够清晰的描绘他们之间的关系了。</p>
+<p><img src="52.png" alt="左倾红黑树转2-3树"></p>
+<p>在了解红黑树的插入删除操作之前，我们需要先了解2-3树的插入删除操作，才能理解红黑树中染色和旋转背后的意义。插入操作需要遵循一个原则：</p>
+<blockquote>
+<p>先将这个元素尝试性地放在已经存在的节点中，如果要存放的节点是2节点，那么插入后会变成3节点，如果要存放的节点是3节点，那么插入后会变成4节点（临时）。<br>然后对可能生成的临时4节点进行分裂处理，使得临时4节点消失。</p>
+</blockquote>
+<p><img src="53.jpg" alt="2-3-4树插入(1)"><br><img src="54.jpg" alt="2-3-4树插入(2)"></p>
+<p>正对应了红黑树在插入的时候一定会把待插入节点涂成红色，因为红色节点的意义是与<code>父节点</code>进行关联，形成概念模型2-3树中的3节点或者临时4节点。</p>
+<p>而红黑树之所以需要在插入后进行调整，正是因为可能存在着概念模型中的临时4节点（反应在红黑树中是双红的情况）。</p>
+<p>试想在2-3树中如果待插入节点是个2节点，那么反应在红黑树中，不正好对应着黑色父节点吗，在黑色父节点下面增加一个红色儿子，确实不会违背红黑树的任何规则，这也对应着我们向2-3树中的2节点插入一个元素，只需要简单的把2节点变成3节点。</p>
+<p>接下来让我们来看一下对于2-3树的删除。对于2-3树的删除我们主要要考虑待删除元素在2节点这种情况，因为如果待删除元素在3节点，那么可以直接将这个元素删除，而不会破坏2-3树的任何性质（删除这个元素不会引起高度的变化）。</p>
+<p>当待删除元素在2节点的时候，由于删除这个元素会导致2节点失去自己唯一的元素，引发2节点自身的删除，会使得树中某条路径的高度发生变化，树变得不平衡。<br>因此我们有两种方案去解决这个问题：</p>
+<ul>
+<li>先删除这个2节点，然后对树进行平衡调整。</li>
+<li>想办法让这个被删除的元素不可能出现在2节点中。</li>
+</ul>
+<p>这里选择第二种方案，我们在搜索到这个节点的路径中，不断地判断当前节点是否为2节点，如果是，就从它的兄弟节点或者它的父节点借一个元素，使得当前节点由2节点成为一个3节点或者一个临时4节点（视具体情况而定，在后面的红黑树部分会详细介绍）。</p>
+<p>这种操作会产生一种结果：除非当前节点是根节点，否则当前节点的父节点一定是一个非2节点（因为搜索的路径是自上而下，父节点已经进行过了这种操作，所以不可能是2节点），那么我们可以保证到达叶子节点的时候，也能顺利的从父节点或者兄弟节点处借到元素，使得自己成为非2节点。从而能够直接删除某个元素（现在这个元素不在2节点中了）。</p>
+<p><img src="55.jpg" alt="2-3树的删除"></p>
+<h3 id="再品红黑树"><a href="#再品红黑树" class="headerlink" title="再品红黑树"></a>再品红黑树</h3><p><img src="56.png" alt="红黑树中的红黑结点"></p>
+<p>来品一下红黑树的5条定义</p>
+<ul>
+<li><p>红黑树结点颜色的有黑色和红色</p>
+<blockquote>
+<p>2-3树到红黑树的转化已经详细说明</p>
+</blockquote>
+</li>
+<li><p>根结点一定是黑色</p>
+<blockquote>
+<p>2-3树中如果根节点为2节点，那么它本来就对应红黑树中黑节点；如果根节点为3节点，也可以用黑色节点表示较大的那个元素，然后较小的元素作为左倾红节点存在于红黑树中</p>
+</blockquote>
+</li>
+<li><p>所有叶子节点都是黑色</p>
+<blockquote>
+<p>这里的叶子其实是空链接</p>
+</blockquote>
+</li>
+<li><p><strong>任意节点到叶子节点经过的黑色节点数目相同</strong></p>
+<blockquote>
+<p>红黑树中的红节点是和黑色父节点绑定的，在2-3树中本来就是同一层的，只有黑色节点才会在2-3树中真正贡献高度，由于2-3树的任一节点到空链接距离相同，因此反应在红黑树中就是<code>黑色完美平衡</code></p>
+</blockquote>
+</li>
+<li><p>不会有连续的红色节点</p>
+<blockquote>
+<p>2-3树中本来就规定没有4节点，2-3-4树中虽然有4节点，但是要求在红黑树中体现为一黑色节点带两红色儿子，分布左右，所以也不会有连续红节点</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<blockquote>
+<p>现在就能看的出来红黑树的定义背后正浮现着一颗2-3树概念模型。虽然我们已经有了这样的认识，但是红黑树作为真正的实现模型，我们还是要回到这个实现本身来探究它的一系列操作</p>
+</blockquote>
+<h4 id="作为二叉查找树"><a href="#作为二叉查找树" class="headerlink" title="作为二叉查找树"></a>作为二叉查找树</h4><p>二叉查找树的节点有一个元素X和两个指针域，左指针指向小于X的元素，右指针指向大于X的元素。</p>
+<p>假设我们的插入序列是1~10，那么这颗树会演变成只有右链接的形式，树高会增加到10层，这个时候已经不具备O(LogN)的查找时间复杂度，因为这颗树退化成了链表。</p>
+<p>因此对二叉树进行平衡调整是很重要的一个环节，无论是AVL还是红黑树，它们本质上都是希望尽可能保证这颗二叉查找树中的元素尽量均衡的分布在树的两侧。</p>
+<p>当我们向一颗二叉查找树中插入一个元素Y的时候，我们会一直与树中的节点进行大小比较，如果Y小于当前元素，就往左走，如果Y大于当前元素，就往右走，直到达到叶子节点，这个时候我们可以把Y插入这颗二叉查找树了。</p>
+<p>由于这次的插入动作，整棵树可能会发生一些不平衡，因此我们需要在插入后进行一次平衡调整，使得整棵树恢复到平衡的状态（具体如何调整，要看树是AVL还是红黑树亦或是其他的平衡树）。</p>
+<p>二叉查找树的删除是一个很有意思的问题，不同于插入的是，待删除的元素并不能保证一定出现在树中的叶子节点。这将带来一个棘手的情景，即我们需要从树的中间部分取走一个元素，而且在取走后还需要经过调整来使得整颗树满足平衡的性质。从树的中间部分直接取走一个节点的场景实在是太多，也牵扯到了太多相关的节点，这种操作很难实现。</p>
+<p>好在有人提出了一个观点，我们对查找树中一个节点的删除，其实可以不必真的改动这个节点的位置。由于查找树的特殊性质，将某个元素节点删除后，它有两个最佳替代者，分别是有序序列中的前驱元素和后继元素。</p>
+<p>我们还是以一个包含元素1~10的二叉查找树为例，如果我们希望删除5所在的节点，那么让4或者6替代它的位置都是可行的。作为前驱元素的4，会存放在5所在节点的左子树的最右侧；作为后继元素的6，会存放在5所在节点的右子树的最左侧。</p>
+<p>关于这个结论，大家只需稍加思索便可以明白。</p>
+<p>现在我们又让问题简化了，也就是说，删除某个节点的时候，我们先找到它的前驱元素或者后继元素（随便选一个），将它的前驱元素直接填到待删除的节点，然后再把它的前驱元素或者后继元素删除。</p>
+<p>这个时候问题就转化成了在二叉查找树中删除一个没有左子树的节点（或者是一个没有右子树的节点），我们只需要将这个节点删除再进行对应的平衡调整即可（虽然还是需要调平，但是比直接在树中层删除一个同时具备左右儿子的节点要容易很多）。</p>
+<p>注意，此处并没有强调是针对红黑树的操作，因为红黑树和AVL都是二叉查找树，它们都适用这个方法。</p>
+<h4 id="树的旋转"><a href="#树的旋转" class="headerlink" title="树的旋转"></a>树的旋转</h4><p>为了调平一颗二叉树，使得其左右节点数目分布均匀，通常会选择旋转的手段。你可以把一颗二叉树某节点的左右子树想象成天平上待称量的物品，如果哪边重了，我们就从重的那边拿出一部分，加到轻的那边，以此保持相对的平均。</p>
+<p>以X为旋转点的左旋</p>
+<p><img src="58.png" alt="左旋调平"></p>
+<p>以X为旋转点的右旋</p>
+<p><img src="59.png" alt="右旋调平"></p>
+
+                
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2020/11/06/那些年我们学过的设计模式，你还记得几个（二）/" data-toggle="tooltip" data-placement="top" title="那些年我们学过的设计模式，你还记得几个（二）">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2020/10/30/一道算法题引发的惯性思维/" data-toggle="tooltip" data-placement="top" title="记一下最近刷题的一些小想法">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Music start-->
+                
+                
+<link rel="stylesheet" href="/css/music-player/fonts/iconfont.css">
+
+
+<link rel="stylesheet" href="/css/music-player/css/reset.css">
+
+
+<link rel="stylesheet" href="/css/music-player/css/player.css">
+
+
+<div class="music-player">
+    <audio class="music-player__audio" ></audio>
+    <div class="music-player__main">
+        <div class="music-player__blur"></div>
+        <div class="music-player__disc">
+            <div class="music-player__image">
+                <img width="100%" src="" alt="">
+            </div>
+            <div class="music-player__pointer"><img width="100%" src="/img/cd_tou.png" alt=""></div>
+        </div>
+        <div class="music-player__controls">
+            <div class="music__info">
+                <h3 class="music__info--title">...</h3>
+                <p class="music__info--singer">...</p>
+            </div>
+            <div class="player-control">
+                <div class="player-control__content">
+                    <div class="player-control__btns">
+                        <div class="player-control__btn player-control__btn--prev"><i class="iconfont icon-prev"></i></div>
+                        <div class="player-control__btn player-control__btn--play"><i class="iconfont icon-play"></i></div>
+                        <div class="player-control__btn player-control__btn--next"><i class="iconfont icon-next"></i></div>
+                        <div class="player-control__btn player-control__btn--mode"><i class="iconfont icon-loop"></i></div>
+                    </div>
+                    <div class="player-control__volume">
+                        <div class="control__volume--icon player-control__btn"><i class="iconfont icon-volume"></i></div>
+                        <div class="control__volume--progress player_progress"></div>
+                    </div>
+                </div>
+                <div class="player-control__content">
+                    <div class="player__song--progress player_progress"></div>
+                    <div class="player__song--timeProgess nowTime">00:00</div>
+                    <div class="player__song--timeProgess totalTime">00:00</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="/js/music-player/utill.js"></script>
+
+
+<script src="/js/music-player/jquery.min.js"></script>
+
+<!-- netease; qqkg -->
+<!--
+<script src="/js/music-player/player.js?library=config.music.library.js"></script>
+-->
+<script src="../../../../js/music-player/player.js?library=netease&music=https://music.163.com/#/song?id=1325896303"></script>
+                
+                <!-- Music end -->
+
+                <!-- Sharing -->
+                
+                <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                <!--  css & js -->
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            
+              <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-3-4树"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">2-3-4树</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#红黑树"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">红黑树</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#再品红黑树"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">再品红黑树</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#作为二叉查找树"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">作为二叉查找树</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#树的旋转"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">树的旋转</span></a></li></ol></li></ol>
+            
+          
+          </div>
+        </aside>
+      
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#红黑树" title="红黑树">红黑树</a>
+                        
+                          <a class="tag" href="/tags/#HashMap" title="HashMap">HashMap</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://meandni.com/" target="_blank">Joker&#39;s Blog</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+
+
+<style  type="text/css">
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/liujiang157">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/maybelence">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; maybelence 2020 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/dusign/hexo-theme-snail" target="_blank" rel="noopener">
+                        <i>hexo-theme-snail</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=dusign&repo=hexo-theme-snail&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://maybelence.cn/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+
+        
+            <script type="text/javascript" src="/js/mouse-click.js" content='[&quot;🌱&quot;,&quot;just do it&quot;,&quot;🍀&quot;,&quot;waiting for you&quot;]' color='[&quot;rgb(121,93,179)&quot; ,&quot;rgb(76,180,231)&quot; ,&quot;rgb(184,90,154)&quot;]'></script>
+        
+
+        <!-- background effects end -->
+    
+
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>
