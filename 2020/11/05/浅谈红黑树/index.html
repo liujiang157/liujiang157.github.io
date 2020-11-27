@@ -321,7 +321,7 @@
 <p>这里的叶子其实是空链接</p>
 </blockquote>
 </li>
-<li><p><strong>任意节点到叶子节点经过的黑色节点数目相同</strong></p>
+<li><p>任意节点到叶子节点经过的黑色节点数目相同</p>
 <blockquote>
 <p>红黑树中的红节点是和黑色父节点绑定的，在2-3树中本来就是同一层的，只有黑色节点才会在2-3树中真正贡献高度，由于2-3树的任一节点到空链接距离相同，因此反应在红黑树中就是<code>黑色完美平衡</code></p>
 </blockquote>
@@ -353,6 +353,44 @@
 <p><img src="58.png" alt="左旋调平"></p>
 <p>以X为旋转点的右旋</p>
 <p><img src="59.png" alt="右旋调平"></p>
+<p>理解了这些之后，再去看红黑树的插入删除，就能够理解旋转和染色背后的意义了。我们仍然选择算法4中的左倾红黑树作演示：首先看<code>插入</code></p>
+<h4 id="左倾红黑树的插入"><a href="#左倾红黑树的插入" class="headerlink" title="左倾红黑树的插入"></a>左倾红黑树的插入</h4><p><img src="60.png" alt="红黑树基树"></p>
+<p>对于上述左倾红黑树的插入一共有三种可能的情况：</p>
+<ul>
+<li>待插入元素比黑父大，插在了黑父的右边，而黑父左边是红色儿子。这种情况会导致在红黑树中出现右倾红节点。</li>
+</ul>
+<p>这种情况对应着2-3树中出现了临时4节点，我们在2-3树中的处理是将这个临时4节点分裂，左右元素各自形成一个2节点，中间元素上升到上层跟父节点结合。所以，我们在红黑树中的动作是，将原本红色的左右儿子染黑（左右分裂），将黑父染红（等待上升结合）。</p>
+<p><img src="61.png" alt="红黑树基于黑叔插入图1"></p>
+<ul>
+<li>待插入元素比红父小，且红父自身就是左倾。听起来有点绕，看图就会明白，其实就是说红父和待插入元素同时靠在了左边，形成了连续的红节点。</li>
+</ul>
+<p>这种情况我们需要用两步来调整。由于我们插入的是红色节点，其实不会破坏黑色完美平衡，所以要注意的是在旋转和染色的过程种继续保持这种完美黑色平衡。<br>首先对红父的父亲进行一次右旋，这次右旋不会破坏黑色平衡，但是也没有解决连续红色的问题。<br>接下来将12所在节点与15所在节点交换颜色，这样的目的是为了消除连续红色，并且这个操作依旧维持了黑色平衡。现在我们已经得到了情况1的场景，直接按情况1处理即可。</p>
+<p><img src="62.png" alt="红黑树基于黑叔插入图2"></p>
+<ul>
+<li>待插入元素比红父大，且红父自身就是左倾。</li>
+</ul>
+<p>也就是说插入的这个节点形成了一个右倾的红色节点，对右倾的处理很简单，将红父进行一次左旋，就能使得右倾红节点变为左倾，现在出现了连续的左倾红节点，直接按情况2处理即可。</p>
+<p><img src="63.png" alt="红黑树基于黑叔插入图3"></p>
+<p>在插入时，可以体会到左倾红黑树对于左倾的限制带来的好处，因为在原树符合红黑树定义的情况下，如果父亲是红的，那么它一定左倾，同时也不用考虑可能存在的右倾兄弟（如果有，那说明原树不满足红黑树定义）。</p>
+<p>这种限制消除了很多需要考虑的场景，让插入变得更加简单。</p>
+<h4 id="左倾红黑树的删除"><a href="#左倾红黑树的删除" class="headerlink" title="左倾红黑树的删除"></a>左倾红黑树的删除</h4><p>左倾红黑树的删除需要借鉴之前提到的<code>二叉查找树通用的删除</code>策略，当我们要删除某个节点的时候选择它的前驱节点或者后继节点元素来替代它，转而删除它的前驱/后继节点。</p>
+<p>这里我们用<code>后继节点</code>来替代被删除节点。</p>
+<p>假设我们需要删除的节点它的右子树如图所示，那么对该节点的删除实际上转为了对2的删除。</p>
+<p>我们从当前的根节点出发，利于2-3树中预合并的策略逐层对红黑树进行调整。具体的做法是，每次都保证当前的节点是2-3树中的非2节点，如果当前节点已经是非2节点，那么直接跳过；如果当前节点是2节点，那么根据兄弟节点的状况来进行调整：</p>
+<ul>
+<li><p>如果兄弟是2节点，那么从父节点借一个元素给当前节点，然后与兄弟节点一起形成一个临时4节点。</p>
+</li>
+<li><p>如果兄弟是非2节点，那么兄弟上升一个元素到父节点，同时父节点下降一个元素到当前节点，使得当前节点成为一个3节点。</p>
+</li>
+</ul>
+<p>这样的策略能够保证最后走到待删除节点的时候，它一定是一个非2节点，我们可以直接将其元素删除。</p>
+<p><img src="64.png" alt="左倾红黑树的删除"></p>
+<p>接下来要考虑的是修复工作，由于红黑树定义的限制，我们在调整的过程中出现了一些本不该存在的<code>红色右倾节点</code>（因为生成了概念模型中的临时4节点），于是我们顺着搜索的方向向上<code>回溯</code>，如果遇到当前节点具备右倾的红色儿子，那么对当前节点进行一次左旋，这时原本的右儿子会来到当前节点的位置，然后将右儿子与当前节点交换颜色，我们就将右倾红节点修复成了左倾红节点，同时我们并没有破坏黑色节点的平衡。</p>
+<p><img src="65.png" alt="左倾红黑树修复"></p>
+<h3 id="思考"><a href="#思考" class="headerlink" title="思考"></a>思考</h3><ul>
+<li>你知道了红黑树的五条定义，如果我构造一颗只有黑色节点的红黑树，这样子可行吗？因为这样子没有破坏任何一条红黑树的规则。</li>
+<li>那么请问红黑树中要红节点干什么呢？红节点的真实意义是什么呢？</li>
+</ul>
 
                 
                 <hr>
@@ -472,7 +510,7 @@
           <strong class="toc-title">Contents</strong>
           
             
-              <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-3-4树"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">2-3-4树</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#红黑树"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">红黑树</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#再品红黑树"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">再品红黑树</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#作为二叉查找树"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">作为二叉查找树</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#树的旋转"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">树的旋转</span></a></li></ol></li></ol>
+              <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-3-4树"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">2-3-4树</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#红黑树"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">红黑树</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#再品红黑树"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">再品红黑树</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#作为二叉查找树"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">作为二叉查找树</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#树的旋转"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">树的旋转</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#左倾红黑树的插入"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">左倾红黑树的插入</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#左倾红黑树的删除"><span class="toc-nav-number">3.4.</span> <span class="toc-nav-text">左倾红黑树的删除</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#思考"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">思考</span></a></li></ol>
             
           
           </div>
