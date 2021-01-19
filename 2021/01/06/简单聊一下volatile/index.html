@@ -345,7 +345,7 @@
 <p>上述重排序规则，为了提高处理速度，JVM往往会对代码进行指令重排序优化。并发编程下指令重排序会带来一些安全隐患：如指令重排序导致的多个线程操作之间的不可见性。</p>
 <p>从JDK5开始，提出了<code>happens-before</code>的概念，通过这个概念来阐述操作之间的内存可见性。</p>
 <h3 id="happens-before"><a href="#happens-before" class="headerlink" title="happens-before"></a>happens-before</h3><p>如果一个操作执行的结果需要对另一个操作可见，那么这两个操作之间必须存在happens-before关系。<br><code>volatile域规则：对一个volatile域的写操作，happens-before于任意线程后续对这个volatile域的读。</code><br>如果现在我的变了flag变成了false，那么后面的那个操作，一定要知道我变了。</p>
-<p>一定要记住<code>volatile无法保证原子性</code>，如果非要保证原子性，可以采用concurrent包下的一些原子类或者给加锁。关于volatile的应用，可以看之前有一篇讲单例的文章<a href="/2020-09-25-那些年我们学过的设计模式，你还记得几个（一）.html">_post/2020-09-25-那些年我们学过的设计模式，你还记得几个（一）.md</a>。</p>
+<p>一定要记住<code>volatile无法保证原子性</code>，如果非要保证原子性，可以采用concurrent包下的一些原子类或者给加锁。关于volatile的应用，可以看之前有一篇讲单例的文章<a href="/2020/09/25/那些年我们学过的设计模式，你还记得几个（一）/">2020-09-25-那些年我们学过的设计模式，你还记得几个（一）</a>。</p>
 <h3 id="volatile和synchronized的区别"><a href="#volatile和synchronized的区别" class="headerlink" title="volatile和synchronized的区别"></a>volatile和synchronized的区别</h3><ul>
 <li>volatile只能修饰实例变量和类变量，而synchronized可以修饰方法，以及代码块。</li>
 <li>volatile保证数据的可见性，但是不保证原子性(多线程进行写操作，不保证线程安全);而synchronized是一种排他(互斥)的机制。</li>
@@ -359,7 +359,7 @@
 </li>
 <li><p>volatile只能作用于属性，我们用volatile修饰属性，这样compilers就不会对这个属性做指令重排序。</p>
 </li>
-<li><p>volatile提供了可见性，任何一个线程对其的修改将立马对其他线程可见，volatile属性不会被线程缓存，始终从主 存中读取。</p>
+<li><p>volatile提供了可见性，任何一个线程对其的修改将立马对其他线程可见，volatile属性不会被线程缓存，始终从主存中读取。</p>
 </li>
 <li><p>volatile提供了happens-before保证，对volatile变量v的写入happens-before所有其他线程后续对v的读操作。</p>
 </li>
