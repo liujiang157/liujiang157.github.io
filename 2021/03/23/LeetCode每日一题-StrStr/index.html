@@ -16,11 +16,11 @@
     <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
     <title>
         
-          百问不厌的乐观锁和悲观锁 - Maybelence&#39;s Blog
+          LeetCode每日一题--StrStr() - Maybelence&#39;s Blog
         
     </title>
 
-    <link rel="canonical" href="https://maybelence.cn/2021/01/28/百问不厌的乐观锁和悲观锁/">
+    <link rel="canonical" href="https://maybelence.cn/2021/03/23/LeetCode每日一题-StrStr/">
 
     <!-- Bootstrap Core CSS -->
     
@@ -113,16 +113,18 @@
                     <div class="post-heading">
                         <div class="tags">
                             
-                              <a class="tag" href="/tags/#锁" title="锁">锁</a>
+                              <a class="tag" href="/tags/#算法" title="算法">算法</a>
                             
-                              <a class="tag" href="/tags/#并发" title="并发">并发</a>
+                              <a class="tag" href="/tags/#leetcode" title="leetcode">leetcode</a>
+                            
+                              <a class="tag" href="/tags/#algorithm" title="algorithm">algorithm</a>
                             
                         </div>
-                        <h1>百问不厌的乐观锁和悲观锁</h1>
-                        <h2 class="subheading">聊一下CAS ，Synchronized，ReentrantLock</h2>
+                        <h1>LeetCode每日一题--StrStr()</h1>
+                        <h2 class="subheading">leetCode算法系列</h2>
                         <span class="meta">
                             Posted by maybelence on
-                            2021-01-28
+                            2021-03-23
                         </span>
 
                         
@@ -261,58 +263,35 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p>乐观锁和悲观锁一直都是面试中高频考察点，面试官也喜欢从这类问题去考察面试者的基本功。今天我们就来聊一下乐观锁和悲观锁的实现：<br><code>CAS，Synchronized，ReentrantLock</code>。</p>
-<p>首先要对乐观锁和悲观锁，我们要有一定的概念：</p>
-<ul>
-<li>悲观锁：悲观的认为只要不做正确的数据同步措施，它就一定会出问题</li>
-<li>乐观锁：乐观的认为不需要去采取同步措施也不会出问题，如果出现问题，再去补救</li>
-</ul>
-<p>那具体通过哪些方式去才取同步呢，在多线程中，同步机制主要分为以下四种，具体的区别以后再讲：</p>
-<ul>
-<li>互斥量：为协调共同对一个共享资源的单独访问而设计的。</li>
-<li>临界区：通过对多线程的串行化来访问公共资源或一段代码，速度快，适合控制数据访问。</li>
-<li>临界量：为控制一个具有有限数量用户资源而设计。</li>
-<li>事件：用来通知线程有一些事件已发生，从而启动后继任务的开始。</li>
-</ul>
-<h3 id="互斥（同步阻塞）悲观锁"><a href="#互斥（同步阻塞）悲观锁" class="headerlink" title="互斥（同步阻塞）悲观锁"></a>互斥（同步阻塞）悲观锁</h3><p>互斥只是同步机制的其中一个手段，也是很常见的保障并发正确性的手段<br>我们知道传统的锁（如<code>synchronized</code>或者<code>ReentrantLock</code>）之所以被称为重量级锁，就是因为他使用操作系统互斥量来实现同步。</p>
-<h4 id="synchronized"><a href="#synchronized" class="headerlink" title="synchronized"></a>synchronized</h4><p>synchronized能实现同步的基础：也是因为在java中，所有对象都可以作为锁。</p>
-<p>具体表现为以下3种形式。</p>
-<ul>
-<li>对于普通同步方法，锁是当前实例对象。</li>
-<li>对于静态同步方法，锁是当前类的Class对象。</li>
-<li>对于同步方法块，锁是Synchonized括号里配置的对象。</li>
-<li>当一个线程试图访问同步代码块时，它首先必须得到锁，退出或抛出异常时必须释放锁。</li>
-</ul>
-<p>synchronized是基于<code>Monitor</code>来实现同步的。当<code>synchronized</code>经过编译之后，<strong>会在<code>同步块</code>的前后分别形成<code>monitorenter</code>和<code>monitorexit</code>指令</strong>。</p>
-<ul>
-<li>每个monitor维护着一个记录着拥有次数的计数器。未被拥有的monitor的该计数器为0</li>
-<li>当执行进入monitorenter时，锁计数器就会+1，当执行到monitorexit,锁计数器就会-1。当锁计数器为0的时候，锁就会被释放</li>
-<li>synchronized不会出现自己死锁自己的情况，因为对于已经进入同步块的线程，synchronized锁是可重入的</li>
-<li>在synchronized同步代码块执行完，会阻塞其他线程进入同步锁（排他锁）</li>
-<li>对于<code>同步方法</code>，<code>synchronized</code>同步方式是通过方法中的access_flags中设置<code>ACC_SYNCHRONIZED</code>标志来实现</li>
-</ul>
-<p>并且，随着JDK6对<code>synchronized</code>进行了各种优化之后，有些情况下synchronized就并不那么重,JDK6中为了减少获得锁和释放锁带来的性能消耗而引入的偏向锁和轻量级锁。<br>针对<code>synchronized</code>获取锁的方式，JVM 使用了锁升级的优化方式，就是先使用偏向锁优先同一线程然后再次获取锁，如果失败，就升级为 CAS 轻量级锁，如果失败就会短暂自旋，防止线程被系统挂起。最后如果以上都失败就升级为重量级锁。并且锁只能向上升级，不能降级。</p>
-<p><img src="11.png" alt=""></p>
-<h4 id="ReentrantLock"><a href="#ReentrantLock" class="headerlink" title="ReentrantLock"></a>ReentrantLock</h4><p>实现ReentrantLock的基础是AQS( AbstractQueuedSynchronizer 队列同步器)，AQS 有一个 state 标记位，值为<code>1</code>时表示有线程占用，其他线程需要进入到同步队列等待，同步队列是一个双向链表。<br>当获得锁需要等待某个条件时，会进入condition队列，进入等待队列的可以有很多个。当满足condition的条件的时候，线程就会重新竞争锁资源。<br>ReentrantLock 内部有公平锁和非公平锁两种实现，差别就在于新来的线程是否比已经在同步队列中的等待线程更早获得锁。</p>
-<p><img src="12.png" alt=""></p>
-<p>ReentrantLock里面有一个内部类Sync，Sync继承AQS（AbstractQueuedSynchronizer），添加锁和释放锁的大部分操作实际上都是在Sync中实现的。<br>它有公平锁FairSync和非公平锁NonfairSync两个子类。<br>ReentrantLock默认使用非公平锁，也可以通过构造器来显示的指定使用公平锁。</p>
-<h3 id="非阻塞同步（乐观锁）"><a href="#非阻塞同步（乐观锁）" class="headerlink" title="非阻塞同步（乐观锁）"></a>非阻塞同步（乐观锁）</h3><h4 id="CAS"><a href="#CAS" class="headerlink" title="CAS"></a>CAS</h4><p>CAS(Compare And Swap)是一种乐观锁的实现方式。是一种轻量级锁，JUC 中很多工具类的实现都是基于<code>CAS</code>的。CAS操作包含三个操作数—— 内存位置的值（V）、预期原值（A）和新值（B）。如果内存位置的值与预期原值相匹配，那么处理器会自动将该位置更新为新值。否则，处理器不做任何操作。无论哪种情况，它都会在CAS指令之前返回该位置的值。</p>
-<p><img src="13.png" alt=""></p>
-<p>但是这种情况，当数据被其他线程修改，就会出现一直循环。导致CPU资源一直消耗过多。除此之外<code>CAS</code>本身还存在<code>ABA问题</code>。即线程一读取数据A，线程二也读取数据A，线程二通过CAS比较发现数据是A，于是将A写回B，线程三读取B，线程三通过CAS比较发现数据是B没有被操作过，又将数据写回A，此时线程一读到的是A，会以为数据没有改变过。对于ABA问题，通过控制变量值的<code>版本号</code>（自增字段或者时间戳）来保证CAS的正确性。具体解决思路就是在变量前追加上版本号，每次变量更新的时候把版本号加一，那么A - B - A就会变成1A - 2B - 3A。</p>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>今日偷懒，不写总结。</p>
+                <p>昨天和朋友劳(da)逸(you)结(xi)合的时候，朋友告诉我他实现了一个Strstr()。然后我去看了一下，题目难度属于Easy。想着做出来还是简单的，于是立马动手操作了一把。</p>
+<h4 id="题目描述"><a href="#题目描述" class="headerlink" title="题目描述"></a>题目描述</h4><p>实现 strStr() 函数。</p>
+<p>给定一个 haystack 字符串和一个 needle 字符串，在 haystack 字符串中找出 needle 字符串出现的第一个位置 (从0开始)。如果不存在，则返回  -1。</p>
+<p>示例 1:</p>
+<blockquote>
+<p>输入: haystack = “hello”, needle = “ll”<br>输出: 2<br>示例 2:</p>
+<p>输入: haystack = “aaaaa”, needle = “bba”<br>输出: -1</p>
+</blockquote>
+<blockquote id="fn_链接：https://leetcode-cn.com/problems/implement-strstr">
+<sup>链接：https://leetcode-cn.com/problems/implement-strstr</sup>. 来源：力扣（LeetCode）<a href="#reffn_链接：https://leetcode-cn.com/problems/implement-strstr" title="Jump back to footnote [链接：https://leetcode-cn.com/problems/implement-strstr] in the text."> &#8617;</a>
+</blockquote>
+<p>因为我是一个java党，我拿到这个题目一看，这不就是indexOf吗，于是我优雅的写下了第一行代码。。。。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">strStr</span><span class="params">(String haystack, String needle)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> haystack.indexOf(needle);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="临界情况"><a href="#临界情况" class="headerlink" title="临界情况"></a>临界情况</h4><p>但是题目的本意显然不是让我们之间调用API，strStr()是C++的API，题目的本意是让我们实现他，短暂思索一下。我就开始了我接下来的思路。<br>既然要返回初始下标，那我直接将字符串转为char[]，通过判断数组下标，返回起始位置,当needle是空串的时候按照API的返回结果默认应该返回0，因此加了一层特殊的条件判断。然后开始思考indexOf如何实现。。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">strStr</span><span class="params">(String haystack, String needle)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (needle.length() == <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">char</span>[] sources = haystack.toCharArray();</span><br><span class="line">    <span class="keyword">char</span>[] targets = needle.toCharArray();</span><br><span class="line">    <span class="keyword">return</span> indexOf(sources, targets, <span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们先来思考临界条件。当targets的长度大于sources长度的时候。那肯定是匹配不上的。因此直接返回-1。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">indexOf</span><span class="params">(<span class="keyword">char</span>[] sources, <span class="keyword">char</span>[] targets, <span class="keyword">int</span> fromIndex)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (targets.length &gt; sources.length)</span><br><span class="line">        <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="处理思路"><a href="#处理思路" class="headerlink" title="处理思路"></a>处理思路</h4><p>当满足targets的长度小于等于sources的长度的时候，我需要去寻找targets中第一个元素作为sources第一次出现的位置。如果从头至尾我都找不到这个元素，那么说明匹配不是，直接返回-1，如果我能找到这个元素的下标，则看后面能否完全匹配，若能这个第一次出现的位置就是返回下标。如果后面不完全匹配，那么我可以截取sources中这个<code>下标</code>到<code>sources.length</code>生成一个新的数组，我定义为newsources，重复这个匹配逻辑，如果匹配上，那么返回坐标就是sources中第一次出现的位置加上newsources中第一次出现的位置，如果没匹配上，就重复分割数组，直至<code>匹配成功</code>或者出现上面<code>临界情况</code>。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Solution</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">strStr</span><span class="params">(String haystack, String needle)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (needle.length() == <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">char</span>[] sources = haystack.toCharArray();</span><br><span class="line">        <span class="keyword">char</span>[] targets = needle.toCharArray();</span><br><span class="line">        <span class="keyword">return</span> indexOf(sources, targets, <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">indexOf</span><span class="params">(<span class="keyword">char</span>[] sources, <span class="keyword">char</span>[] targets, <span class="keyword">int</span> fromIndex)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (targets.length &gt; sources.length)</span><br><span class="line">            <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">        <span class="comment">//先找到第一个位置</span></span><br><span class="line">        <span class="keyword">char</span> Item = targets[<span class="number">0</span>];</span><br><span class="line">        BREAK:</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; sources.length; i++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (sources[i] == Item) &#123;</span><br><span class="line">                fromIndex = i; <span class="comment">//预设定</span></span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; targets.length; j++) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (i != <span class="number">0</span> &amp;&amp; i == sources.length - <span class="number">1</span>) &#123;</span><br><span class="line">                    <span class="comment">//这里其实可以优化，当找到第一个位置之后，</span></span><br><span class="line">                    <span class="comment">//直接判断sources剩余长度是不是大于等于targets长度可省略很多次if判断</span></span><br><span class="line">                        <span class="keyword">return</span> -<span class="number">1</span>; </span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">if</span> (sources[i++] != targets[j]) &#123;</span><br><span class="line">                        fromIndex++;</span><br><span class="line">                        <span class="keyword">break</span> BREAK;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">return</span> fromIndex;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">//全部遍历都找不到第一个元素，返回-1</span></span><br><span class="line">            <span class="keyword">if</span> (i + <span class="number">1</span> == sources.length)</span><br><span class="line">                <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//递归</span></span><br><span class="line">        <span class="keyword">int</span> thenIndex = indexOf(Arrays.copyOfRange(sources, fromIndex, sources.length), targets, fromIndex);</span><br><span class="line">        <span class="keyword">return</span> thenIndex == -<span class="number">1</span> ? -<span class="number">1</span> : fromIndex + thenIndex;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面在遍历匹配的时候，我加了一层判断，因为可能sources剩余长度如果小于targets长度，i++之后 sources[i++]有可能会数组越界。这种处理其实不好，可以直接在遍历targets之前判断sources.length-fromIndex是不是比targets.length大。这样可以省略很多次if判断，<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(sources.length-fromIndex&lt;targets.length)&#123;</span><br><span class="line">    <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; targets.length; j++) &#123;</span><br><span class="line">    <span class="comment">// if (i != 0 &amp;&amp; i == sources.length - 1) &#123;</span></span><br><span class="line">    <span class="comment">// //这里其实可以优化，当找到第一个位置之后，</span></span><br><span class="line">    <span class="comment">// //直接判断sources剩余长度是不是大于等于targets长度可省略很多次if判断</span></span><br><span class="line">    <span class="comment">//     return -1; </span></span><br><span class="line">    <span class="comment">// &#125;</span></span><br><span class="line">    <span class="keyword">if</span> (sources[i++] != targets[j]) &#123;</span><br><span class="line">        fromIndex++;</span><br><span class="line">        <span class="keyword">break</span> BREAK;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>其实类似字符串的匹配算法还有很多，比较有名的KMP算法，或者利用哈希表来处理，都是一些解决方案，仅此记录一下我的解法，勿喷勿喷。</p>
 
                 
                 <hr>
                 <!-- Pager -->
                 <ul class="pager">
                     
-                    <li class="previous">
-                        <a href="/2021/03/23/LeetCode每日一题-StrStr/" data-toggle="tooltip" data-placement="top" title="LeetCode每日一题--StrStr()">&larr; Previous Post</a>
-                    </li>
-                    
                     
                     <li class="next">
-                        <a href="/2021/01/06/简单聊一下volatile/" data-toggle="tooltip" data-placement="top" title="简单聊一下volatile">Next Post &rarr;</a>
+                        <a href="/2021/01/28/百问不厌的乐观锁和悲观锁/" data-toggle="tooltip" data-placement="top" title="百问不厌的乐观锁和悲观锁">Next Post &rarr;</a>
                     </li>
                     
                 </ul>
@@ -419,7 +398,7 @@
           <strong class="toc-title">Contents</strong>
           
             
-              <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#互斥（同步阻塞）悲观锁"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">互斥（同步阻塞）悲观锁</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#synchronized"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">synchronized</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#ReentrantLock"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">ReentrantLock</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#非阻塞同步（乐观锁）"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">非阻塞同步（乐观锁）</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#CAS"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">CAS</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#总结"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">总结</span></a></li></ol>
+              <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#题目描述"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">题目描述</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#临界情况"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">临界情况</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#处理思路"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">处理思路</span></a></li></ol>
             
           
           </div>
@@ -441,9 +420,11 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#锁" title="锁">锁</a>
+                          <a class="tag" href="/tags/#算法" title="算法">算法</a>
                         
-                          <a class="tag" href="/tags/#并发" title="并发">并发</a>
+                          <a class="tag" href="/tags/#leetcode" title="leetcode">leetcode</a>
+                        
+                          <a class="tag" href="/tags/#algorithm" title="algorithm">algorithm</a>
                         
                     </div>
                 </section>
