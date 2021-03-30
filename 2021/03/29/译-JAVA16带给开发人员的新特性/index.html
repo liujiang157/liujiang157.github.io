@@ -312,7 +312,7 @@
 <p>现在看下一个例子，如果instanceof String s的条件为true，则为s分配一个值。相反，如果模式匹配失败，那么s将没有任何值。</p>
 <p>因此这个代码完全可以正常执行，不存在<a href="https://docs.oracle.com/javase/specs/jls/se15/html/jls-14.html#jls-14.22" target="_blank" rel="noopener">语句不可达</a>的情况。如果有条件通过，则s分配值；如果没有通过，则s被安全丢弃。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onlyForStrings</span><span class="params">(Object o)</span> <span class="keyword">throws</span> MyException </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!(o <span class="keyword">instanceof</span> String s))</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> MyException();</span><br><span class="line">    <span class="comment">// s has value at this point</span></span><br><span class="line">    System.out.println(s);</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>Java在不断发展。导致很多重大更改。同时也入很多<a href="https://medium.com/dev-genius/8-problems-every-java-developer-knows-4f65339e0c00" target="_blank" rel="noopener">问题</a>。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>Java在不断发展。导致很多重大更改。同时也引入很多<a href="https://medium.com/dev-genius/8-problems-every-java-developer-knows-4f65339e0c00" target="_blank" rel="noopener">问题</a>。</p>
 <p><img src="0_MzIcNjgSR9uVS3yb.png" alt="Constant Java updates"></p>
 <p>即使这样，我们仍然需要进行调整。使用新特性，以便我们创建更好的软件。这些是我提出的几个新特性。您可以在下面的部分中阅读更多内容。</p>
 <hr>
@@ -686,7 +686,7 @@
         
 
         
-            <script type="text/javascript" src="/js/mouse-click.js" content='[&quot;🌱&quot;,&quot;just do it&quot;,&quot;🍀&quot;,&quot;waiting for you&quot;]' color='[&quot;rgb(121,93,179)&quot; ,&quot;rgb(76,180,231)&quot; ,&quot;rgb(184,90,154)&quot;]'></script>
+            <script type="text/javascript" src="/js/mouse-click.js" content='[&#34;🌱&#34;,&#34;just do it&#34;,&#34;🍀&#34;,&#34;waiting for you&#34;]' color='[&#34;rgb(121,93,179)&#34; ,&#34;rgb(76,180,231)&#34; ,&#34;rgb(184,90,154)&#34;]'></script>
         
 
         <!-- background effects end -->
@@ -696,21 +696,6 @@
     
         <script src="/js/ribbonDynamic.js"></script>
     
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-        tex2jax: {
-            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
-            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-            processEscapes: true
-        }
-    });
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax();
-        for (var i = 0; i < all.length; ++i)
-            all[i].SourceElement().parentNode.className += ' has-jax';
-    });
-</script>
-<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 </body>
 
 </html>
