@@ -16,11 +16,11 @@
     <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
     <title>
         
-          百问不厌的乐观锁和悲观锁 - Maybelence&#39;s Blog
+          [译] JAVA16带给开发者的新特性 - Maybelence&#39;s Blog
         
     </title>
 
-    <link rel="canonical" href="https://maybelence.cn/2021/01/28/百问不厌的乐观锁和悲观锁/">
+    <link rel="canonical" href="https://maybelence.cn/2021/03/29/译-JAVA16带给开发人员的新特性/">
 
     <!-- Bootstrap Core CSS -->
     
@@ -113,16 +113,14 @@
                     <div class="post-heading">
                         <div class="tags">
                             
-                              <a class="tag" href="/tags/#锁" title="锁">锁</a>
-                            
-                              <a class="tag" href="/tags/#并发" title="并发">并发</a>
+                              <a class="tag" href="/tags/#JAVA16" title="JAVA16">JAVA16</a>
                             
                         </div>
-                        <h1>百问不厌的乐观锁和悲观锁</h1>
-                        <h2 class="subheading">聊一下CAS ，Synchronized，ReentrantLock</h2>
+                        <h1>[译] JAVA16带给开发者的新特性</h1>
+                        <h2 class="subheading">介绍有关模式匹配，密封类和更多Java新功能的信息。</h2>
                         <span class="meta">
                             Posted by maybelence on
-                            2021-01-28
+                            2021-03-29
                         </span>
 
                         
@@ -261,58 +259,74 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p>乐观锁和悲观锁一直都是面试中高频考察点，面试官也喜欢从这类问题去考察面试者的基本功。今天我们就来聊一下乐观锁和悲观锁的实现：<br><code>CAS，Synchronized，ReentrantLock</code>。</p>
-<p>首先要对乐观锁和悲观锁，我们要有一定的概念：</p>
+                <blockquote>
 <ul>
-<li>悲观锁：悲观的认为只要不做正确的数据同步措施，它就一定会出问题</li>
-<li>乐观锁：乐观的认为不需要去采取同步措施也不会出问题，如果出现问题，再去补救</li>
+<li>原文地址：<a href="https://levelup.gitconnected.com/features-java-16-brings-to-developers-b0edd1a1ed28" target="_blank" rel="noopener">Features Java 16 Brings to Developers</a></li>
+<li>原文作者：<a href="https://zivce.medium.com/" target="_blank" rel="noopener">Živković Miloš</a></li>
+<li>译    者：<a href="https://maybelence.cn/">maybelence</a></li>
 </ul>
-<p>那具体通过哪些方式去才取同步呢，在多线程中，同步机制主要分为以下四种，具体的区别以后再讲：</p>
+</blockquote>
+<p>Java不需要再做过多介绍。它作为一种编程语言，已经有很多年的发展历史。最近的更新也为该语言带来了几个新的特性：</p>
 <ul>
-<li>互斥量：为协调共同对一个共享资源的单独访问而设计的。</li>
-<li>临界区：通过对多线程的串行化来访问公共资源或一段代码，速度快，适合控制数据访问。</li>
-<li>临界量：为控制一个具有有限数量用户资源而设计。</li>
-<li>事件：用来通知线程有一些事件已发生，从而启动后继任务的开始。</li>
+<li>密封类</li>
+<li>模式匹配</li>
+<li>其他安全措施。</li>
 </ul>
-<h3 id="互斥（同步阻塞）悲观锁"><a href="#互斥（同步阻塞）悲观锁" class="headerlink" title="互斥（同步阻塞）悲观锁"></a>互斥（同步阻塞）悲观锁</h3><p>互斥只是同步机制的其中一个手段，也是很常见的保障并发正确性的手段<br>我们知道传统的锁（如<code>synchronized</code>或者<code>ReentrantLock</code>）之所以被称为重量级锁，就是因为他使用操作系统互斥量来实现同步。</p>
-<h4 id="synchronized"><a href="#synchronized" class="headerlink" title="synchronized"></a>synchronized</h4><p>synchronized能实现同步的基础：也是因为在java中，所有对象都可以作为锁。</p>
-<p>具体表现为以下3种形式。</p>
-<ul>
-<li>对于普通同步方法，锁是当前实例对象。</li>
-<li>对于静态同步方法，锁是当前类的Class对象。</li>
-<li>对于同步方法块，锁是Synchonized括号里配置的对象。</li>
-<li>当一个线程试图访问同步代码块时，它首先必须得到锁，退出或抛出异常时必须释放锁。</li>
-</ul>
-<p>synchronized是基于<code>Monitor</code>来实现同步的。当<code>synchronized</code>经过编译之后，<strong>会在<code>同步块</code>的前后分别形成<code>monitorenter</code>和<code>monitorexit</code>指令</strong>。</p>
-<ul>
-<li>每个monitor维护着一个记录着拥有次数的计数器。未被拥有的monitor的该计数器为0</li>
-<li>当执行进入monitorenter时，锁计数器就会+1，当执行到monitorexit,锁计数器就会-1。当锁计数器为0的时候，锁就会被释放</li>
-<li>synchronized不会出现自己死锁自己的情况，因为对于已经进入同步块的线程，synchronized锁是可重入的</li>
-<li>在synchronized同步代码块执行完，会阻塞其他线程进入同步锁（排他锁）</li>
-<li>对于<code>同步方法</code>，<code>synchronized</code>同步方式是通过方法中的access_flags中设置<code>ACC_SYNCHRONIZED</code>标志来实现</li>
-</ul>
-<p>并且，随着JDK6对<code>synchronized</code>进行了各种优化之后，有些情况下synchronized就并不那么重,JDK6中为了减少获得锁和释放锁带来的性能消耗而引入的偏向锁和轻量级锁。<br>针对<code>synchronized</code>获取锁的方式，JVM 使用了锁升级的优化方式，就是先使用偏向锁优先同一线程然后再次获取锁，如果失败，就升级为 CAS 轻量级锁，如果失败就会短暂自旋，防止线程被系统挂起。最后如果以上都失败就升级为重量级锁。并且锁只能向上升级，不能降级。</p>
-<p><img src="11.png" alt=""></p>
-<h4 id="ReentrantLock"><a href="#ReentrantLock" class="headerlink" title="ReentrantLock"></a>ReentrantLock</h4><p>实现ReentrantLock的基础是AQS( AbstractQueuedSynchronizer 队列同步器)，AQS 有一个 state 标记位，值为<code>1</code>时表示有线程占用，其他线程需要进入到同步队列等待，同步队列是一个双向链表。<br>当获得锁需要等待某个条件时，会进入condition队列，进入等待队列的可以有很多个。当满足condition的条件的时候，线程就会重新竞争锁资源。<br>ReentrantLock 内部有公平锁和非公平锁两种实现，差别就在于新来的线程是否比已经在同步队列中的等待线程更早获得锁。</p>
-<p><img src="12.png" alt=""></p>
-<p>ReentrantLock里面有一个内部类Sync，Sync继承AQS（AbstractQueuedSynchronizer），添加锁和释放锁的大部分操作实际上都是在Sync中实现的。<br>它有公平锁FairSync和非公平锁NonfairSync两个子类。<br>ReentrantLock默认使用非公平锁，也可以通过构造器来显示的指定使用公平锁。</p>
-<h3 id="非阻塞同步（乐观锁）"><a href="#非阻塞同步（乐观锁）" class="headerlink" title="非阻塞同步（乐观锁）"></a>非阻塞同步（乐观锁）</h3><h4 id="CAS"><a href="#CAS" class="headerlink" title="CAS"></a>CAS</h4><p>CAS(Compare And Swap)是一种乐观锁的实现方式。是一种轻量级锁，JUC 中很多工具类的实现都是基于<code>CAS</code>的。CAS操作包含三个操作数—— 内存位置的值（V）、预期原值（A）和新值（B）。如果内存位置的值与预期原值相匹配，那么处理器会自动将该位置更新为新值。否则，处理器不做任何操作。无论哪种情况，它都会在CAS指令之前返回该位置的值。</p>
-<p><img src="13.png" alt=""></p>
-<p>但是这种情况，当数据被其他线程修改，就会出现一直循环。导致CPU资源一直消耗过多。除此之外<code>CAS</code>本身还存在<code>ABA问题</code>。即线程一读取数据A，线程二也读取数据A，线程二通过CAS比较发现数据是A，于是将A写回B，线程三读取B，线程三通过CAS比较发现数据是B没有被操作过，又将数据写回A，此时线程一读到的是A，会以为数据没有改变过。对于ABA问题，通过控制变量值的<code>版本号</code>（自增字段或者时间戳）来保证CAS的正确性。具体解决思路就是在变量前追加上版本号，每次变量更新的时候把版本号加一，那么A - B - A就会变成1A - 2B - 3A。</p>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>今日偷懒，不写总结。</p>
+<h3 id="密封类"><a href="#密封类" class="headerlink" title="密封类"></a>密封类</h3><p><a href="https://openjdk.java.net/jeps/397" target="_blank" rel="noopener">JEP-397</a></p>
+<p><code>密封</code>背后的动机是限制具体的类。密封将实现控制模式匹配，并提供对模式匹配的支持。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这里可以许可的关键字已经密封 </span></span><br><span class="line"><span class="comment">// 允许列出可以扩展密封等级的等级</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> sealed <span class="class"><span class="keyword">class</span> <span class="title">Shape</span></span></span><br><span class="line"><span class="class">    <span class="title">permits</span> <span class="title">Circle</span>, <span class="title">Rectangle</span>, <span class="title">Square</span> </span>&#123; ... &#125;</span><br></pre></td></tr></table></figure>
+<p>如果使用基本的接口，那你将不会得到反射，您不会对这些有限的具体实现有细致了解。</p>
+<p>当使用密封类的话，你将获取到这个反射行为，您知道自己域中可以拥有的类型。</p>
+<p>枚举表明了一组有限的值。密封类表明了一组数量有限的一种值。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sealed <span class="class"><span class="keyword">interface</span> <span class="title">Celestial</span> </span></span><br><span class="line"><span class="class">    <span class="title">permits</span> <span class="title">Planet</span>, <span class="title">Star</span>, <span class="title">Comet</span> </span>&#123; ... &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Planet</span> <span class="keyword">implements</span> <span class="title">Celestial</span> </span>&#123; ... &#125;</span><br><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Star</span>   <span class="keyword">implements</span> <span class="title">Celestial</span> </span>&#123; ... &#125;</span><br><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Comet</span>  <span class="keyword">implements</span> <span class="title">Celestial</span> </span>&#123; ... &#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>但是，这种层次结构并不会反映出重要的领域知识，即我们的模型中只有三种。<br>在这些情况下，限制子类或者子接口的集合可以简化建模。 — JEP-397</p>
+</blockquote>
+<h3 id="对基于值的类的值发出警告"><a href="#对基于值的类的值发出警告" class="headerlink" title="对基于值的类的值发出警告"></a>对基于值的类的值发出警告</h3><p><a href="https://openjdk.java.net/jeps/390" target="_blank" rel="noopener">JEP-390</a></p>
+<p>基本类型的包装类是基于值的类，例如：<code>Byte</code>, <code>Short</code>, <code>Integer</code>, <code>Long</code>, <code>Float</code>, <code>Double</code>, <code>Boolean</code>,和 <code>Character</code>。有关基于值的类的更多信息，请参见<a href="https://docs.oracle.com/en/java/javase/15/docs/api/java.base/java/lang/doc-files/ValueBased.html" target="_blank" rel="noopener">此处</a>。</p>
+<p>由于它们是不可变的对象，因此构造函数对于它们来言是没有任何意义的。</p>
+<p>为防止滥用构造函数，提供<code>@jdk.internal.ValueBased</code>来用于标注作为value-based的类。每次编译器找到基于值的类构造函数时，这都会发出警告。</p>
+<h3 id="默认强封装JDK内部元素"><a href="#默认强封装JDK内部元素" class="headerlink" title="默认强封装JDK内部元素"></a>默认强封装JDK内部元素</h3><p><a href="https://openjdk.java.net/jeps/396" target="_blank" rel="noopener">JEP-396</a></p>
+<p>这是为了鼓励用户使用标准的Java API。不过，如果您如果需要使用宽松的封装。请尽量避免使用该特性。</p>
+<p>您需要将参数添加到JVM的启动器中。在下面您可以看到可能的参数，您可以传入。有关参数的更多信息，请参见<a href="https://openjdk.java.net/jeps/396#Description" target="_blank" rel="noopener">此处</a>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">--illegal-access&#x3D; permit | deny | debug | warn</span><br></pre></td></tr></table></figure>
+<p>尽管JAVA16包含了此功能，但是您可能在更早的<a href="https://stackoverflow.com/questions/53790182/get-the-current-value-of-illegal-access-setting-in-java" target="_blank" rel="noopener">版本</a>就遇到了这种问题，这个更改是在JAVA9<a href="https://jaxenter.com/jdk-9-replace-permit-illegal-access-134180.html" target="_blank" rel="noopener">发布</a>之后提出的。</p>
+<blockquote>
+<p>直至今日，某些构建工具在构建Java项目(Java&gt; = 9)时仍会打印出<a href="https://issues.apache.org/jira/browse/GROOVY-8339" target="_blank" rel="noopener">“反射访问”警告</a>，即使已经成功构建，它们也会感觉“尚未就绪”。 - <a href="https://www.marcobehler.com/guides/a-guide-to-java-versions-and-features" target="_blank" rel="noopener">出处</a></p>
+</blockquote>
+<h3 id="模式匹配"><a href="#模式匹配" class="headerlink" title="模式匹配"></a>模式匹配</h3><p><a href="https://openjdk.java.net/jeps/394" target="_blank" rel="noopener">JEP-394</a></p>
+<p>模式匹配已经存在很长时间了，你可以在很多编程语言中发现它，例如Elixir。</p>
+<p>在JAVA中，存在许多<code>instanceof</code>条件。因为有减少操作的动机从而衍生出了模式匹配。</p>
+<blockquote>
+<p>模式匹配允许简明地表达对象的所需“形状”（模式），并允许各种语句和表达式针对其输入（匹配）来测试“形状”。 — JEP-394</p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 很多样板代码</span></span><br><span class="line"><span class="keyword">if</span> (obj <span class="keyword">instanceof</span> String) &#123;</span><br><span class="line">    String s = (String) obj;    <span class="comment">// grr...</span></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用模式匹配，我们可以获得此代码。减少样板，进行转换，并声明变量。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (obj <span class="keyword">instanceof</span> String s) &#123;</span><br><span class="line">    <span class="comment">// Let pattern matching do the work!</span></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>模式变量在它匹配的范围内。因此，这样的代码是有效的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (a <span class="keyword">instanceof</span> Point p) &#123;</span><br><span class="line">    <span class="comment">// p在范围内</span></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// p不再范围内</span></span><br><span class="line"><span class="keyword">if</span> (b <span class="keyword">instanceof</span> Point p) &#123;     <span class="comment">// Sure!</span></span><br><span class="line">        ... </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>您不必担心变量名。如果范围不同，则可以重用现有名称。</p>
+<p><em>模式匹配改善了什么？？？</em></p>
+<p>可以避免很多显示的转换，让我们用相同的方法，写出可读性更高的代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> (o <span class="keyword">instanceof</span> CaseInsensitiveString) &amp;&amp;</span><br><span class="line">        ((CaseInsensitiveString) o).s.equalsIgnoreCase(s);</span><br><span class="line"><span class="comment">// to this </span></span><br><span class="line"><span class="keyword">return</span> (o <span class="keyword">instanceof</span> CaseInsensitiveString cis) &amp;&amp;</span><br><span class="line">        cis.s.equalsIgnoreCase(s);</span><br></pre></td></tr></table></figure>
+<p>现在看下一个例子，如果instanceof String s的条件为true，则为s分配一个值。相反，如果模式匹配失败，那么s将没有任何值。</p>
+<p>因此这个代码完全可以正常执行，不存在<a href="https://docs.oracle.com/javase/specs/jls/se15/html/jls-14.html#jls-14.22" target="_blank" rel="noopener">语句不可达</a>的情况。如果有条件通过，则s分配值；如果没有通过，则s被安全丢弃。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onlyForStrings</span><span class="params">(Object o)</span> <span class="keyword">throws</span> MyException </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (!(o <span class="keyword">instanceof</span> String s))</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> MyException();</span><br><span class="line">    <span class="comment">// s has value at this point</span></span><br><span class="line">    System.out.println(s);</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>Java在不断发展。导致很多重大更改。同时也入很多<a href="https://medium.com/dev-genius/8-problems-every-java-developer-knows-4f65339e0c00" target="_blank" rel="noopener">问题</a>。</p>
+<p><img src="0_MzIcNjgSR9uVS3yb.png" alt="Constant Java updates"></p>
+<p>即使这样，我们仍然需要进行调整。使用新特性，以便我们创建更好的软件。这些是我提出的几个新特性。您可以在下面的部分中阅读更多内容。</p>
+<hr>
+<h3 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h3><p>JEP草案：开关的模式匹配（preview）<a href="https://openjdk.java.net/jeps/406" target="_blank" rel="noopener">点此查看</a></p>
+<p>JDK16：JAVA16中的新特性 <a href="https://www.infoworld.com/article/3569150/jdk-16-the-new-features-in-java-16.html" target="_blank" rel="noopener">点此查看</a></p>
 
                 
                 <hr>
                 <!-- Pager -->
                 <ul class="pager">
                     
-                    <li class="previous">
-                        <a href="/2021/03/23/LeetCode每日一题-StrStr/" data-toggle="tooltip" data-placement="top" title="LeetCode每日一题--StrStr()">&larr; Previous Post</a>
-                    </li>
-                    
                     
                     <li class="next">
-                        <a href="/2021/01/06/简单聊一下volatile/" data-toggle="tooltip" data-placement="top" title="简单聊一下volatile">Next Post &rarr;</a>
+                        <a href="/2021/03/24/切面编程-springAOP/" data-toggle="tooltip" data-placement="top" title="切面编程--springAOP">Next Post &rarr;</a>
                     </li>
                     
                 </ul>
@@ -419,7 +433,7 @@
           <strong class="toc-title">Contents</strong>
           
             
-              <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#互斥（同步阻塞）悲观锁"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">互斥（同步阻塞）悲观锁</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#synchronized"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">synchronized</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#ReentrantLock"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">ReentrantLock</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#非阻塞同步（乐观锁）"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">非阻塞同步（乐观锁）</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#CAS"><span class="toc-nav-number">2.1.</span> <span class="toc-nav-text">CAS</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#总结"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">总结</span></a></li></ol>
+              <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#密封类"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">密封类</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#对基于值的类的值发出警告"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">对基于值的类的值发出警告</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#默认强封装JDK内部元素"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">默认强封装JDK内部元素</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#模式匹配"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">模式匹配</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#总结"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">总结</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#源码"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">源码</span></a></li></ol>
             
           
           </div>
@@ -441,9 +455,7 @@
                     <h5><a href="/tags/">FEATURED TAGS</a></h5>
                     <div class="tags">
                        
-                          <a class="tag" href="/tags/#锁" title="锁">锁</a>
-                        
-                          <a class="tag" href="/tags/#并发" title="并发">并发</a>
+                          <a class="tag" href="/tags/#JAVA16" title="JAVA16">JAVA16</a>
                         
                     </div>
                 </section>
