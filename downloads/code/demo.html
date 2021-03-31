@@ -16,11 +16,11 @@
     <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
     <title>
         
-          用JAVA实现一个IMDB数据解析器/csvsample - Maybelence&#39;s Blog
+          Maybelence&#39;s Blog
         
     </title>
 
-    <link rel="canonical" href="https://maybelence.cn/2021/03/31/用JAVA实现一个IMDB数据解析器/csvsample/">
+    <link rel="canonical" href="https://maybelence.cn/downloads/code/demo.html">
 
     <!-- Bootstrap Core CSS -->
     
@@ -91,8 +91,8 @@
     header.intro-header{
         
             
-                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('')
-                /*post*/
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('/undefined')
+                /*page*/
             
         
     }
@@ -110,19 +110,10 @@
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                 
-                    <div class="post-heading">
-                        <div class="tags">
-                            
-                        </div>
-                        <h1>用JAVA实现一个IMDB数据解析器/csvsample</h1>
-                        <h2 class="subheading"></h2>
-                        <span class="meta">
-                            Posted by maybelence on
-                            2021-03-31
-                        </span>
-
-                        
-
+                    <div class="site-heading">
+                        <h1>Maybelence&#39;s Blog</h1>
+                        <!--<hr class="small">-->
+                        <span id="subdusi" class="subheading">记录学习笔记，记录日常生活 未来路还很长 ，且行且珍惜</span>
                     </div>
                 
 
@@ -206,6 +197,12 @@
                         </li>
                         
                     
+
+                        
+                    
+
+                        
+                    
                     
                     
                 </ul>
@@ -246,20 +243,22 @@
 
 
     <!-- Main Content -->
-    <!-- Post Content -->
-<article>
-    <div class="container">
-        <div class="row">
+    <!-- Main Content -->
+<div class="container">
+    <div class="row">
+        
 
-            <!-- Post Container -->
+    <!-- Post Container -->
             <div class="
-                col-lg-8 col-lg-offset-2
-                col-md-10 col-md-offset-1
-                post-container">
-
+                col-lg-8 col-lg-offset-1
+                col-md-8 col-md-offset-1
+                col-sm-12
+                col-xs-12
+                post-container
+            ">
                 <!DOCTYPE html>
 <!-- saved from url=(0071)https://levelup.gitconnected.com/media/f8aa2acdb7bb98605773021fe930d0cc -->
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>data.csv – Medium</title><meta name="description" content="Instantly share code, notes, and snippets. You can&#39;t perform that action at this time. You signed in with another tab or window. You signed out in another tab or window. Reload to refresh your session. Reload to refresh your session."><meta name="twitter:widgets:csp" content="on"><meta name="robots" content="noindex"><!--<base target="_blank">--><base href="." target="_blank"><style>body {text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; font-family: "ff-tisa-web-pro", Georgia, Cambria, "Times New Roman", Times, serif; font-weight: 400; color: #333332; font-size: 18px; line-height: 1.4; margin: 0; background-color: white; overflow: hidden;}iframe {max-width: 100%;}</style><meta name="generator" content="Hexo 4.2.1"></head><body><style>.gist .gist-file { margin-bottom: 0 !important; }.gist { text-rendering: auto; }</style><script src="./csvsample_files/eb1155fe1c30cc5d9bf1189d2ffbd0bb.js.下载" charset="utf-8"></script><link rel="stylesheet" href="./csvsample_files/gist-embed-33b98015caf26cfcbee6ce1a5d1fc768.css"><div id="gist108695785" class="gist">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>data.csv – Medium</title><meta name="description" content="Instantly share code, notes, and snippets. You can&#39;t perform that action at this time. You signed in with another tab or window. You signed out in another tab or window. Reload to refresh your session. Reload to refresh your session."><meta name="twitter:widgets:csp" content="on"><meta name="robots" content="noindex"><!--<base target="_blank">--><base href="." target="_blank"><style>body {text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; font-family: "ff-tisa-web-pro", Georgia, Cambria, "Times New Roman", Times, serif; font-weight: 400; color: #333332; font-size: 18px; line-height: 1.4; margin: 0; background-color: white; overflow: hidden;}iframe {max-width: 100%;}</style><meta name="generator" content="Hexo 4.2.1"></head><body><style>.gist .gist-file { margin-bottom: 0 !important; }.gist { text-rendering: auto; }</style><script src="./demo_files/eb1155fe1c30cc5d9bf1189d2ffbd0bb.js.下载" charset="utf-8"></script><link rel="stylesheet" href="./demo_files/gist-embed-33b98015caf26cfcbee6ce1a5d1fc768.css"><div id="gist108695785" class="gist">
     <div class="gist-file">
       <div class="gist-data">
         <div class="js-gist-file-update-container js-task-list-container file-box">
@@ -877,190 +876,234 @@
     </div>
 </div>
 <script>var height = -1; var delayMs = 200; if (document) {document.domain = document.domain;}function notifyResize(height) {height = height ? height : document.documentElement.offsetHeight; var resized = false; if (window.donkey && donkey.resize) {donkey.resize(height);var elements = document.getElementsByClassName("gist-data"); for (var i = 0; i < elements.length; i++) {elements[i].style.overflow = "visible"}resized = true;}if (parent && parent._resizeIframe) {var obj = {iframe: window.frameElement, height: height}; parent._resizeIframe(obj); resized = true;}if (window.location && window.location.hash === "#amp=1" && window.parent && window.parent.postMessage) {window.parent.postMessage({sentinel: "amp", type: "embed-size", height: height}, "*");}if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.resize) {window.webkit.messageHandlers.resize.postMessage(height); resized = true;}return resized;}function maybeResize() {try {if (document.documentElement.offsetHeight != height && notifyResize()) {height = document.documentElement.offsetHeight;}delayMs = Math.min(delayMs * 2, 1000000); setTimeout(maybeResize, delayMs);} catch(error) {console.log('maybeResize error: ', error)}}maybeResize();</script></body></html>
-                
-                <hr>
-                <!-- Pager -->
-                <ul class="pager">
-                    
-                    <li class="previous">
-                        <a href="/2021/03/31/用JAVA实现一个IMDB数据解析器/" data-toggle="tooltip" data-placement="top" title="用JAVA实现一个IMDB数据解析器">&larr; Previous Post</a>
-                    </li>
-                    
-                    
-                    <li class="next">
-                        <a href="/2021/03/31/用JAVA实现一个IMDB数据解析器/csvsample_files/gist-embed-33b98015caf26cfcbee6ce1a5d1fc768/" data-toggle="tooltip" data-placement="top" title="用JAVA实现一个IMDB数据解析器/csvsample_files/gist-embed-33b98015caf26cfcbee6ce1a5d1fc768">Next Post &rarr;</a>
-                    </li>
-                    
-                </ul>
-
-                <!-- tip start -->
-                
-
-                
-                <!-- tip end -->
-
-                <!-- Music start-->
-                
-                
-<link rel="stylesheet" href="/css/music-player/fonts/iconfont.css">
-
-
-<link rel="stylesheet" href="/css/music-player/css/reset.css">
-
-
-<link rel="stylesheet" href="/css/music-player/css/player.css">
-
-
-<div class="music-player">
-    <audio class="music-player__audio" ></audio>
-    <div class="music-player__main">
-        <div class="music-player__blur"></div>
-        <div class="music-player__disc">
-            <div class="music-player__image">
-                <img width="100%" src="" alt="">
             </div>
-            <div class="music-player__pointer"><img width="100%" src="/img/cd_tou.png" alt=""></div>
-        </div>
-        <div class="music-player__controls">
-            <div class="music__info">
-                <h3 class="music__info--title">...</h3>
-                <p class="music__info--singer">...</p>
-            </div>
-            <div class="player-control">
-                <div class="player-control__content">
-                    <div class="player-control__btns">
-                        <div class="player-control__btn player-control__btn--prev"><i class="iconfont icon-prev"></i></div>
-                        <div class="player-control__btn player-control__btn--play"><i class="iconfont icon-play"></i></div>
-                        <div class="player-control__btn player-control__btn--next"><i class="iconfont icon-next"></i></div>
-                        <div class="player-control__btn player-control__btn--mode"><i class="iconfont icon-loop"></i></div>
-                    </div>
-                    <div class="player-control__volume">
-                        <div class="control__volume--icon player-control__btn"><i class="iconfont icon-volume"></i></div>
-                        <div class="control__volume--progress player_progress"></div>
-                    </div>
-                </div>
-                <div class="player-control__content">
-                    <div class="player__song--progress player_progress"></div>
-                    <div class="player__song--timeProgess nowTime">00:00</div>
-                    <div class="player__song--timeProgess totalTime">00:00</div>
-                </div>
-            </div>
-        </div>
-    </div>
+
+            <!-- Sidebar Container -->
+<div class="
+    col-lg-3 col-lg-offset-0
+    col-md-3 col-md-offset-0
+    col-sm-12
+    col-xs-12
+    sidebar-container
+">
+    
+        
+<!--
+<h5>SEARCH</h5>
+<div class="search-article" class="tags">
+	<input id="search-kw" type="text" name="search_article" placeholder="Enter keywords for search" />
+	<div class="search-img">
+		<img 
+			src="/img/search.png" 
+			alt="search" 
+			onMouseOver="this.src='/img/search-focus.png'" 
+			onMouseOut="this.src='/img/search.png'"/>
+	</div>
+</div>-->
+
+<h5>SEARCH</h5>
+<div id="site_search">
+	<div class="form-group">
+		<input type="text" id="local-search-input" name="q" results="0" placeholder="search" class="st-search-input st-default-search-input form-control"/>
+	</div>  
+	<div id="local-search-result"></div>
 </div>
 
+        <hr>
+    
+        <!-- Featured Tags -->
 
-<script src="/js/music-player/utill.js"></script>
-
-
-<script src="/js/music-player/jquery.min.js"></script>
-
-<!-- netease; qqkg -->
-<!--
-<script src="/js/music-player/player.js?library=config.music.library.js"></script>
--->
-<script src="../../../../js/music-player/player.js?library=netease&music=https://music.163.com/#/song?id=1325896303"></script>
-                
-                <!-- Music end -->
-
-                <!-- Sharing -->
-                
-                <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
-                <!--  css & js -->
-                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
-                <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
-                
-                <!-- Sharing -->
-
-                <!-- gitment start -->
-                
-                <!-- gitment end -->
-
-                <!-- 来必力City版安装代码 -->
-                
-                <!-- City版安装代码已完成 -->
-
-                <!-- disqus comment start -->
-                
-                <!-- disqus comment end -->
-            </div>
+<section>
+    <!-- no hr -->
+    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+    <div class="tags">
+        
             
-            <!-- Tabe of Content -->
-            <!-- Table of Contents -->
-
-                
-            <!-- Sidebar Container -->
-            <div class="
-                col-lg-8 col-lg-offset-2
-                col-md-10 col-md-offset-1
-                sidebar-container">
-
-                <!-- Featured Tags -->
-                
-                <section>
-                    <!-- no hr -->
-                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
-                    <div class="tags">
-                       
-                    </div>
-                </section>
-                
-
-                <!-- Friends Blog -->
-                
-                <hr>
-                <h5>FRIENDS</h5>
-                <ul class="list-inline">
-
-                    
-                        <li><a href="http://meandni.com/" target="_blank">Joker&#39;s Blog</a></li>
-                    
-                </ul>
-                
-            </div>
-        </div>
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+            <a href="/tags/#算法" title="算法" rel="2">算法</a>
+            
+        
+            
+            <a href="/tags/#leetcode" title="leetcode" rel="2">leetcode</a>
+            
+        
+            
+            <a href="/tags/#algorithm" title="algorithm" rel="2">algorithm</a>
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
+            
+        
     </div>
-</article>
+</section>
 
+        <hr>
+    
+        <!-- Short About -->
+<section class="visible-md visible-lg">
+    <h5><a href="/about/">ABOUT ME</a></h5>
+    <div class="short-about">
 
+        
+            <img id = "avatar_pic" src="/img/ironman-draw.jpg" />
+        
 
+        
+            <p>Welcome to visit, I&#39;m Maybelence!</p>
+        
 
-<!-- async load function -->
-<script>
-    function async(u, c) {
-      var d = document, t = 'script',
-          o = d.createElement(t),
-          s = d.getElementsByTagName(t)[0];
-      o.src = u;
-      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
-      s.parentNode.insertBefore(o, s);
-    }
-</script>
-<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
-<script>
-    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
-        anchors.options = {
-          visible: 'hover',
-          placement: 'left',
-          icon: 'ℬ'
-        };
-        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
-    })
-</script>
+        <!-- SNS Link -->
+        <ul class="list-inline">
 
+            
+                <li>
+                    <a target="_blank"  href="https://github.com/liujiang157">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                        </span>
+                    </a>
+                </li>
+            
 
-<style  type="text/css">
-    /* place left on bigger screen */
-    @media all and (min-width: 800px) {
-        .anchorjs-link{
-            position: absolute;
-            left: -0.75em;
-            font-size: 1.1em;
-            margin-top : -0.1em;
-        }
-    }
-</style>
+            
 
+            
+
+            
+                <li>
+                    <a target="_blank" href="https://www.zhihu.com/people/maybelence">
+                        <span class="fa-stack fa-lg">
+                            <i class="fa fa-circle fa-stack-2x"></i>
+                            <i class="fa  fa-stack-1x fa-inverse">知</i>
+                        </span>
+                    </a>
+                </li>
+            
+
+            
+
+            
+
+            
+
+        </ul>
+    </div>
+</section>
+        <hr>
+    
+        
+  <h5>VISITORS</h5>
+  <div class="widget">
+    <span>
+    	Viewed <b><i><span id="busuanzi_value_site_pv"><i class="fa fa-spinner fa-spin"></i></span></i></b> Times
+	</span>
+	<br/>
+	<span>
+		<b><i><span id="busuanzi_value_site_uv"><i class="fa fa-spinner fa-spin"></i></span></i></b> Visitors In Total
+	</span>
+  </div>
+
+        <hr>
+    
+        
+  <h5>RECENT POSTS</h5>
+  <div class="widget">
+    <ul>
+      
+        <li>
+          <a href="/2021/03/31/%E7%94%A8JAVA%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AAIMDB%E6%95%B0%E6%8D%AE%E8%A7%A3%E6%9E%90%E5%99%A8/">用JAVA实现一个IMDB数据解析器</a>
+        </li>
+      
+        <li>
+          <a href="/2021/03/29/%E8%AF%91-JAVA16%E5%B8%A6%E7%BB%99%E5%BC%80%E5%8F%91%E4%BA%BA%E5%91%98%E7%9A%84%E6%96%B0%E7%89%B9%E6%80%A7/">[译] JAVA16带给开发者的新特性</a>
+        </li>
+      
+        <li>
+          <a href="/2021/03/24/%E5%88%87%E9%9D%A2%E7%BC%96%E7%A8%8B-springAOP/">切面编程--springAOP</a>
+        </li>
+      
+        <li>
+          <a href="/2021/03/23/LeetCode%E6%AF%8F%E6%97%A5%E4%B8%80%E9%A2%98-StrStr/">LeetCode每日一题--StrStr()</a>
+        </li>
+      
+        <li>
+          <a href="/2021/01/28/%E7%99%BE%E9%97%AE%E4%B8%8D%E5%8E%8C%E7%9A%84%E4%B9%90%E8%A7%82%E9%94%81%E5%92%8C%E6%82%B2%E8%A7%82%E9%94%81/">百问不厌的乐观锁和悲观锁</a>
+        </li>
+      
+    </ul>
+  </div>
+
+        <hr>
+    
+        <!-- Friends Blog -->
+
+<h5>FRIENDS</h5>
+<ul class="list-inline">
+
+    
+        <li><a href="http://meandni.com/" target="_blank">Joker&#39;s Blog</a></li>
+    
+</ul>
+
+        <hr>
+    
+        
+    <h5>ARCHIVES</h5>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li></ul>
+    </div>
+
+        <hr>
+    
+        <!-- Categories -->
+
+    <h5>categories</h5>
+    <div class="widget">
+      <ul>
+        
+          <a href="categories/#设计模式"><li>设计模式</li></a>
+        
+          <a href="categories/#Java"><li>Java</li></a>
+        
+          <a href="categories/#数据结构"><li>数据结构</li></a>
+        
+          <a href="categories/#spring"><li>spring</li></a>
+        
+          <a href="categories/#JAVA"><li>JAVA</li></a>
+        
+      </ul>
+    </div>
+
+        <hr>
+    
+</div>
+
+        
+    </div>
+</div>
 
 
     <!-- Footer -->
