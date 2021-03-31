@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="一个用来絮絮叨叨的地方">
+    <meta name="keyword"  content="maybelence, 学习, 生活">
+    <link rel="shortcut icon" href="/img/ironman-draw.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          用JAVA实现一个IMDB数据解析器/csvsample - Maybelence&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://maybelence.cn/2021/03/31/用JAVA实现一个IMDB数据解析器/csvsample/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+        
+<link rel="stylesheet" href="/css/dusign-light.css">
+
+        
+<link rel="stylesheet" href="/css/dusign-common-light.css">
+
+        
+<link rel="stylesheet" href="/css/font-awesome.css">
+
+        
+<link rel="stylesheet" href="/css/toc.css">
+
+        <!-- background effects end -->
+    
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+    <!-- photography -->
+    
+<link rel="stylesheet" href="/css/photography.css">
+
+
+    <!-- ga & ba script hoook -->
+    <script data-ad-client="ca-pub-9951682438363353" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- background effects start -->
+    
+    <!-- background effects end -->
+
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('')
+                /*post*/
+            
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/maybelence.png');
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                        </div>
+                        <h1>用JAVA实现一个IMDB数据解析器/csvsample</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by maybelence on
+                            2021-03-31
+                        </span>
+
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+    <div class="waveWrapper">
+        <div class="wave wave_before" style="background-image: url('/img/wave-light.png')"></div>
+        <div class="wave wave_after" style="background-image: url('/img/wave-light.png')"></div>
+    </div>
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Maybelence&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">首页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">目录</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/photography/">随手拍</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">分类</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">标签</a>
+                        </li>
+                        
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <!DOCTYPE html>
+<!-- saved from url=(0071)https://levelup.gitconnected.com/media/f8aa2acdb7bb98605773021fe930d0cc -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><title>data.csv – Medium</title><meta name="description" content="Instantly share code, notes, and snippets. You can&#39;t perform that action at this time. You signed in with another tab or window. You signed out in another tab or window. Reload to refresh your session. Reload to refresh your session."><meta name="twitter:widgets:csp" content="on"><meta name="robots" content="noindex"><!--<base target="_blank">--><base href="." target="_blank"><style>body {text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; font-family: "ff-tisa-web-pro", Georgia, Cambria, "Times New Roman", Times, serif; font-weight: 400; color: #333332; font-size: 18px; line-height: 1.4; margin: 0; background-color: white; overflow: hidden;}iframe {max-width: 100%;}</style><meta name="generator" content="Hexo 4.2.1"></head><body><style>.gist .gist-file { margin-bottom: 0 !important; }.gist { text-rendering: auto; }</style><script src="./csvsample_files/eb1155fe1c30cc5d9bf1189d2ffbd0bb.js.下载" charset="utf-8"></script><link rel="stylesheet" href="./csvsample_files/gist-embed-33b98015caf26cfcbee6ce1a5d1fc768.css"><div id="gist108695785" class="gist">
+    <div class="gist-file">
+      <div class="gist-data">
+        <div class="js-gist-file-update-container js-task-list-container file-box">
+  <div id="file-data-csv" class="file my-2">
+    
+
+  <div itemprop="text" class="Box-body p-0 blob-wrapper data type-csv  ">
+      <div class="blob-interaction-bar">
+  <svg class="octicon octicon-search" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M11.5 7a4.499 4.499 0 11-8.998 0A4.499 4.499 0 0111.5 7zm-.82 4.74a6 6 0 111.06-1.06l3.04 3.04a.75.75 0 11-1.06 1.06l-3.04-3.04z"></path></svg>
+  <input type="text" name="filter" class="form-control js-csv-filter-field blob-filter" autocapitalize="off" placeholder="Search this file…" aria-label="Search this file…">
+</div>
+
+  <div class="markdown-body">
+    <table class="js-csv-data csv-data js-file-line-container">
+      <thead>
+        <tr id="file-data-csv-LC1" class="js-file-line">
+          <td id="file-data-csv-L1" class="blob-num js-line-number" data-line-number="1"></td>
+            <th>Actor</th>
+            <th>Title</th>
+            <th>Year</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr id="file-data-csv-LC2" class="js-file-line">
+            <td id="file-data-csv-L2" class="blob-num js-line-number" data-line-number="2"></td>
+              <td>Andre Kent</td>
+              <td>The Mask: The Origin</td>
+              <td>1995</td>
+          </tr>
+          <tr id="file-data-csv-LC3" class="js-file-line">
+            <td id="file-data-csv-L3" class="blob-num js-line-number" data-line-number="3"></td>
+              <td>Andre Kevin</td>
+              <td>Come Fly with Us</td>
+              <td>1974</td>
+          </tr>
+          <tr id="file-data-csv-LC4" class="js-file-line">
+            <td id="file-data-csv-L4" class="blob-num js-line-number" data-line-number="4"></td>
+              <td>Andre Kevin</td>
+              <td>Deep Throat Part II</td>
+              <td>1974</td>
+          </tr>
+          <tr id="file-data-csv-LC5" class="js-file-line">
+            <td id="file-data-csv-L5" class="blob-num js-line-number" data-line-number="5"></td>
+              <td>Andre Kevin</td>
+              <td>Fringe Benefits</td>
+              <td>1974</td>
+          </tr>
+          <tr id="file-data-csv-LC6" class="js-file-line">
+            <td id="file-data-csv-L6" class="blob-num js-line-number" data-line-number="6"></td>
+              <td>Andre Kevin</td>
+              <td>Invasion of the Love Drones</td>
+              <td>1977</td>
+          </tr>
+          <tr id="file-data-csv-LC7" class="js-file-line">
+            <td id="file-data-csv-L7" class="blob-num js-line-number" data-line-number="7"></td>
+              <td>Andre Kevin</td>
+              <td>Is There Sex After Death?</td>
+              <td>1971</td>
+          </tr>
+          <tr id="file-data-csv-LC8" class="js-file-line">
+            <td id="file-data-csv-L8" class="blob-num js-line-number" data-line-number="8"></td>
+              <td>Andre Kevin</td>
+              <td>Lady on the Couch</td>
+              <td>1974</td>
+          </tr>
+          <tr id="file-data-csv-LC9" class="js-file-line">
+            <td id="file-data-csv-L9" class="blob-num js-line-number" data-line-number="9"></td>
+              <td>Andre Kevin</td>
+              <td>Naked Came the Stranger</td>
+              <td>1975</td>
+          </tr>
+          <tr id="file-data-csv-LC10" class="js-file-line">
+            <td id="file-data-csv-L10" class="blob-num js-line-number" data-line-number="10"></td>
+              <td>Andre Kevin</td>
+              <td>Sex Fantasies</td>
+              <td>1975</td>
+          </tr>
+          <tr id="file-data-csv-LC11" class="js-file-line">
+            <td id="file-data-csv-L11" class="blob-num js-line-number" data-line-number="11"></td>
+              <td>Andre Kevin</td>
+              <td>Stigma</td>
+              <td>1972</td>
+          </tr>
+          <tr id="file-data-csv-LC12" class="js-file-line">
+            <td id="file-data-csv-L12" class="blob-num js-line-number" data-line-number="12"></td>
+              <td>Andre Kevin</td>
+              <td>Teenage Hitchhikers</td>
+              <td>1975</td>
+          </tr>
+          <tr id="file-data-csv-LC13" class="js-file-line">
+            <td id="file-data-csv-L13" class="blob-num js-line-number" data-line-number="13"></td>
+              <td>Andre Kevin</td>
+              <td>The $50000 Climax Show</td>
+              <td>1975</td>
+          </tr>
+          <tr id="file-data-csv-LC14" class="js-file-line">
+            <td id="file-data-csv-L14" class="blob-num js-line-number" data-line-number="14"></td>
+              <td>Andre Kevin</td>
+              <td>The Big Con</td>
+              <td>1975</td>
+          </tr>
+          <tr id="file-data-csv-LC15" class="js-file-line">
+            <td id="file-data-csv-L15" class="blob-num js-line-number" data-line-number="15"></td>
+              <td>Andre Kevin</td>
+              <td>The Defiance of Good</td>
+              <td>1975</td>
+          </tr>
+          <tr id="file-data-csv-LC16" class="js-file-line">
+            <td id="file-data-csv-L16" class="blob-num js-line-number" data-line-number="16"></td>
+              <td>Andre Kevin</td>
+              <td>The Love Bus</td>
+              <td>1974</td>
+          </tr>
+          <tr id="file-data-csv-LC17" class="js-file-line">
+            <td id="file-data-csv-L17" class="blob-num js-line-number" data-line-number="17"></td>
+              <td>Andre Kevin</td>
+              <td>The Mount of Venus</td>
+              <td>1975</td>
+          </tr>
+          <tr id="file-data-csv-LC18" class="js-file-line">
+            <td id="file-data-csv-L18" class="blob-num js-line-number" data-line-number="18"></td>
+              <td>Andre Kevin</td>
+              <td>The New York City Woman</td>
+              <td>1977</td>
+          </tr>
+          <tr id="file-data-csv-LC19" class="js-file-line">
+            <td id="file-data-csv-L19" class="blob-num js-line-number" data-line-number="19"></td>
+              <td>Andre Kevin</td>
+              <td>The Passions of Carol</td>
+              <td>1975</td>
+          </tr>
+          <tr id="file-data-csv-LC20" class="js-file-line">
+            <td id="file-data-csv-L20" class="blob-num js-line-number" data-line-number="20"></td>
+              <td>Andre Kevin</td>
+              <td>The Private Afternoons of Pamela Mann</td>
+              <td>1974</td>
+          </tr>
+          <tr id="file-data-csv-LC21" class="js-file-line">
+            <td id="file-data-csv-L21" class="blob-num js-line-number" data-line-number="21"></td>
+              <td>Andre Kevin</td>
+              <td>The Switch or How to Alter Your Ego</td>
+              <td>1974</td>
+          </tr>
+          <tr id="file-data-csv-LC22" class="js-file-line">
+            <td id="file-data-csv-L22" class="blob-num js-line-number" data-line-number="22"></td>
+              <td>Andre Kevin</td>
+              <td>Whatever Happened to Miss September?</td>
+              <td>1973</td>
+          </tr>
+          <tr id="file-data-csv-LC23" class="js-file-line">
+            <td id="file-data-csv-L23" class="blob-num js-line-number" data-line-number="23"></td>
+              <td>Andre Kurt</td>
+              <td>My Politics My Country</td>
+              <td>2012</td>
+          </tr>
+          <tr id="file-data-csv-LC24" class="js-file-line">
+            <td id="file-data-csv-L24" class="blob-num js-line-number" data-line-number="24"></td>
+              <td>Andre Kurt</td>
+              <td>World Bender</td>
+              <td>2014</td>
+          </tr>
+          <tr id="file-data-csv-LC25" class="js-file-line">
+            <td id="file-data-csv-L25" class="blob-num js-line-number" data-line-number="25"></td>
+              <td>Andre L.J.</td>
+              <td>Disneyland</td>
+              <td>1954</td>
+          </tr>
+          <tr id="file-data-csv-LC26" class="js-file-line">
+            <td id="file-data-csv-L26" class="blob-num js-line-number" data-line-number="26"></td>
+              <td>Andre L.J.</td>
+              <td>Disneyland</td>
+              <td>1954</td>
+          </tr>
+          <tr id="file-data-csv-LC27" class="js-file-line">
+            <td id="file-data-csv-L27" class="blob-num js-line-number" data-line-number="27"></td>
+              <td>Andre LeClerc</td>
+              <td>StreetSmart Guide</td>
+              <td>2014</td>
+          </tr>
+          <tr id="file-data-csv-LC28" class="js-file-line">
+            <td id="file-data-csv-L28" class="blob-num js-line-number" data-line-number="28"></td>
+              <td>Andre LeClerc</td>
+              <td>Laughs</td>
+              <td>2014</td>
+          </tr>
+          <tr id="file-data-csv-LC29" class="js-file-line">
+            <td id="file-data-csv-L29" class="blob-num js-line-number" data-line-number="29"></td>
+              <td>Andre LeClerc</td>
+              <td>Laughs</td>
+              <td>2014</td>
+          </tr>
+          <tr id="file-data-csv-LC30" class="js-file-line">
+            <td id="file-data-csv-L30" class="blob-num js-line-number" data-line-number="30"></td>
+              <td>Andre Lorin</td>
+              <td>-Pierre	Cirque du Soleil: Worlds Away</td>
+              <td>2012</td>
+          </tr>
+          <tr id="file-data-csv-LC31" class="js-file-line">
+            <td id="file-data-csv-L31" class="blob-num js-line-number" data-line-number="31"></td>
+              <td>Andre Lorin</td>
+              <td>The Neighborhood Ball: An Inauguration Celebration</td>
+              <td>2009</td>
+          </tr>
+          <tr id="file-data-csv-LC32" class="js-file-line">
+            <td id="file-data-csv-L32" class="blob-num js-line-number" data-line-number="32"></td>
+              <td>Andre Lukka</td>
+              <td>Armando Rene: Start Running</td>
+              <td>2015</td>
+          </tr>
+          <tr id="file-data-csv-LC33" class="js-file-line">
+            <td id="file-data-csv-L33" class="blob-num js-line-number" data-line-number="33"></td>
+              <td>Andre Lukka</td>
+              <td>Making of Salir Corriendo</td>
+              <td>2015</td>
+          </tr>
+          <tr id="file-data-csv-LC34" class="js-file-line">
+            <td id="file-data-csv-L34" class="blob-num js-line-number" data-line-number="34"></td>
+              <td>Andre Mandi</td>
+              <td>Memoirs of a Lifeguard</td>
+              <td>2010</td>
+          </tr>
+          <tr id="file-data-csv-LC35" class="js-file-line">
+            <td id="file-data-csv-L35" class="blob-num js-line-number" data-line-number="35"></td>
+              <td>Andre Marcus</td>
+              <td>The Grad Film</td>
+              <td>2015</td>
+          </tr>
+          <tr id="file-data-csv-LC36" class="js-file-line">
+            <td id="file-data-csv-L36" class="blob-num js-line-number" data-line-number="36"></td>
+              <td>Andre Mario </td>
+              <td>(I)	Love Your Mama</td>
+              <td>1990</td>
+          </tr>
+          <tr id="file-data-csv-LC37" class="js-file-line">
+            <td id="file-data-csv-L37" class="blob-num js-line-number" data-line-number="37"></td>
+              <td>Andre Mario </td>
+              <td>(II)	Market Value</td>
+              <td>2016</td>
+          </tr>
+          <tr id="file-data-csv-LC38" class="js-file-line">
+            <td id="file-data-csv-L38" class="blob-num js-line-number" data-line-number="38"></td>
+              <td>Andre Mario </td>
+              <td>The Breakout Dream</td>
+              <td>2015</td>
+          </tr>
+          <tr id="file-data-csv-LC39" class="js-file-line">
+            <td id="file-data-csv-L39" class="blob-num js-line-number" data-line-number="39"></td>
+              <td>Andre Mario </td>
+              <td>The Penny</td>
+              <td>2010</td>
+          </tr>
+          <tr id="file-data-csv-LC40" class="js-file-line">
+            <td id="file-data-csv-L40" class="blob-num js-line-number" data-line-number="40"></td>
+              <td>Andre Mario </td>
+              <td>(III)	Blactose Intolerance</td>
+              <td>2015</td>
+          </tr>
+          <tr id="file-data-csv-LC41" class="js-file-line">
+            <td id="file-data-csv-L41" class="blob-num js-line-number" data-line-number="41"></td>
+              <td>Andre Mario </td>
+              <td>Life Outside the Rhyme</td>
+              <td>2016</td>
+          </tr>
+          <tr id="file-data-csv-LC42" class="js-file-line">
+            <td id="file-data-csv-L42" class="blob-num js-line-number" data-line-number="42"></td>
+              <td>Andre Mario </td>
+              <td>Preacher Man</td>
+              <td>2015</td>
+          </tr>
+          <tr id="file-data-csv-LC43" class="js-file-line">
+            <td id="file-data-csv-L43" class="blob-num js-line-number" data-line-number="43"></td>
+              <td>Andre Mario </td>
+              <td>School for Gods</td>
+              <td>????</td>
+          </tr>
+          <tr id="file-data-csv-LC44" class="js-file-line">
+            <td id="file-data-csv-L44" class="blob-num js-line-number" data-line-number="44"></td>
+              <td>Andre Mario </td>
+              <td>Under Pressure</td>
+              <td>2016</td>
+          </tr>
+          <tr id="file-data-csv-LC45" class="js-file-line">
+            <td id="file-data-csv-L45" class="blob-num js-line-number" data-line-number="45"></td>
+              <td>Andre Mario </td>
+              <td>The Natural</td>
+              <td>2016</td>
+          </tr>
+          <tr id="file-data-csv-LC46" class="js-file-line">
+            <td id="file-data-csv-L46" class="blob-num js-line-number" data-line-number="46"></td>
+              <td>Andre Martin</td>
+              <td>Vasilissa maimou</td>
+              <td>2000</td>
+          </tr>
+          <tr id="file-data-csv-LC47" class="js-file-line">
+            <td id="file-data-csv-L47" class="blob-num js-line-number" data-line-number="47"></td>
+              <td>Andre Mat </td>
+              <td>(I)		Lights Camera Blood!</td>
+              <td>2015</td>
+          </tr>
+          <tr id="file-data-csv-LC48" class="js-file-line">
+            <td id="file-data-csv-L48" class="blob-num js-line-number" data-line-number="48"></td>
+              <td>Andre Mat </td>
+              <td>Todd and the Book of Pure Evil</td>
+              <td>2010</td>
+          </tr>
+          <tr id="file-data-csv-LC49" class="js-file-line">
+            <td id="file-data-csv-L49" class="blob-num js-line-number" data-line-number="49"></td>
+              <td>Andre Mathias </td>
+              <td>(II)	Guilty Pleasures</td>
+              <td>2016</td>
+          </tr>
+          <tr id="file-data-csv-LC50" class="js-file-line">
+            <td id="file-data-csv-L50" class="blob-num js-line-number" data-line-number="50"></td>
+              <td>Andre Matthew</td>
+              <td>Santa Rosa</td>
+              <td>2004</td>
+          </tr>
+          <tr id="file-data-csv-LC51" class="js-file-line">
+            <td id="file-data-csv-L51" class="blob-num js-line-number" data-line-number="51"></td>
+              <td>Andre Michael </td>
+              <td>(II)	Here 2 Help</td>
+              <td>2011</td>
+          </tr>
+          <tr id="file-data-csv-LC52" class="js-file-line">
+            <td id="file-data-csv-L52" class="blob-num js-line-number" data-line-number="52"></td>
+              <td>Andre Michael </td>
+              <td>Here 2 Help</td>
+              <td>2011</td>
+          </tr>
+          <tr id="file-data-csv-LC53" class="js-file-line">
+            <td id="file-data-csv-L53" class="blob-num js-line-number" data-line-number="53"></td>
+              <td>Andre Michael </td>
+              <td>Here 2 Help</td>
+              <td>2011</td>
+          </tr>
+          <tr id="file-data-csv-LC54" class="js-file-line">
+            <td id="file-data-csv-L54" class="blob-num js-line-number" data-line-number="54"></td>
+              <td>Andre Michael </td>
+              <td>Here 2 Help</td>
+              <td>2011</td>
+          </tr>
+          <tr id="file-data-csv-LC55" class="js-file-line">
+            <td id="file-data-csv-L55" class="blob-num js-line-number" data-line-number="55"></td>
+              <td>Andre Michael </td>
+              <td>Here 2 Help</td>
+              <td>2011</td>
+          </tr>
+          <tr id="file-data-csv-LC56" class="js-file-line">
+            <td id="file-data-csv-L56" class="blob-num js-line-number" data-line-number="56"></td>
+              <td>Andre Michael </td>
+              <td>Peter Andre: My Life</td>
+              <td>2011</td>
+          </tr>
+          <tr id="file-data-csv-LC57" class="js-file-line">
+            <td id="file-data-csv-L57" class="blob-num js-line-number" data-line-number="57"></td>
+              <td>Andre Michael </td>
+              <td>Peter Andre: My Life</td>
+              <td>2011</td>
+          </tr>
+          <tr id="file-data-csv-LC58" class="js-file-line">
+            <td id="file-data-csv-L58" class="blob-num js-line-number" data-line-number="58"></td>
+              <td>Andre Michael </td>
+              <td>Peter Andre: My Life</td>
+              <td>2011</td>
+          </tr>
+          <tr id="file-data-csv-LC59" class="js-file-line">
+            <td id="file-data-csv-L59" class="blob-num js-line-number" data-line-number="59"></td>
+              <td>Andre Michael </td>
+              <td>Peter Andre: My Life</td>
+              <td>2011</td>
+          </tr>
+          <tr id="file-data-csv-LC60" class="js-file-line">
+            <td id="file-data-csv-L60" class="blob-num js-line-number" data-line-number="60"></td>
+              <td>Andre Michael </td>
+              <td>Peter Andre: My Life</td>
+              <td>2011</td>
+          </tr>
+          <tr id="file-data-csv-LC61" class="js-file-line">
+            <td id="file-data-csv-L61" class="blob-num js-line-number" data-line-number="61"></td>
+              <td>Andre Michael </td>
+              <td>Peter Andre: My Life</td>
+              <td>2011</td>
+          </tr>
+          <tr id="file-data-csv-LC62" class="js-file-line">
+            <td id="file-data-csv-L62" class="blob-num js-line-number" data-line-number="62"></td>
+              <td>Andre Michael </td>
+              <td>Peter Andre: My Life</td>
+              <td>2011</td>
+          </tr>
+          <tr id="file-data-csv-LC63" class="js-file-line">
+            <td id="file-data-csv-L63" class="blob-num js-line-number" data-line-number="63"></td>
+              <td>Andre Michael </td>
+              <td>Peter Andre: My Life</td>
+              <td>2011</td>
+          </tr>
+          <tr id="file-data-csv-LC64" class="js-file-line">
+            <td id="file-data-csv-L64" class="blob-num js-line-number" data-line-number="64"></td>
+              <td>Andre Michael </td>
+              <td>Peter Andre: My Life</td>
+              <td>2011</td>
+          </tr>
+          <tr id="file-data-csv-LC65" class="js-file-line">
+            <td id="file-data-csv-L65" class="blob-num js-line-number" data-line-number="65"></td>
+              <td>Andre Michael </td>
+              <td>Peter Andre: My Life</td>
+              <td>2011</td>
+          </tr>
+          <tr id="file-data-csv-LC66" class="js-file-line">
+            <td id="file-data-csv-L66" class="blob-num js-line-number" data-line-number="66"></td>
+              <td>Andre Michael </td>
+              <td>Peter Andre: My Life</td>
+              <td>2011</td>
+          </tr>
+          <tr id="file-data-csv-LC67" class="js-file-line">
+            <td id="file-data-csv-L67" class="blob-num js-line-number" data-line-number="67"></td>
+              <td>Andre Michael </td>
+              <td>Peter Andre: My Life</td>
+              <td>2011</td>
+          </tr>
+          <tr id="file-data-csv-LC68" class="js-file-line">
+            <td id="file-data-csv-L68" class="blob-num js-line-number" data-line-number="68"></td>
+              <td>Andre Michael </td>
+              <td>Peter Andre: My Life</td>
+              <td>2011</td>
+          </tr>
+          <tr id="file-data-csv-LC69" class="js-file-line">
+            <td id="file-data-csv-L69" class="blob-num js-line-number" data-line-number="69"></td>
+              <td>Andre Miguel</td>
+              <td>Journey Among Women</td>
+              <td>1977</td>
+          </tr>
+          <tr id="file-data-csv-LC70" class="js-file-line">
+            <td id="file-data-csv-L70" class="blob-num js-line-number" data-line-number="70"></td>
+              <td>Andre Mikail</td>
+              <td>1 Lawan Satu</td>
+              <td>2013</td>
+          </tr>
+          <tr id="file-data-csv-LC71" class="js-file-line">
+            <td id="file-data-csv-L71" class="blob-num js-line-number" data-line-number="71"></td>
+              <td>Andre Mikail</td>
+              <td>Dua Kalimah</td>
+              <td>2013</td>
+          </tr>
+          <tr id="file-data-csv-LC72" class="js-file-line">
+            <td id="file-data-csv-L72" class="blob-num js-line-number" data-line-number="72"></td>
+              <td>Andre Mikail</td>
+              <td>Gangster Wars</td>
+              <td>2013</td>
+          </tr>
+          <tr id="file-data-csv-LC73" class="js-file-line">
+            <td id="file-data-csv-L73" class="blob-num js-line-number" data-line-number="73"></td>
+              <td>Andre Mikail</td>
+              <td>Mukasurat Cinta</td>
+              <td>2014</td>
+          </tr>
+          <tr id="file-data-csv-LC74" class="js-file-line">
+            <td id="file-data-csv-L74" class="blob-num js-line-number" data-line-number="74"></td>
+              <td>Andre Mikail</td>
+              <td>Sniper</td>
+              <td>2014</td>
+          </tr>
+          <tr id="file-data-csv-LC75" class="js-file-line">
+            <td id="file-data-csv-L75" class="blob-num js-line-number" data-line-number="75"></td>
+              <td>Andre Mikail</td>
+              <td>Tokak</td>
+              <td>2013</td>
+          </tr>
+          <tr id="file-data-csv-LC76" class="js-file-line">
+            <td id="file-data-csv-L76" class="blob-num js-line-number" data-line-number="76"></td>
+              <td>Andre Mike</td>
+              <td>A Mystery in Carmine</td>
+              <td>2012</td>
+          </tr>
+          <tr id="file-data-csv-LC77" class="js-file-line">
+            <td id="file-data-csv-L77" class="blob-num js-line-number" data-line-number="77"></td>
+              <td>Andre Mohd Mikail</td>
+              <td>Hantu dalam botol kicap</td>
+              <td>2012</td>
+          </tr>
+          <tr id="file-data-csv-LC78" class="js-file-line">
+            <td id="file-data-csv-L78" class="blob-num js-line-number" data-line-number="78"></td>
+              <td>Andre Mohd Pierre</td>
+              <td>3 Temujanji</td>
+              <td>2012</td>
+          </tr>
+          <tr id="file-data-csv-LC79" class="js-file-line">
+            <td id="file-data-csv-L79" class="blob-num js-line-number" data-line-number="79"></td>
+              <td>Andre Mohd Pierre</td>
+              <td>3 2 1 cinta</td>
+              <td>2011</td>
+          </tr>
+          <tr id="file-data-csv-LC80" class="js-file-line">
+            <td id="file-data-csv-L80" class="blob-num js-line-number" data-line-number="80"></td>
+              <td>Andre Mohd Pierre</td>
+              <td>9 September</td>
+              <td>2007</td>
+          </tr>
+          <tr id="file-data-csv-LC81" class="js-file-line">
+            <td id="file-data-csv-L81" class="blob-num js-line-number" data-line-number="81"></td>
+              <td>Andre Mohd Pierre</td>
+              <td>Aku Kau &amp; Dia</td>
+              <td>2012</td>
+          </tr>
+          <tr id="file-data-csv-LC82" class="js-file-line">
+            <td id="file-data-csv-L82" class="blob-num js-line-number" data-line-number="82"></td>
+              <td>Andre Mohd Pierre</td>
+              <td>Al-Hijab</td>
+              <td>2011</td>
+          </tr>
+          <tr id="file-data-csv-LC83" class="js-file-line">
+            <td id="file-data-csv-L83" class="blob-num js-line-number" data-line-number="83"></td>
+              <td>Andre Mohd Pierre</td>
+              <td>Chantek</td>
+              <td>2012</td>
+          </tr>
+          <tr id="file-data-csv-LC84" class="js-file-line">
+            <td id="file-data-csv-L84" class="blob-num js-line-number" data-line-number="84"></td>
+              <td>Andre Mohd Pierre</td>
+              <td>Cinta</td>
+              <td>2006</td>
+          </tr>
+          <tr id="file-data-csv-LC85" class="js-file-line">
+            <td id="file-data-csv-L85" class="blob-num js-line-number" data-line-number="85"></td>
+              <td>Andre Mohd Pierre</td>
+              <td>Cinta fotokopi</td>
+              <td>2005</td>
+          </tr>
+          <tr id="file-data-csv-LC86" class="js-file-line">
+            <td id="file-data-csv-L86" class="blob-num js-line-number" data-line-number="86"></td>
+              <td>Andre Mohd Pierre</td>
+              <td>Gol &amp; Gincu</td>
+              <td>2005</td>
+          </tr>
+          <tr id="file-data-csv-LC87" class="js-file-line">
+            <td id="file-data-csv-L87" class="blob-num js-line-number" data-line-number="87"></td>
+              <td>Andre Mohd Pierre</td>
+              <td>Jangan pandang belakang</td>
+              <td>2007</td>
+          </tr>
+          <tr id="file-data-csv-LC88" class="js-file-line">
+            <td id="file-data-csv-L88" class="blob-num js-line-number" data-line-number="88"></td>
+              <td>Andre Mohd Pierre</td>
+              <td>Jangan tegur</td>
+              <td>2009</td>
+          </tr>
+          <tr id="file-data-csv-LC89" class="js-file-line">
+            <td id="file-data-csv-L89" class="blob-num js-line-number" data-line-number="89"></td>
+              <td>Andre Mohd Pierre</td>
+              <td>Krazy crazy krezy...</td>
+              <td>2009</td>
+          </tr>
+          <tr id="file-data-csv-LC90" class="js-file-line">
+            <td id="file-data-csv-L90" class="blob-num js-line-number" data-line-number="90"></td>
+              <td>Andre Mohd Pierre</td>
+              <td>Pontianak harum sundal malam 2</td>
+              <td>2005</td>
+          </tr>
+          <tr id="file-data-csv-LC91" class="js-file-line">
+            <td id="file-data-csv-L91" class="blob-num js-line-number" data-line-number="91"></td>
+              <td>Andre Mohd Pierre</td>
+              <td>Potret mistik</td>
+              <td>2005</td>
+          </tr>
+          <tr id="file-data-csv-LC92" class="js-file-line">
+            <td id="file-data-csv-L92" class="blob-num js-line-number" data-line-number="92"></td>
+              <td>Andre Mohd Pierre</td>
+              <td>Salon</td>
+              <td>2005</td>
+          </tr>
+          <tr id="file-data-csv-LC93" class="js-file-line">
+            <td id="file-data-csv-L93" class="blob-num js-line-number" data-line-number="93"></td>
+              <td>Andre Mohd Pierre</td>
+              <td>Sepi</td>
+              <td>2008</td>
+          </tr>
+          <tr id="file-data-csv-LC94" class="js-file-line">
+            <td id="file-data-csv-L94" class="blob-num js-line-number" data-line-number="94"></td>
+              <td>Andre Mohd Pierre</td>
+              <td>Seru</td>
+              <td>2011</td>
+          </tr>
+          <tr id="file-data-csv-LC95" class="js-file-line">
+            <td id="file-data-csv-L95" class="blob-num js-line-number" data-line-number="95"></td>
+              <td>Andre Mohd Pierre</td>
+              <td>Strawberi cinta</td>
+              <td>2012</td>
+          </tr>
+          <tr id="file-data-csv-LC96" class="js-file-line">
+            <td id="file-data-csv-L96" class="blob-num js-line-number" data-line-number="96"></td>
+              <td>Andre Mohd Pierre</td>
+              <td>X</td>
+              <td>2012</td>
+          </tr>
+          <tr id="file-data-csv-LC97" class="js-file-line">
+            <td id="file-data-csv-L97" class="blob-num js-line-number" data-line-number="97"></td>
+              <td>Andre Mohd Pierre</td>
+              <td>Gol &amp; Gincu: The Series</td>
+              <td>2006</td>
+          </tr>
+      </tbody>
+    </table>
+  </div>
+
+  </div>
+
+  </div>
+</div>
+
+      </div>
+      <div class="gist-meta">
+        <a href="https://gist.github.com/bryandijkhuizen/eb1155fe1c30cc5d9bf1189d2ffbd0bb/raw/e4b93bc1ee9d1b3fcc7514aad035b86bb3f9ddf0/data.csv" target="_blank" rel="noopener" style="float:right">view raw</a>
+        <a href="https://gist.github.com/bryandijkhuizen/eb1155fe1c30cc5d9bf1189d2ffbd0bb#file-data-csv" target="_blank" rel="noopener">data.csv</a>
+        hosted with ❤ by <a href="https://github.com/" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
+</div>
+<script>var height = -1; var delayMs = 200; if (document) {document.domain = document.domain;}function notifyResize(height) {height = height ? height : document.documentElement.offsetHeight; var resized = false; if (window.donkey && donkey.resize) {donkey.resize(height);var elements = document.getElementsByClassName("gist-data"); for (var i = 0; i < elements.length; i++) {elements[i].style.overflow = "visible"}resized = true;}if (parent && parent._resizeIframe) {var obj = {iframe: window.frameElement, height: height}; parent._resizeIframe(obj); resized = true;}if (window.location && window.location.hash === "#amp=1" && window.parent && window.parent.postMessage) {window.parent.postMessage({sentinel: "amp", type: "embed-size", height: height}, "*");}if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.resize) {window.webkit.messageHandlers.resize.postMessage(height); resized = true;}return resized;}function maybeResize() {try {if (document.documentElement.offsetHeight != height && notifyResize()) {height = document.documentElement.offsetHeight;}delayMs = Math.min(delayMs * 2, 1000000); setTimeout(maybeResize, delayMs);} catch(error) {console.log('maybeResize error: ', error)}}maybeResize();</script></body></html>
+                
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2021/03/31/用JAVA实现一个IMDB数据解析器/" data-toggle="tooltip" data-placement="top" title="用JAVA实现一个IMDB数据解析器">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2021/03/31/用JAVA实现一个IMDB数据解析器/csvsample_files/gist-embed-33b98015caf26cfcbee6ce1a5d1fc768/" data-toggle="tooltip" data-placement="top" title="用JAVA实现一个IMDB数据解析器/csvsample_files/gist-embed-33b98015caf26cfcbee6ce1a5d1fc768">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Music start-->
+                
+                
+<link rel="stylesheet" href="/css/music-player/fonts/iconfont.css">
+
+
+<link rel="stylesheet" href="/css/music-player/css/reset.css">
+
+
+<link rel="stylesheet" href="/css/music-player/css/player.css">
+
+
+<div class="music-player">
+    <audio class="music-player__audio" ></audio>
+    <div class="music-player__main">
+        <div class="music-player__blur"></div>
+        <div class="music-player__disc">
+            <div class="music-player__image">
+                <img width="100%" src="" alt="">
+            </div>
+            <div class="music-player__pointer"><img width="100%" src="/img/cd_tou.png" alt=""></div>
+        </div>
+        <div class="music-player__controls">
+            <div class="music__info">
+                <h3 class="music__info--title">...</h3>
+                <p class="music__info--singer">...</p>
+            </div>
+            <div class="player-control">
+                <div class="player-control__content">
+                    <div class="player-control__btns">
+                        <div class="player-control__btn player-control__btn--prev"><i class="iconfont icon-prev"></i></div>
+                        <div class="player-control__btn player-control__btn--play"><i class="iconfont icon-play"></i></div>
+                        <div class="player-control__btn player-control__btn--next"><i class="iconfont icon-next"></i></div>
+                        <div class="player-control__btn player-control__btn--mode"><i class="iconfont icon-loop"></i></div>
+                    </div>
+                    <div class="player-control__volume">
+                        <div class="control__volume--icon player-control__btn"><i class="iconfont icon-volume"></i></div>
+                        <div class="control__volume--progress player_progress"></div>
+                    </div>
+                </div>
+                <div class="player-control__content">
+                    <div class="player__song--progress player_progress"></div>
+                    <div class="player__song--timeProgess nowTime">00:00</div>
+                    <div class="player__song--timeProgess totalTime">00:00</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="/js/music-player/utill.js"></script>
+
+
+<script src="/js/music-player/jquery.min.js"></script>
+
+<!-- netease; qqkg -->
+<!--
+<script src="/js/music-player/player.js?library=config.music.library.js"></script>
+-->
+<script src="../../../../js/music-player/player.js?library=netease&music=https://music.163.com/#/song?id=1325896303"></script>
+                
+                <!-- Music end -->
+
+                <!-- Sharing -->
+                
+                <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                <!--  css & js -->
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://meandni.com/" target="_blank">Joker&#39;s Blog</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+
+
+<style  type="text/css">
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/liujiang157">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/maybelence">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; maybelence 2021 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/dusign/hexo-theme-snail" target="_blank" rel="noopener">
+                        <i>hexo-theme-snail</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=dusign&repo=hexo-theme-snail&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://maybelence.cn/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+
+        
+            <script type="text/javascript" src="/js/mouse-click.js" content='[&quot;🌱&quot;,&quot;just do it&quot;,&quot;🍀&quot;,&quot;waiting for you&quot;]' color='[&quot;rgb(121,93,179)&quot; ,&quot;rgb(76,180,231)&quot; ,&quot;rgb(184,90,154)&quot;]'></script>
+        
+
+        <!-- background effects end -->
+    
+
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

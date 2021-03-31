@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="一个用来絮絮叨叨的地方">
+    <meta name="keyword"  content="maybelence, 学习, 生活">
+    <link rel="shortcut icon" href="/img/ironman-draw.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          用JAVA实现一个IMDB数据解析器 - Maybelence&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://maybelence.cn/2021/03/31/用JAVA实现一个IMDB数据解析器/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+        
+<link rel="stylesheet" href="/css/dusign-light.css">
+
+        
+<link rel="stylesheet" href="/css/dusign-common-light.css">
+
+        
+<link rel="stylesheet" href="/css/font-awesome.css">
+
+        
+<link rel="stylesheet" href="/css/toc.css">
+
+        <!-- background effects end -->
+    
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+    <!-- photography -->
+    
+<link rel="stylesheet" href="/css/photography.css">
+
+
+    <!-- ga & ba script hoook -->
+    <script data-ad-client="ca-pub-9951682438363353" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- background effects start -->
+    
+    <!-- background effects end -->
+
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('1617185278.jpg')
+                /*post*/
+            
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/maybelence.png');
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                        </div>
+                        <h1>用JAVA实现一个IMDB数据解析器</h1>
+                        <h2 class="subheading">将凌乱的列表文件转换为csv</h2>
+                        <span class="meta">
+                            Posted by maybelence on
+                            2021-03-31
+                        </span>
+
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+    <div class="waveWrapper">
+        <div class="wave wave_before" style="background-image: url('/img/wave-light.png')"></div>
+        <div class="wave wave_after" style="background-image: url('/img/wave-light.png')"></div>
+    </div>
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Maybelence&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">首页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">目录</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/photography/">随手拍</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">分类</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">标签</a>
+                        </li>
+                        
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p>在IMDB数据库中，至少有2000万条数据可以查询。在使用这些数据之前还有许多前置工作需要完成。</p>
+<h3 id="数据库文件"><a href="#数据库文件" class="headerlink" title="数据库文件"></a>数据库文件</h3><p>我们只取120行的样例数据来测试我们的解析器。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br></pre></td><td class="code"><pre><span class="line">Andre, Kent		The Mask: The Origin (1995) (VG)  (voice)</span><br><span class="line"></span><br><span class="line">Andre, Kevin		Come Fly with Us (1974)  [Tony]  &lt;4&gt;</span><br><span class="line">			Deep Throat Part II (1974)  (as Carter Courtney Jr.)  [Russian Agent]  &lt;8&gt;</span><br><span class="line">			Fringe Benefits (1974)  [Dr. Charles Cherrypopper]  &lt;1&gt;</span><br><span class="line">			Invasion of the Love Drones (1977)  [Pseudo Drone]  &lt;26&gt;</span><br><span class="line">			Is There Sex After Death? (1971)  (as Carter Courtney Jr.)  [Sex Bowl Contestant]  &lt;82&gt;</span><br><span class="line">			Lady on the Couch (1974)  [Dr. Miller]</span><br><span class="line">			Naked Came the Stranger (1975)  [Party Guy with Candle]  &lt;6&gt;</span><br><span class="line">			Sex Fantasies (1975)</span><br><span class="line">			Stigma (1972)  (as Carter Courtney)  [Homosexual]  &lt;10&gt;</span><br><span class="line">			Teenage Hitchhikers (1975)  (as Carter Courtney Jr.)  [Farquart (Bruce)]  &lt;8&gt;</span><br><span class="line">			The $50,000 Climax Show (1975)  (as Kevin Andre Darby)</span><br><span class="line">			The Big Con (1975)  (as Carter Courtney)  [Sam Browne]  &lt;7&gt;</span><br><span class="line">			The Defiance of Good (1975)  [Dr. Hirsch]  &lt;8&gt;</span><br><span class="line">			The Love Bus (1974)  (as Kevin André)  [Ralph Kramden]  &lt;7&gt;</span><br><span class="line">			The Mount of Venus (1975)  (as Kevin André)  [Bacchus]  &lt;5&gt;</span><br><span class="line">			The New York City Woman (1977)  (archive footage) (uncredited)  [Dr. Chartop]</span><br><span class="line">			The Passions of Carol (1975)  (as Kevin André)  [The Spirits]  &lt;5&gt;</span><br><span class="line">			The Private Afternoons of Pamela Mann (1974)  [Frank&#39;s First Client]  &lt;6&gt;</span><br><span class="line">			The Switch or How to Alter Your Ego (1974)  [Seymour]  &lt;17&gt;</span><br><span class="line">			Whatever Happened to Miss September? (1973)  (as Knah-Knah)  [Bentley]</span><br><span class="line"></span><br><span class="line">Andre, Kurt		My Politics, My Country (2012)</span><br><span class="line">			World Bender (2014)  [Network Executive]  &lt;8&gt;</span><br><span class="line"></span><br><span class="line">Andre, L.J.		&quot;Disneyland&quot; (1954) &#123;Willie and the Yank: The Deserter (#13.15)&#125;  [Uncle Ferd]  &lt;10&gt;</span><br><span class="line">			&quot;Disneyland&quot; (1954) &#123;Willie and the Yank: The Mosby Raiders (#13.16)&#125;  [Uncle Ferd]  &lt;10&gt;</span><br><span class="line"></span><br><span class="line">Andre, LeClerc		StreetSmart Guide (2014) (V)  [Himself - Guest]</span><br><span class="line">			&quot;Laughs&quot; (2014) &#123;(#1.22)&#125;</span><br><span class="line">			&quot;Laughs&quot; (2014) &#123;(#1.5)&#125;  [Himself]</span><br><span class="line"></span><br><span class="line">Andre, Lorin-Pierre	Cirque du Soleil: Worlds Away (2012)  [Viva Elvis Cast Member]  &lt;198&gt;</span><br><span class="line">			The Neighborhood Ball: An Inauguration Celebration (2009) (TV)  [Antigravity Performer]</span><br><span class="line"></span><br><span class="line">Andre, Lukka		Armando Rene: Start Running (2015) (V)</span><br><span class="line">			Making of Salir Corriendo (2015)  (archive footage)</span><br><span class="line"></span><br><span class="line">Andre, Mandi		Memoirs of a Lifeguard (2010)</span><br><span class="line"></span><br><span class="line">Andre, Marcus		The Grad Film (2015)  [Rob]</span><br><span class="line"></span><br><span class="line">Andre, Mario (I)	Love Your Mama (1990)  [Bartender]</span><br><span class="line"></span><br><span class="line">Andre, Mario (II)	Market Value (2016)  [Triage Patient]</span><br><span class="line">			The Breakout Dream (2015)  [Pastor Mark]</span><br><span class="line">			The Penny (2010)  [Darrell Watts]  &lt;6&gt;</span><br><span class="line"></span><br><span class="line">Andre, Mario (III)	Blactose Intolerance (2015)  [Pa Pa]</span><br><span class="line">			Life Outside the Rhyme (2016)  [The Muffin Man]</span><br><span class="line">			Preacher Man (2015)  [Elder Jones]  &lt;4&gt;</span><br><span class="line">			School for Gods (????)  [St. Louis Cartel]</span><br><span class="line">			Under Pressure (2016)  [Uncle Ray]</span><br><span class="line">			&quot;The Natural&quot; (2016)  [The Manager]</span><br><span class="line"></span><br><span class="line">Andre, Martin		Vasilissa maimou (2000)</span><br><span class="line"></span><br><span class="line">Andre, Mat (I)		Lights Camera Blood! (2015)  [Hank the Hobo]</span><br><span class="line">			&quot;Todd and the Book of Pure Evil&quot; (2010) &#123;B.Y.O.B.O.P.E. (#2.11)&#125;  [Dancerman]  &lt;18&gt;</span><br><span class="line"></span><br><span class="line">Andre, Mathias (II)	Guilty Pleasures (2016) (TV)  [Groomer 3]  &lt;26&gt;</span><br><span class="line"></span><br><span class="line">Andre, Matthew		Santa Rosa (2004) (V)</span><br><span class="line"></span><br><span class="line">Andre, Michael (II)	&quot;Here 2 Help&quot; (2011) &#123;(#1.2)&#125;  [Himself]  &lt;3&gt;</span><br><span class="line">			&quot;Here 2 Help&quot; (2011) &#123;(#1.3)&#125;  [Himself]  &lt;2&gt;</span><br><span class="line">			&quot;Here 2 Help&quot; (2011) &#123;(#1.4)&#125;  [Himself]  &lt;2&gt;</span><br><span class="line">			&quot;Here 2 Help&quot; (2011) &#123;(#1.5)&#125;  [Himself]  &lt;2&gt;</span><br><span class="line">			&quot;Here 2 Help&quot; (2011) &#123;(#1.6)&#125;  [Himself]  &lt;2&gt;</span><br><span class="line">			&quot;Peter Andre: My Life&quot; (2011) &#123;(#1.2)&#125;  [Himself]</span><br><span class="line">			&quot;Peter Andre: My Life&quot; (2011) &#123;(#1.3)&#125;  [Himself]</span><br><span class="line">			&quot;Peter Andre: My Life&quot; (2011) &#123;(#1.4)&#125;  [Himself]</span><br><span class="line">			&quot;Peter Andre: My Life&quot; (2011) &#123;(#1.5)&#125;  [Himself]</span><br><span class="line">			&quot;Peter Andre: My Life&quot; (2011) &#123;(#3.4)&#125;  [Himself]</span><br><span class="line">			&quot;Peter Andre: My Life&quot; (2011) &#123;(#3.5)&#125;  [Himself]</span><br><span class="line">			&quot;Peter Andre: My Life&quot; (2011) &#123;He&#39;s Found His Happy Ever After (#5.4)&#125;  [Himself]</span><br><span class="line">			&quot;Peter Andre: My Life&quot; (2011) &#123;I Can&#39;t Remember When I Was 15 (#4.4)&#125;  [Himself]</span><br><span class="line">			&quot;Peter Andre: My Life&quot; (2011) &#123;It&#39;s a New Chapter, Isn&#39;t It? (#5.1)&#125;  [Himself]</span><br><span class="line">			&quot;Peter Andre: My Life&quot; (2011) &#123;Some Days Are Better Than Others (#4.1)&#125;  [Himself]</span><br><span class="line">			&quot;Peter Andre: My Life&quot; (2011) &#123;There&#39;s Only One Problem... She Doesn&#39;t Like Coffee (#3.1)&#125;  [Himself]</span><br><span class="line">			&quot;Peter Andre: My Life&quot; (2011) &#123;We&#39;re Off to Zanzib-Andre (#5.3)&#125;  [Himself]</span><br><span class="line">			&quot;Peter Andre: My Life&quot; (2011) &#123;Why Wait, Why Hesitate? (#5.5)&#125;  [Himself]</span><br><span class="line"></span><br><span class="line">Andre, Miguel		Journey Among Women (1977)  [Soldier]  &lt;21&gt;</span><br><span class="line"></span><br><span class="line">Andre, Mikail		1 Lawan Satu (2013)  [Radhi]</span><br><span class="line">			Dua Kalimah (2013)</span><br><span class="line">			Gangster Wars (2013)  [Romeo]</span><br><span class="line">			Mukasurat Cinta (2014)</span><br><span class="line">			Sniper (2014)  [Mat Jambang]</span><br><span class="line">			Tokak (2013)  [Boy]</span><br><span class="line"></span><br><span class="line">Andre, Mike		A Mystery in Carmine (2012)  (as Mikey Andre)  [Toby]</span><br><span class="line"></span><br><span class="line">Andre, Mohd Mikail	Hantu dalam botol kicap (2012)  [Azri]  &lt;4&gt;</span><br><span class="line"></span><br><span class="line">Andre, Mohd Pierre	3 Temujanji (2012)  [Sein]  &lt;2&gt;</span><br><span class="line">			3, 2, 1 cinta (2011)  (as Pierre Andre)  [Fariz]  &lt;3&gt;</span><br><span class="line">			9 September (2007)  (as Pierre Andre)  [Kogi]  &lt;1&gt;</span><br><span class="line">			Aku, Kau &amp; Dia (2012)  (as Pierre Andre)  [Abang Harris]</span><br><span class="line">			Al-Hijab (2011)  (as Pierre Andre)  [Rafael]  &lt;1&gt;</span><br><span class="line">			Chantek (2012)  [Ad]  &lt;1&gt;</span><br><span class="line">			Cinta (2006)  [Taufiq]</span><br><span class="line">			Cinta fotokopi (2005)  (as Pierre Andre)  [Din]</span><br><span class="line">			Gol &amp; Gincu (2005)  [Reza]  &lt;3&gt;</span><br><span class="line">			Jangan pandang belakang (2007)  [Darma]</span><br><span class="line">			Jangan tegur (2009)  [Kamal]  &lt;2&gt;</span><br><span class="line">			Krazy crazy krezy... (2009)  (as Pierre André)  &lt;3&gt;</span><br><span class="line">			Pontianak harum sundal malam 2 (2005)  [Purnama]</span><br><span class="line">			Potret mistik (2005)  (as Pierre Andre)  [Badrul]</span><br><span class="line">			Salon (2005)  [Ezra Fernandez]  &lt;2&gt;</span><br><span class="line">			Sepi (2008)  [Khalil]</span><br><span class="line">			Seru (2011)  [Bob]</span><br><span class="line">			Strawberi cinta (2012)  [Hakimi]</span><br><span class="line">			X (2012&#x2F;I)  [Hafiz]</span><br><span class="line">			&quot;Gol &amp; Gincu: The Series&quot; (2006)  [Reza]  &lt;2&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="用正则分析数据库文件"><a href="#用正则分析数据库文件" class="headerlink" title="用正则分析数据库文件"></a>用正则分析数据库文件</h3><p>我们使用正则来得到正确的数据，如果你之前没有接触过正则表达式，我推荐<a href="https://regexr.com/" target="_blank" rel="noopener">RegexR</a>网站提供给你学习。</p>
+<p>我们将使用下面的正则字符串:</p>
+<figure class="highlight re"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="literal">[A-Z<span class="identifier">a</span>-<span class="identifier">z</span>,.'<span class="identifier">$</span>&amp; ]</span>*)?(<span class="literal">[\<span class="identifier">t</span>]</span>*)(.+?)(<span class="literal">[ ]</span>*)\\((<span class="literal">[<span class="number">0</span>-<span class="number">9</span>,?]</span>&#123;<span class="number">4</span>&#125;)(.+?\\n&#123;<span class="number">2</span>&#125;)?</span><br></pre></td></tr></table></figure>
+<p>这样会将所有的数据从演员中删除，然后你可以单独的使用这些数据。</p>
+<h3 id="创建JAVA项目"><a href="#创建JAVA项目" class="headerlink" title="创建JAVA项目"></a>创建JAVA项目</h3><p>如果你之前没有接触过JAVA，希望你先学习一下JAVA的基础课程。</p>
+<p>我们仅仅需要4个类：</p>
+<ul>
+<li>Main</li>
+<li>Reader</li>
+<li>Parser</li>
+<li>Writer</li>
+</ul>
+<p>项目结构如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">DataParser</span><br><span class="line"> src</span><br><span class="line">  database</span><br><span class="line">   database.txt</span><br><span class="line">  Main.java</span><br><span class="line">  Writer.java</span><br><span class="line">  Reader.java</span><br><span class="line">  Parser.java</span><br><span class="line">&#96;&#96;&#96;  </span><br><span class="line"></span><br><span class="line">#### 创建Reader类</span><br><span class="line"></span><br><span class="line">我们应该做的第一件事是创建一个Reader类，该类将读取其中包含所有演员的数据库文件（database.txt）。在Java中，我们可以使用File和Scanner类读取文件的数据并将其放入ArrayList中。</span><br><span class="line"></span><br><span class="line">&#96;&#96;&#96;java</span><br><span class="line">import java.io.File;</span><br><span class="line">import java.io.FileNotFoundException;</span><br><span class="line">import java.util.Scanner;</span><br><span class="line">import java.util.ArrayList;</span><br><span class="line"></span><br><span class="line">public class Reader &#123;</span><br><span class="line"></span><br><span class="line">    ArrayList&lt;String&gt; lines &#x3D; new ArrayList&lt;String&gt;();</span><br><span class="line">    public ArrayList&lt;String&gt; Read(String dbFile)&#123;</span><br><span class="line">        try &#123;</span><br><span class="line"></span><br><span class="line">            File readable &#x3D; new File(Reader.class.getResource(dbFile).getFile());</span><br><span class="line">            Scanner dbScanner &#x3D; new Scanner(readable);</span><br><span class="line">            while (dbScanner.hasNextLine()) &#123;</span><br><span class="line">                String data &#x3D; dbScanner.nextLine();</span><br><span class="line">                lines.add(data);</span><br><span class="line">            &#125;</span><br><span class="line">            dbScanner.close();</span><br><span class="line">             </span><br><span class="line"></span><br><span class="line">        &#125; catch(FileNotFoundException e) &#123;</span><br><span class="line">            System.out.println(&quot;File not found&quot;);</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        return lines;</span><br><span class="line">         </span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先，创建保存String类型的ArrayList。公共方法Read（）将采用我们要读取的文件的路径，然后Scanner将每一行数据放入ArrayList中。如果没有剩余的行，关闭Scanner。</p>
+<h4 id="创建Parser类"><a href="#创建Parser类" class="headerlink" title="创建Parser类"></a>创建Parser类</h4><p>为了将每一行的数据解析为结构化的csv文件，我们必须创建一个匹配模板并检查是否能够匹配刚刚读取的文件。</p>
+<h5 id="ParseActors-方法"><a href="#ParseActors-方法" class="headerlink" title="ParseActors 方法"></a>ParseActors 方法</h5><p>ParseActors方法接收两个参数，文件存储的数据list，和一个正则表达式。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> ArrayList&lt;ArrayList&lt;String&gt;&gt; ParseActors(ArrayList&lt;String&gt; input, String regex) &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个方法返回一个String泛型的一个ArrayList，这样可以保证数据库中的每个演员和电影能被分别注册。</p>
+<h5 id="创建匹配模式"><a href="#创建匹配模式" class="headerlink" title="创建匹配模式"></a>创建匹配模式</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Pattern pattern = Pattern.compile(regex);</span><br></pre></td></tr></table></figure>
+<h5 id="组装响应值"><a href="#组装响应值" class="headerlink" title="组装响应值"></a>组装响应值</h5><p>为了确保我们的csv文件是结构化的。我们创建一个ArrayList并且添加csv的header (Actor, Title, Year)。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ArrayList&lt;ArrayList&lt;String&gt;&gt; collections = <span class="keyword">new</span> ArrayList&lt;ArrayList&lt;String&gt; &gt;();</span><br><span class="line"></span><br><span class="line">collections.add(<span class="keyword">new</span> ArrayList&lt;String&gt;());</span><br><span class="line"></span><br><span class="line">collections.get(<span class="number">0</span>).add(<span class="string">"Actor"</span>);</span><br><span class="line">collections.get(<span class="number">0</span>).add(<span class="string">"Title"</span>);</span><br><span class="line">collections.get(<span class="number">0</span>).add(<span class="string">"Year"</span>);</span><br></pre></td></tr></table></figure>
+<h5 id="查找匹配项并填充collections"><a href="#查找匹配项并填充collections" class="headerlink" title="查找匹配项并填充collections"></a>查找匹配项并填充collections</h5><p>现在我们已经准备好列表并创建好了匹配模板，我们可以搜索匹配项。再次查看正则表达式字符串时，我们发现可以匹配一些内容。我们只需要演员的姓名，他上演的电影以及年份。</p>
+<p>让我们创建一个映射所有结果的<code>for</code>循环，然后使用匹配模板找到正确的<code>strings</code>。<br>现在，该数据库存在一个大问题，那就是我们只能看到演员一次，然后才能看到他所播放的电影的完整列表。</p>
+<p>一旦将演员放入<code>collections</code>，我们假设在找到另一个演员之前，找到的所有电影都是他所扮演的电影。例如：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.ArrayList;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.Arrays;</span><br><span class="line"><span class="keyword">import</span> java.util.regex.Matcher;</span><br><span class="line"><span class="keyword">import</span> java.util.regex.Pattern;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Parser</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> ArrayList&lt;ArrayList&lt;String&gt;&gt; ParseActors(ArrayList&lt;String&gt; input, String regex) &#123;</span><br><span class="line">        Pattern pattern = Pattern.compile(regex);</span><br><span class="line"></span><br><span class="line">        <span class="comment">//ArrayList&lt;String&gt; lijst = new ArrayList&lt;String&gt;();</span></span><br><span class="line"></span><br><span class="line">        ArrayList&lt;ArrayList&lt;String&gt;&gt; collections = <span class="keyword">new</span> ArrayList&lt;ArrayList&lt;String&gt; &gt;();</span><br><span class="line"></span><br><span class="line">        collections.add(<span class="keyword">new</span> ArrayList&lt;String&gt;());</span><br><span class="line"></span><br><span class="line">        collections.get(<span class="number">0</span>).add(<span class="string">"Actor"</span>);</span><br><span class="line">        collections.get(<span class="number">0</span>).add(<span class="string">"Title"</span>);</span><br><span class="line">        collections.get(<span class="number">0</span>).add(<span class="string">"Year"</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; input.size(); i++) &#123;</span><br><span class="line">            Matcher matcher = pattern.matcher(input.get(i));</span><br><span class="line"></span><br><span class="line">            collections.add(<span class="keyword">new</span> ArrayList&lt;String&gt;());</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span>(matcher.find()) &#123;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (matcher.group(<span class="number">1</span>) != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    String actor = matcher.group(<span class="number">1</span>).toString();</span><br><span class="line">                    <span class="comment">//lijst.add(actor.replaceAll("[,]", ""));   </span></span><br><span class="line">                    </span><br><span class="line">                    <span class="keyword">if</span>(actor == <span class="string">""</span>)&#123;</span><br><span class="line">                        collections.get(i+<span class="number">1</span>).add(collections.get(i).get(<span class="number">0</span>).replaceAll(<span class="string">"[,]"</span>, <span class="string">""</span>).toString());</span><br><span class="line">                        System.out.println(collections.get(i+<span class="number">1</span>).get(<span class="number">0</span>));</span><br><span class="line">                         </span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        collections.get(i+<span class="number">1</span>).add(actor.replaceAll(<span class="string">"[,]"</span>, <span class="string">""</span>));</span><br><span class="line">                        System.out.println(collections.get(i+<span class="number">1</span>).get(<span class="number">0</span>));</span><br><span class="line">                    &#125;     </span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (matcher.group(<span class="number">3</span>) != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="comment">//lijst.add(matcher.group(3));</span></span><br><span class="line"></span><br><span class="line">                    collections.get(i+<span class="number">1</span>).add(matcher.group(<span class="number">3</span>).replaceAll(<span class="string">"[\",]"</span>, <span class="string">""</span>).replaceAll(<span class="string">"[,]"</span>, <span class="string">""</span>).toString());</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (matcher.group(<span class="number">5</span>) != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="comment">//lijst.add(matcher.group(5));</span></span><br><span class="line">                    collections.get(i+<span class="number">1</span>).add(matcher.group(<span class="number">5</span>));</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                <span class="keyword">if</span> (matcher.group(<span class="number">6</span>) != <span class="keyword">null</span>) &#123;</span><br><span class="line">                    <span class="comment">//lijst.add("null");</span></span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> collections;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="创建Writer类"><a href="#创建Writer类" class="headerlink" title="创建Writer类"></a>创建Writer类</h4><p>Writer类的作用是将输出的数据写入到csv文件中，我们将在此类中创建的两种方法比Parser类简单得多。<br>我们需要再次使用File类，这一次，我们创建一个名为data.csv的文件。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">createFile</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        File myObj = <span class="keyword">new</span> File(<span class="string">"data.csv"</span>);</span><br><span class="line">        <span class="keyword">if</span> (myObj.createNewFile()) &#123;</span><br><span class="line">            System.out.println(<span class="string">"File created: "</span> + myObj.getName());</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">"File already exists."</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        System.out.println(<span class="string">"An error occurred."</span>);</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们再创建一个writeToFile()方法，该方法将所有数据逐行写入CSV文件中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">writeToFile</span><span class="params">(ArrayList&lt;ArrayList&lt;String&gt;&gt; parserOutput)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            FileWriter myWriter = <span class="keyword">new</span> FileWriter(<span class="string">"data.csv"</span>);</span><br><span class="line"></span><br><span class="line">            System.out.println(parserOutput);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; parserOutput.size(); i++)&#123;</span><br><span class="line">                <span class="keyword">if</span>(parserOutput.get(i).isEmpty())&#123;</span><br><span class="line">                    <span class="comment">//nothing</span></span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                   </span><br><span class="line">                    myWriter.append(parserOutput.get(i).get(<span class="number">0</span>) + <span class="string">","</span> + parserOutput.get(i).get(<span class="number">1</span>) + <span class="string">","</span> + parserOutput.get(i).get(<span class="number">2</span>) + <span class="string">"\n"</span>);</span><br><span class="line">                &#125;</span><br><span class="line">                </span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            myWriter.close();</span><br><span class="line"></span><br><span class="line">            System.out.println(<span class="string">"Successfully wrote to the file."</span>);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            System.out.println(<span class="string">"An error occurred."</span>);</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h4 id="整合代码"><a href="#整合代码" class="headerlink" title="整合代码"></a>整合代码</h4><p>为了将所有的代码整合在一起，测试我们的解析器，我们需要：</p>
+<ul>
+<li>创建一个<code>Main.java</code>并添加我们的正则字符串和数据库文件地址</li>
+<li>创建 Writer, Reader, 和 Parser的实例</li>
+<li>创建一个list存储读取数据</li>
+<li>创建一个list存储解析数据</li>
+</ul>
+<p>最后，我们将所有的数据写入到csv文化中。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        String file = <span class="string">"/databases/actorstest.txt"</span>;</span><br><span class="line">        String regex = <span class="string">"([A-Za-z,.'$&amp; ]*)?([\t]*)(.+?)([ ]*)\\(([0-9,?]&#123;4&#125;)(.+?\\n&#123;2&#125;)?"</span>;</span><br><span class="line"></span><br><span class="line">        Reader reader = <span class="keyword">new</span> Reader();</span><br><span class="line">        Parser parser = <span class="keyword">new</span> Parser();</span><br><span class="line">        Writer writer = <span class="keyword">new</span> Writer();</span><br><span class="line">        </span><br><span class="line">        ArrayList&lt;String&gt; lijst = reader.Read(file);</span><br><span class="line">        ArrayList&lt;ArrayList&lt;String&gt;&gt; parsed = parser.ParseActors(lijst, regex);</span><br><span class="line"></span><br><span class="line">     </span><br><span class="line">        writer.createFile();</span><br><span class="line">        writer.writeToFile(parsed);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="运行代码测试解析器"><a href="#运行代码测试解析器" class="headerlink" title="运行代码测试解析器"></a>运行代码测试解析器</h4><p>运行代码之后，会自动创建一个<code>data.csv</code>的文件，如下：</p>
+<iframe src="csvsample.html" allowfullscreen="" frameborder="0" height="2252" width="680" title="data.csv"  scrolling="auto"></iframe>
+
+<p>如你所见，它存储了所有的数据，并按照<code>标题</code>, <code>演员</code>, 和<code>年份</code>分组。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>我们为演员列表创建了一个解析器。如果要解析更多IMDB列表或找到的任何数据库/列表，则可以创建一个新的Parse（）方法。<br>这样的解析器使您可以更好地理解数据的外观。</p>
+
+                
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    
+                    <li class="next">
+                        <a href="/2021/03/31/用JAVA实现一个IMDB数据解析器/csvsample/" data-toggle="tooltip" data-placement="top" title="用JAVA实现一个IMDB数据解析器/csvsample">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Music start-->
+                
+                
+<link rel="stylesheet" href="/css/music-player/fonts/iconfont.css">
+
+
+<link rel="stylesheet" href="/css/music-player/css/reset.css">
+
+
+<link rel="stylesheet" href="/css/music-player/css/player.css">
+
+
+<div class="music-player">
+    <audio class="music-player__audio" ></audio>
+    <div class="music-player__main">
+        <div class="music-player__blur"></div>
+        <div class="music-player__disc">
+            <div class="music-player__image">
+                <img width="100%" src="" alt="">
+            </div>
+            <div class="music-player__pointer"><img width="100%" src="/img/cd_tou.png" alt=""></div>
+        </div>
+        <div class="music-player__controls">
+            <div class="music__info">
+                <h3 class="music__info--title">...</h3>
+                <p class="music__info--singer">...</p>
+            </div>
+            <div class="player-control">
+                <div class="player-control__content">
+                    <div class="player-control__btns">
+                        <div class="player-control__btn player-control__btn--prev"><i class="iconfont icon-prev"></i></div>
+                        <div class="player-control__btn player-control__btn--play"><i class="iconfont icon-play"></i></div>
+                        <div class="player-control__btn player-control__btn--next"><i class="iconfont icon-next"></i></div>
+                        <div class="player-control__btn player-control__btn--mode"><i class="iconfont icon-loop"></i></div>
+                    </div>
+                    <div class="player-control__volume">
+                        <div class="control__volume--icon player-control__btn"><i class="iconfont icon-volume"></i></div>
+                        <div class="control__volume--progress player_progress"></div>
+                    </div>
+                </div>
+                <div class="player-control__content">
+                    <div class="player__song--progress player_progress"></div>
+                    <div class="player__song--timeProgess nowTime">00:00</div>
+                    <div class="player__song--timeProgess totalTime">00:00</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="/js/music-player/utill.js"></script>
+
+
+<script src="/js/music-player/jquery.min.js"></script>
+
+<!-- netease; qqkg -->
+<!--
+<script src="/js/music-player/player.js?library=config.music.library.js"></script>
+-->
+<script src="../../../../js/music-player/player.js?library=netease&music=https://music.163.com/#/song?id=1325896303"></script>
+                
+                <!-- Music end -->
+
+                <!-- Sharing -->
+                
+                <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                <!--  css & js -->
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            
+              <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#数据库文件"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">数据库文件</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#用正则分析数据库文件"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">用正则分析数据库文件</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#创建JAVA项目"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">创建JAVA项目</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#创建Parser类"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">创建Parser类</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#ParseActors-方法"><span class="toc-nav-number">3.1.1.</span> <span class="toc-nav-text">ParseActors 方法</span></a></li><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#创建匹配模式"><span class="toc-nav-number">3.1.2.</span> <span class="toc-nav-text">创建匹配模式</span></a></li><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#组装响应值"><span class="toc-nav-number">3.1.3.</span> <span class="toc-nav-text">组装响应值</span></a></li><li class="toc-nav-item toc-nav-level-5"><a class="toc-nav-link" href="#查找匹配项并填充collections"><span class="toc-nav-number">3.1.4.</span> <span class="toc-nav-text">查找匹配项并填充collections</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#创建Writer类"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">创建Writer类</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#整合代码"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">整合代码</span></a></li><li class="toc-nav-item toc-nav-level-4"><a class="toc-nav-link" href="#运行代码测试解析器"><span class="toc-nav-number">3.4.</span> <span class="toc-nav-text">运行代码测试解析器</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#总结"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">总结</span></a></li></ol>
+            
+          
+          </div>
+        </aside>
+      
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://meandni.com/" target="_blank">Joker&#39;s Blog</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+
+
+<style  type="text/css">
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/liujiang157">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/maybelence">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; maybelence 2021 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/dusign/hexo-theme-snail" target="_blank" rel="noopener">
+                        <i>hexo-theme-snail</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=dusign&repo=hexo-theme-snail&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://maybelence.cn/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+
+        
+            <script type="text/javascript" src="/js/mouse-click.js" content='[&quot;🌱&quot;,&quot;just do it&quot;,&quot;🍀&quot;,&quot;waiting for you&quot;]' color='[&quot;rgb(121,93,179)&quot; ,&quot;rgb(76,180,231)&quot; ,&quot;rgb(184,90,154)&quot;]'></script>
+        
+
+        <!-- background effects end -->
+    
+
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>
