@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="一个用来絮絮叨叨的地方">
+    <meta name="keyword"  content="maybelence, 学习, 生活">
+    <link rel="shortcut icon" href="/img/ironman-draw.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          [译] 快速理解开闭原则 - Maybelence&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://maybelence.cn/2021/04/20/译-快速理解开闭原则/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+        
+<link rel="stylesheet" href="/css/dusign-light.css">
+
+        
+<link rel="stylesheet" href="/css/dusign-common-light.css">
+
+        
+<link rel="stylesheet" href="/css/font-awesome.css">
+
+        
+<link rel="stylesheet" href="/css/toc.css">
+
+        <!-- background effects end -->
+    
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+    <!-- photography -->
+    
+<link rel="stylesheet" href="/css/photography.css">
+
+
+    <!-- ga & ba script hoook -->
+    <script data-ad-client="ca-pub-9951682438363353" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- background effects start -->
+    
+    <!-- background effects end -->
+
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('../../../../img/default.jpg')
+                /*post*/
+            
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/maybelence.png');
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                        </div>
+                        <h1>[译] 快速理解开闭原则</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by maybelence on
+                            2021-04-20
+                        </span>
+
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+    <div class="waveWrapper">
+        <div class="wave wave_before" style="background-image: url('/img/wave-light.png')"></div>
+        <div class="wave wave_after" style="background-image: url('/img/wave-light.png')"></div>
+    </div>
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Maybelence&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">首页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">目录</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/photography/">随手拍</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">分类</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">标签</a>
+                        </li>
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <blockquote>
+<p>原文地址：<a href="https://levelup.gitconnected.com/the-open-closed-principle-made-simple-cc3d0ed70553" target="_blank" rel="noopener">The Open-Closed principle made simple</a><br>原文作者：<a href="https://mihai-sandu.medium.com/" target="_blank" rel="noopener">Mihai Sandu</a><br>译者：<a href="https://maybelence.cn/">maybelence</a></p>
+</blockquote>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e3157c27450b41d98d39467fcb8c42ed~tplv-k3u1fbpfcp-watermark.image" alt=""></p>
+<p>原文的示例代码都是采用的 <code>Scala</code> 语言，其实 <code>Scala</code> 本身和 <code>java</code> 的语法非常像，考虑到目前更多的开发者都是 java ，因此我把原文的代码都转成了 java 。一些和 java 语法有冲突的地方也都做了中文注释。</p>
+<hr>
+<p>卡车是一种多功能的设备。他们可以根据车厢挂载的零件类型来执行不同的任务，如果载重允许的话，甚至可以<br>装载多个车厢。</p>
+<p>简而言之，卡车可以通过不同的零件以进行扩展，但不能改装每个零件的内部单元（例如发动机或机舱）。可拓展的代码也应该像卡车挂载零件一样得心应手。</p>
+<h2 id="制冰机问题"><a href="#制冰机问题" class="headerlink" title="制冰机问题"></a>制冰机问题</h2><p>假设我们必须要编写一个程序来为 <em>Ted&amp;Kelly</em> 公司制作可可冰激凌。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IceCreamMachine</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">MakeIceCream</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"Cacao ice-cream"</span>); <span class="comment">//logic to create cacao ice cream</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们将程序交付给客户，虽然这段代码很简单，但是看上去没有什么问题，而且没有违反任何原则。客户目前是非常满意的。</p>
+<p>但是事情并不是到这里就结束了，客户总是会有一些新的需求。这就意味着我们需要不断调整我们的代码。</p>
+<h3 id="添加新的口味"><a href="#添加新的口味" class="headerlink" title="添加新的口味"></a>添加新的口味</h3><p>没想到程序刚上线就如此火爆，于是 <em>Ted＆Kelly</em> 希望扩大规模。他们要求我们还要能够生产香草味的冰激凌。</p>
+<p>短暂思考之后，我们给出了以下解决方案：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IceCreamMachine</span> </span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">MakeIceCream</span><span class="params">(String flavor)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="string">"cacao"</span>.equals(flavor))</span><br><span class="line">        &#123;</span><br><span class="line">            System.out.println(<span class="string">"Cacao ice-cream"</span>); <span class="comment">//logic to create cacao ice-cream</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (<span class="string">"vanilla"</span>.equals(flavor))</span><br><span class="line">        &#123;</span><br><span class="line">            System.out.println(<span class="string">"Vanilla ice-cream"</span>); <span class="comment">//logic to create vanilla ice-cream</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> Exception(<span class="string">"Flavor not supported"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们修改了最初的代码，添加了一个参数以指定所需的口味，并添加了 <code>if</code> 语句以在逻辑之间切换。由于我们已经改变了最初的函数签名，因此调用我们代码的方法将被破坏，但是至少从现在开始，我们应该在不破坏更改的情况下支持其他口味的生产。</p>
+<h3 id="创建可可和香草组合"><a href="#创建可可和香草组合" class="headerlink" title="创建可可和香草组合"></a>创建可可和香草组合</h3><p>业务进展顺利，但是很快客户就提出了第二个需求，希望我们能够生产由可可和香草制成的冰淇淋。事情开始变得有点复杂，但是我们仍然能够处理。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IceCreamMachine</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">MakeIceCream</span><span class="params">(String flavor)</span> <span class="keyword">throws</span> Exception </span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="string">"cacao"</span>.equals(flavor))</span><br><span class="line">        &#123;</span><br><span class="line">            System.out.println(<span class="string">"Cacao ice-cream"</span>); <span class="comment">//logic to create cacao ice-cream</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (<span class="string">"vanilla"</span>.equals(flavor))</span><br><span class="line">        &#123;</span><br><span class="line">            System.out.println(<span class="string">"Vanilla ice-cream"</span>); <span class="comment">//logic to create vanilla ice-cream</span></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">if</span> (<span class="string">"cacao-vanilla"</span>.equals(flavor))</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//copy &amp; paste the cacao ice-cream logic</span></span><br><span class="line">            System.out.println(<span class="string">"Cacao ice-cream"</span>);</span><br><span class="line"></span><br><span class="line">            <span class="comment">//copy &amp; paste the vanilla ice-cream logic</span></span><br><span class="line">            System.out.println(<span class="string">"Vanilla ice-cream"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> Exception(<span class="string">"Flavor not supported"</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们又添加了一个 <code>if</code> 语句，在这种情况下，生产冰淇淋的逻辑被复制到每个 <code>if</code> 内部。在实际的应用程序中，我可能会在单独的服务中提取生产的逻辑。但是，正如我们将看到的那样，提取服务并不总是最好的方案。</p>
+<p>当 <em>Ted＆Kelly</em> 要求支持生产更多口味时，会发生什么。如果他想进一步将它们结合起来怎么办？仅添加 <code>if</code> 子句并不是理想的解决方案。</p>
+<h3 id="这种解决方案产生的问题"><a href="#这种解决方案产生的问题" class="headerlink" title="这种解决方案产生的问题"></a>这种解决方案产生的问题</h3><p>每次我们添加新的口味或组合时，我们都必须更新 <code>IceCreamMachine</code> 类，这就意味着：</p>
+<ul>
+<li>我们更新已经部署的代码</li>
+<li>这个类变得越来越复杂，易读性变得越来越差。假设我们有 100 种口味，这个类很容易膨胀到 5000+ 行代码</li>
+<li>我们可能会破坏现有的单元测试</li>
+</ul>
+<p>现在回想一下开头卡车的类比，当你每次更换车厢挂载的零件时，你会每次都更换引擎吗？显然不会，看我们如何解决这个问题。</p>
+<h2 id="传统的可拓展性方法"><a href="#传统的可拓展性方法" class="headerlink" title="传统的可拓展性方法"></a>传统的可拓展性方法</h2><p><em>Bertrand Meyer</em> 是最早提出开闭原则这一术语的人，他定义 “软件实体（类，模块，函数，等） 应当对扩展开放，对修改关闭。”</p>
+<p>换句话说，每当我们需要向旧对象添加新行为时，都可以根据需要继承和更新它们。开闭原则是那些易于理解却难以应用的原则之一。</p>
+<p>让我们遵循这种方法重写刚刚的代码：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">BaseIceCream</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">MakeIceCream</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CacaoIceCream</span> <span class="keyword">extends</span> <span class="title">BaseIceCream</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">MakeIceCream</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"Cacao ice-cream"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">VanillaIceCream</span> <span class="keyword">extends</span> <span class="title">BaseIceCream</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">MakeIceCream</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"Vanilla ice-cream"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CacaoAndVanilla</span> <span class="keyword">extends</span> <span class="title">CacaoIceCream</span> </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">MakeIceCream</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.MakeIceCream();</span><br><span class="line">        System.out.println(<span class="string">"Vanilla ice-cream"</span>); <span class="comment">//duplicate vanilla logic because we can't iherit both cacao and vanilla</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>原始类分为了四个类，每个类代表一种生产口味。通过此解决方案，我们解决了所有最初的问题：</p>
+<ul>
+<li>每个类都短小精悍，可维护性和易读性都很高</li>
+<li>当需要添加新口味时，我们只需要添加一个新的类</li>
+<li>不会影响现有的单元测试</li>
+</ul>
+<p>代码看起来已经没有任何问题了，我们完全可以到这里就停止思考，但是其实这种解决方案还是存在一些<strong>问题</strong>的：</p>
+<ul>
+<li>不能继承多个类，因此对于两种口味的结合，我们必须复制一些代码或将逻辑提取到服务中</li>
+<li>如果基类中的代码被更新，所有子类都会受到影响。假设基类通过构造函数注入了一些依赖关系，每当我们添加新的依赖关系时，所有子代都必须将该参数解析为基本构造函数</li>
+</ul>
+<h2 id="现在可拓展性的方法"><a href="#现在可拓展性的方法" class="headerlink" title="现在可拓展性的方法"></a>现在可拓展性的方法</h2><p>当 <em>Robert C. Martin</em> 重申 <em>Meyer</em> 的开闭原则时，他做了一些更新。<strong>偏爱继承而不是继承</strong>。</p>
+<p>组合对象时，我们可以自由地随意组合任意数量和所需的组合。而且，如果我们针对抽象类（接口）进行编程，则可以修改已有代码的行为而无需进行修改代码。让我们看看最终的解决方案：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">public interface <span class="type">IMakeIceCream</span> &#123;</span><br><span class="line">    void <span class="type">Make</span>();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CacaoIceCream</span> <span class="title">implements</span> <span class="title">IMakeIceCream</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">IMakeIceCream</span> iceCreamMaker;</span><br><span class="line"></span><br><span class="line">    public <span class="type">CacaoIceCream</span>(<span class="type">IMakeIceCream</span> iceCreamMaker)  <span class="comment">//可选参数，如果不需要另一个口味传null</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">this</span>.iceCreamMaker = iceCreamMaker;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void <span class="type">Make</span>() &#123;</span><br><span class="line">        <span class="keyword">if</span> (iceCreamMaker != <span class="literal">null</span>) <span class="comment">//if flavor passed in, make that first</span></span><br><span class="line">        &#123;</span><br><span class="line">            iceCreamMaker.<span class="type">Make</span>();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">System</span>.out.println(<span class="string">"Cacao ice-cream"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">VanillaIceCream</span> <span class="title">implements</span> <span class="title">IMakeIceCream</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="type">IMakeIceCream</span> iceCreamMaker;</span><br><span class="line"></span><br><span class="line">    public <span class="type">VanillaIceCream</span>(<span class="type">IMakeIceCream</span> iceCreamMaker)  <span class="comment">//可选参数，如果不需要另一个口味传null</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">this</span>.iceCreamMaker = iceCreamMaker;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    public void <span class="type">Make</span>() &#123;</span><br><span class="line">        <span class="keyword">if</span> (iceCreamMaker != <span class="literal">null</span>) <span class="comment">//if flavor passed in, make that first</span></span><br><span class="line">        &#123;</span><br><span class="line">            iceCreamMaker.<span class="type">Make</span>();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="type">System</span>.out.println(<span class="string">"Vanilla ice-cream"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>现在将原始的类分成了三个对象：</p>
+<ul>
+<li><code>IMakeIceCream</code> 接口定义了制作冰淇淋的通用抽象</li>
+<li><code>CacaoIceCream</code> 实现了 <code>IMakeIceCream</code> </li>
+<li><code>VanillaIceCream</code> 实现了 <code>IMakeIceCream</code> </li>
+</ul>
+<p>通过使用接口，我们将类和实现解耦。接口是封闭不可修改的，因此一旦我们定义了对象，就无法更改。但是我们可以为新的功能定义新接口并继承它们。这使得代码可扩展。</p>
+<p>为什么要向每个构造函数添加 <code>IMakeIceCream</code> 参数？新代码是否具有旧方法或旧方法的所有功能？</p>
+<hr>
+<p>答案是肯定的。可可香草组合仍在这里，但我们不需要 if 子句或专门针对它的类。我们可以利用构造函数参数。类似这样：</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> cacaoVanillaIceCream = <span class="keyword">new</span> <span class="type">CacaoIceCream</span>(<span class="keyword">new</span> <span class="type">VanillaIceCream</span>());</span><br><span class="line">cacaoVanillaIceCream.<span class="type">Make</span>();</span><br></pre></td></tr></table></figure>
+<p>组合的好处在于，我们可以根据需要合成任意数量的对象。需要 4 种口味？只需编写一个构造函数链即可。这称为装饰器模式。你可以在 <a href="https://refactoring.guru/design-patterns/decorator/csharp/example" target="_blank" rel="noopener">这里</a> 读更多关于它的内容。</p>
+<p>请注意， <code>IMakeIceCream</code> 参数是可选的。这使我可以组合使用或单独使用该类。</p>
+<p>像这样编写代码会实现一个可拔插式的体系结构。这是非常 nice 的，因为我们可以通过编写代码来添加新功能，而不更改现有功能。任务完成。</p>
+
+                
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    
+                    <li class="next">
+                        <a href="/2021/04/19/拥抱Restful-Jersey框架/" data-toggle="tooltip" data-placement="top" title="拥抱Restful--Jersey框架">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Music start-->
+                
+                
+<link rel="stylesheet" href="/css/music-player/fonts/iconfont.css">
+
+
+<link rel="stylesheet" href="/css/music-player/css/reset.css">
+
+
+<link rel="stylesheet" href="/css/music-player/css/player.css">
+
+
+<div class="music-player">
+    <audio class="music-player__audio" ></audio>
+    <div class="music-player__main">
+        <div class="music-player__blur"></div>
+        <div class="music-player__disc">
+            <div class="music-player__image">
+                <img width="100%" src="" alt="">
+            </div>
+            <div class="music-player__pointer"><img width="100%" src="/img/cd_tou.png" alt=""></div>
+        </div>
+        <div class="music-player__controls">
+            <div class="music__info">
+                <h3 class="music__info--title">...</h3>
+                <p class="music__info--singer">...</p>
+            </div>
+            <div class="player-control">
+                <div class="player-control__content">
+                    <div class="player-control__btns">
+                        <div class="player-control__btn player-control__btn--prev"><i class="iconfont icon-prev"></i></div>
+                        <div class="player-control__btn player-control__btn--play"><i class="iconfont icon-play"></i></div>
+                        <div class="player-control__btn player-control__btn--next"><i class="iconfont icon-next"></i></div>
+                        <div class="player-control__btn player-control__btn--mode"><i class="iconfont icon-loop"></i></div>
+                    </div>
+                    <div class="player-control__volume">
+                        <div class="control__volume--icon player-control__btn"><i class="iconfont icon-volume"></i></div>
+                        <div class="control__volume--progress player_progress"></div>
+                    </div>
+                </div>
+                <div class="player-control__content">
+                    <div class="player__song--progress player_progress"></div>
+                    <div class="player__song--timeProgess nowTime">00:00</div>
+                    <div class="player__song--timeProgess totalTime">00:00</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="/js/music-player/utill.js"></script>
+
+
+<script src="/js/music-player/jquery.min.js"></script>
+
+<!-- netease; qqkg -->
+<!--
+<script src="/js/music-player/player.js?library=config.music.library.js"></script>
+-->
+<script src="../../../../js/music-player/player.js?library=netease&music=https://music.163.com/#/song?id=1325896303"></script>
+                
+                <!-- Music end -->
+
+                <!-- Sharing -->
+                
+                <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                <!--  css & js -->
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            
+              <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#制冰机问题"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">制冰机问题</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#添加新的口味"><span class="toc-nav-number">1.1.</span> <span class="toc-nav-text">添加新的口味</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#创建可可和香草组合"><span class="toc-nav-number">1.2.</span> <span class="toc-nav-text">创建可可和香草组合</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#这种解决方案产生的问题"><span class="toc-nav-number">1.3.</span> <span class="toc-nav-text">这种解决方案产生的问题</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#传统的可拓展性方法"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">传统的可拓展性方法</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#现在可拓展性的方法"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">现在可拓展性的方法</span></a></li></ol>
+            
+          
+          </div>
+        </aside>
+      
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://meandni.com/" target="_blank">Joker&#39;s Blog</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+
+
+<style  type="text/css">
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/liujiang157">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/maybelence">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; maybelence 2021 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/dusign/hexo-theme-snail" target="_blank" rel="noopener">
+                        <i>hexo-theme-snail</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=dusign&repo=hexo-theme-snail&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://maybelence.cn/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+
+        
+            <script type="text/javascript" src="/js/mouse-click.js" content='[&quot;🌱&quot;,&quot;just do it&quot;,&quot;🍀&quot;,&quot;waiting for you&quot;]' color='[&quot;rgb(121,93,179)&quot; ,&quot;rgb(76,180,231)&quot; ,&quot;rgb(184,90,154)&quot;]'></script>
+        
+
+        <!-- background effects end -->
+    
+
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>
