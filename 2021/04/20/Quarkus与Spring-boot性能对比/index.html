@@ -115,7 +115,7 @@
                             
                         </div>
                         <h1>Quarkus与Spring boot性能对比</h1>
-                        <h2 class="subheading"></h2>
+                        <h2 class="subheading">spring,Quarkus</h2>
                         <span class="meta">
                             Posted by maybelence on
                             2021-04-20
@@ -267,7 +267,10 @@
 <h2 id="什么是-Quarkus-？"><a href="#什么是-Quarkus-？" class="headerlink" title="什么是 Quarkus ？"></a>什么是 Quarkus ？</h2><p>官网是这样定义的，<code>Quarkus</code> 是针对 Java 虚拟机 (JVM) 和本机编译的全栈 <code>Kubernetes</code> 本地 Java 框架，专门针对容器优化 Java ，使其成为无服务器，云和 Kubernetes 环境的有效平台。</p>
 <h2 id="构建程序"><a href="#构建程序" class="headerlink" title="构建程序"></a>构建程序</h2><p>为了直观的比较两个框架的区别，这两个程序都将只引入  Spring Web 依赖。</p>
 <h3 id="构建-Quarkus-应用"><a href="#构建-Quarkus-应用" class="headerlink" title="构建 Quarkus 应用"></a>构建 Quarkus 应用</h3><p>我们可以在 <a href="https://code.quarkus.io/" target="_blank" rel="noopener">Quarkus 官网</a>构建我们的 Quarkus 应用，注意我们只选择了 <code>Spring Web API</code> 依赖。</p>
-<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8727572903114c7fa2ca312e4a6270f9~tplv-k3u1fbpfcp-watermark.image" alt="506(1).jpg"></p>
+<pre><code>var askSky = () =&gt; {
+    return 🌕.exists() ? new 🍺 : null;
+}
+</code></pre><p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/8727572903114c7fa2ca312e4a6270f9~tplv-k3u1fbpfcp-watermark.image" alt="506(1).jpg"></p>
 <p>下载代码用 IDE 打开之后,我们会发现有一个默认的 <code>SpringGreetingController</code> 类:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@RestController</span></span><br><span class="line"><span class="meta">@RequestMapping</span>(<span class="string">"/hello-spring"</span>)</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SpringGreetingController</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@GetMapping</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">hello</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">"Hello Spring"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <h3 id="构建-Spring-Boot-程序"><a href="#构建-Spring-Boot-程序" class="headerlink" title="构建 Spring Boot 程序"></a>构建 Spring Boot 程序</h3><p>Spring Boot 的构建方法就不用多说了，我们也只选了 <code>Spring Web</code> 依赖。</p>
 <p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a6c87f646d86469f90953f4613f4dec5~tplv-k3u1fbpfcp-watermark.image" alt="92445.jpg"></p>
@@ -289,6 +292,10 @@
                 <hr>
                 <!-- Pager -->
                 <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2021/09/23/动手实现一个迷宫机器人/" data-toggle="tooltip" data-placement="top" title="动手实现一个迷宫机器人">&larr; Previous Post</a>
+                    </li>
                     
                     
                     <li class="next">

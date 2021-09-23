@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="一个用来絮絮叨叨的地方">
+    <meta name="keyword"  content="maybelence, 学习, 生活">
+    <link rel="shortcut icon" href="/img/ironman-draw.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          动手实现一个迷宫机器人 - Maybelence&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://maybelence.cn/2021/09/23/动手实现一个迷宫机器人/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+        
+<link rel="stylesheet" href="/css/dusign-light.css">
+
+        
+<link rel="stylesheet" href="/css/dusign-common-light.css">
+
+        
+<link rel="stylesheet" href="/css/font-awesome.css">
+
+        
+<link rel="stylesheet" href="/css/toc.css">
+
+        <!-- background effects end -->
+    
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+    <!-- photography -->
+    
+<link rel="stylesheet" href="/css/photography.css">
+
+
+    <!-- ga & ba script hoook -->
+    <script data-ad-client="ca-pub-9951682438363353" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- background effects start -->
+    
+    <!-- background effects end -->
+
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('../../../../img/default.jpg')
+                /*post*/
+            
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/maybelence.png');
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#Java" title="Java">Java</a>
+                            
+                        </div>
+                        <h1>动手实现一个迷宫机器人</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by maybelence on
+                            2021-09-23
+                        </span>
+
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+    <div class="waveWrapper">
+        <div class="wave wave_before" style="background-image: url('/img/wave-light.png')"></div>
+        <div class="wave wave_after" style="background-image: url('/img/wave-light.png')"></div>
+    </div>
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Maybelence&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">首页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">目录</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/photography/">随手拍</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">分类</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">标签</a>
+                        </li>
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p>很久没有产出，回过头来看看这些日子，好像又没有什么有趣的技术积累。突然想起来之前帮朋友做了个小作业做的一个迷宫机器人。虽然不高级但是还是挺好玩的。下面就给大家分享一下过程。</p>
+<h3 id="地图绘制"><a href="#地图绘制" class="headerlink" title="地图绘制"></a>地图绘制</h3><p>首先定义出地图的宽和高，利用一个二维数组来保存地图的地形。 spawnMarker 用于存储机器人出生点位置。 robots 用于存放迷宫中机器人的当前状态。 controller 用于接收键盘/鼠标事件并传给 World。 Renderer 用于将 2D 字符地图渲染成图形。 </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">World</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> width, height;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">char</span>[][] terrain;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">char</span> FIRST_TERRAIN = <span class="string">' '</span>, LAST_TERRAIN = <span class="string">'~'</span>; <span class="comment">//地图上能展示的ASCII 方便用于机器人说话</span></span><br><span class="line">    <span class="keyword">private</span> Position[] spawnMarker = <span class="keyword">new</span> Position[<span class="number">10</span>]; <span class="comment">//from digits 0 to 9</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> List&lt;Robot&gt; robots = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="keyword">private</span> Controller controller = <span class="keyword">new</span> Controller(<span class="keyword">this</span>);</span><br><span class="line">    <span class="keyword">private</span> Renderer renderer;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> targetFrametime = <span class="number">16</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> pause = <span class="keyword">true</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> currentFrame = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> pauseAtFrame = -<span class="number">1</span>; <span class="comment">//will pause if current frame equals this, set to &lt;0 to not use</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Method work, memoryToString;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上述工作做完之后，我们就来看一下如何将下面的 2D 字符渲染成图案。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">String mazeMap =</span><br><span class="line"></span><br><span class="line">        <span class="string">"###################\n"</span> +</span><br><span class="line">        <span class="string">"#  0H  #   ##    #  $\n"</span> +</span><br><span class="line">        <span class="string">"#  #a ##   ## ## #  #\n"</span> +</span><br><span class="line">        <span class="string">"####p  # #     #   ##\n"</span> +</span><br><span class="line">        <span class="string">"#  yp  #    ## ##   #\n"</span> +</span><br><span class="line">        <span class="string">"#  #  Mid # ##Automn#\n"</span> +</span><br><span class="line">        <span class="string">"#####################"</span>;</span><br><span class="line"></span><br><span class="line">World world = <span class="keyword">new</span> World(mazeMap);</span><br><span class="line">Robot robot = makeMazeRunner();</span><br><span class="line">robot.spawnInWorld(world, <span class="string">'0'</span>);</span><br><span class="line">world.run();</span><br></pre></td></tr></table></figure><br>首先通过 World 的构造函数将地图数据构建出来，并放置机器人出生点，并默认渲染地图数据。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//constructs the world from the "2D" String</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">World</span><span class="params">(String mapData)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>(mapData, <span class="keyword">true</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//you should probably leave shouldRender to true, otherwise you will not see anything</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">World</span><span class="params">(String mapData, <span class="keyword">boolean</span> shouldRender)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (shouldRender)</span><br><span class="line">        renderer = <span class="keyword">new</span> Renderer();</span><br><span class="line"></span><br><span class="line">    width = mapData.lines().mapToInt(String::length).max().orElseThrow();</span><br><span class="line">    height = (<span class="keyword">int</span>) mapData.lines().count();</span><br><span class="line"></span><br><span class="line">    terrain = <span class="keyword">new</span> <span class="keyword">char</span>[width][height];</span><br><span class="line">    String[] rows = mapData.lines().map(s -&gt; s + <span class="string">" "</span>.repeat(width - s.length())).toArray(String[]::<span class="keyword">new</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> y = <span class="number">0</span>; y &lt; height; y++) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> x = <span class="number">0</span>; x &lt; width; x++) &#123;</span><br><span class="line">            <span class="keyword">char</span> c = rows[y].charAt(x);</span><br><span class="line">            <span class="keyword">if</span> (<span class="string">'0'</span> &lt;= c &amp;&amp; c &lt;= <span class="string">'9'</span>)</span><br><span class="line">                spawnMarker[c - <span class="string">'0'</span>] = <span class="keyword">new</span> Position(x + <span class="number">0.5</span>, y + <span class="number">0.5</span>);</span><br><span class="line">            terrain[x][y] = c;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        work = Robot.class.getMethod("work");</span><br><span class="line">        memoryToString = Robot.class.getMethod("memoryToString");</span><br><span class="line">    &#125; <span class="keyword">catch</span> (NoSuchMethodException e) &#123;</span><br><span class="line">        <span class="comment">/* student has not implemented these methods yet */</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着通过 World 的 run() 方法来渲染地图数据。具体的 Renderer 类细节就不描述了，整体的源码链接我会贴在文章结尾。渲染后地图大致是这个样子：</p>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4d196e480f3045208ff894b83f3dcf28~tplv-k3u1fbpfcp-watermark.image?" alt="image.png"></p>
+<p>俯视图是这样的：</p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d43f5c330f64457c82fe979e0cb5036a~tplv-k3u1fbpfcp-watermark.image?" alt="image.png"><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">public void run() &#123;</span><br><span class="line">    if(renderer !&#x3D; null)</span><br><span class="line">        renderer.setup();</span><br><span class="line"></span><br><span class="line">    try &#123;</span><br><span class="line">        while (true) &#123;</span><br><span class="line">            if(renderer !&#x3D; null) &#123;</span><br><span class="line">                &#x2F;&#x2F; wait until unpaused</span><br><span class="line">                while (pause || currentFrame &#x3D;&#x3D; pauseAtFrame)</span><br><span class="line">                    Thread.sleep(50);</span><br><span class="line"></span><br><span class="line">                long before &#x3D; System.currentTimeMillis();</span><br><span class="line"></span><br><span class="line">                simulateFrame();</span><br><span class="line">                renderer.render();</span><br><span class="line"></span><br><span class="line">                long frametime &#x3D; System.currentTimeMillis() - before;</span><br><span class="line">                long sleepTime &#x3D; targetFrametime - frametime;</span><br><span class="line">                if (sleepTime &gt; 0)</span><br><span class="line">                    Thread.sleep(sleepTime);</span><br><span class="line">            &#125; else</span><br><span class="line">                simulateFrame();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; catch (InterruptedException e) &#123;</span><br><span class="line">        &#x2F;* Intentionally left blank *&#x2F;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="迷宫机器人"><a href="#迷宫机器人" class="headerlink" title="迷宫机器人"></a>迷宫机器人</h3><p>接着我们来看 Robot 类。机器人的变量相对而言就变得比较简单，name 和 size 用于描述机器人的姓名大小。 position ，direction ，world 描述机器人当前状态。memory 和 sensors 用于存储机器人的记忆和感知。 todo 和 program 用于存储机器人要做的一系列指令。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Robot</span> </span>&#123;</span><br><span class="line"> </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> String name;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">double</span> size;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Position position = <span class="keyword">new</span> Position();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">double</span> direction;</span><br><span class="line">    <span class="keyword">private</span> World world;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// memory expand</span></span><br><span class="line">    <span class="keyword">private</span> List&lt;Memory&lt;?&gt;&gt; memory = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// sensor expand</span></span><br><span class="line">    <span class="keyword">private</span> List&lt;Sensor&lt;?&gt;&gt; sensors = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> Queue&lt;Command&gt; todo = <span class="keyword">new</span> ArrayDeque&lt;&gt;();</span><br><span class="line">    <span class="keyword">private</span> Function&lt;Robot, List&lt;Command&gt;&gt; program = <span class="keyword">new</span> Function&lt;Robot, List&lt;Command&gt;&gt;() &#123;</span><br><span class="line">        <span class="meta">@Override</span></span><br><span class="line">        <span class="function"><span class="keyword">public</span> List&lt;Command&gt; <span class="title">apply</span><span class="params">(Robot robot)</span> </span>&#123;</span><br><span class="line">            List&lt;Command&gt; commands = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">            commands.addAll(todo);</span><br><span class="line">            <span class="keyword">return</span> commands;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>既然机器人要走迷宫，那走和调整方向的方法肯定是必不可少的。这里 turnBy 表示在当前方向上面顺延多少角度，turnTo 表示直接转向新的方向。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// Pre-programmed Commands</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">go</span><span class="params">(<span class="keyword">double</span> distance)</span> </span>&#123;</span><br><span class="line">    <span class="comment">//step can be negative if the penguin walks backwards</span></span><br><span class="line">    <span class="keyword">double</span> sign = Math.signum(distance);</span><br><span class="line">    distance = Math.abs(distance);</span><br><span class="line">    <span class="comment">//penguin walks, each step being 0.2m</span></span><br><span class="line">    <span class="keyword">while</span> (distance &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        position.moveBy(sign * Math.min(distance, <span class="number">0.2</span>), direction);</span><br><span class="line">        world.resolveCollision(<span class="keyword">this</span>, position);</span><br><span class="line">        distance -= <span class="number">0.2</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">turnBy</span><span class="params">(<span class="keyword">double</span> deltaDirection)</span> </span>&#123;</span><br><span class="line">    direction += deltaDirection;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">turnTo</span><span class="params">(<span class="keyword">double</span> newDirection)</span> </span>&#123;</span><br><span class="line">    direction = newDirection;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>这里还给机器人加了一个 say 的方法，因为之前 World 中定义了有一些字符在地图中是可以直接打印并且不被渲染的。当机器人走到这个字符上，我希望能够让机器人说出这个字符。因为最后是一个 gui 的打印所以还是调用了 World 中的 say方法来渲染这个字符。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">say</span><span class="params">(String text)</span> </span>&#123;</span><br><span class="line">    world.say(<span class="keyword">this</span>, text);</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我调整了一下 ASCII 的打印范围，让地图能够顺利渲染出中秋快乐的文字，让我们来看一下这个机器人是如何说出中秋快乐的吧：</p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5e73745b4c414870be7fdbf964704950~tplv-k3u1fbpfcp-watermark.image?" alt="中秋2.gif"></p>
+<p>接下来就开始我们最重要的走迷宫环节啦。在不知道迷宫复杂度的情况，又不能人为预设路线。所以需要我们对于未知路线，如何让机器人做出正确指令有一些思考。</p>
+<p>我当时应该是参考了这个图片，但是具体的算法应该还是与这个有些出入的。奈何自己没有做注释，现在都看不懂当时是怎么想的了。所以作为一名 coder，注释真的很重要！<br><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/a470f6c1fe59404e9c180853594060a8~tplv-k3u1fbpfcp-watermark.image?" alt="image.png"></p>
+<p>这是我当时的代码，比较好玩的是，只要地图是可以通向终点的，哪怕地图内部不通，但是多一个口从外部也能连接终点。机器人也是可以找到终点的。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Robot <span class="title">makeMazeRunner</span><span class="params">()</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    Robot panicPenguin = <span class="keyword">new</span> Robot(<span class="string">"Maze!"</span>, <span class="number">0</span>, <span class="number">0.5</span>);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// create memory</span></span><br><span class="line">    Memory&lt;Character&gt; terrain = panicPenguin.createMemory(<span class="keyword">new</span> Memory&lt;&gt;(<span class="string">"terrain"</span>, <span class="string">'0'</span>));</span><br><span class="line">    Memory&lt;Character&gt; end = panicPenguin.createMemory(<span class="keyword">new</span> Memory&lt;&gt;(<span class="string">"end"</span>, <span class="string">'$'</span>));</span><br><span class="line">    <span class="comment">// create and attach sensors</span></span><br><span class="line">    panicPenguin.attachSensor(<span class="keyword">new</span> TerrainSensor().setProcessor(terrain::setData));</span><br><span class="line">    panicPenguin.attachSensor(<span class="keyword">new</span> TerrainSensor().setProcessor(end::setData));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// program the robot</span></span><br><span class="line">    panicPenguin.setProgram(robot -&gt; &#123;</span><br><span class="line">        Position position = robot.getPosition();</span><br><span class="line">        List&lt;Command&gt; commands = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (Objects.equals(end.getData().toString(), <span class="string">"$"</span>)) &#123;</span><br><span class="line">            <span class="keyword">return</span> commands;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">switch</span> (dir) &#123;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">0</span>:</span><br><span class="line">                <span class="keyword">if</span> (<span class="string">'#'</span> != robot.getWorld().getTerrain(position.x + <span class="number">1</span>, position.y)) &#123;</span><br><span class="line">                    commands.add(r -&gt; r.turnTo(<span class="number">0</span>));</span><br><span class="line">                    commands.add(r -&gt; r.say(terrain.getData().toString()));</span><br><span class="line">                    commands.add(r -&gt; r.go(<span class="number">1</span>));</span><br><span class="line">                    dir = <span class="number">1</span>;</span><br><span class="line">                    <span class="keyword">return</span> commands;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">if</span> (<span class="string">'#'</span> != robot.getWorld().getTerrain(position.x, position.y - <span class="number">1</span>)) &#123;</span><br><span class="line">                        commands.add(r -&gt; r.turnTo(<span class="number">1.5</span> * Math.PI));</span><br><span class="line">                        commands.add(r -&gt; r.say(terrain.getData().toString()));</span><br><span class="line">                        commands.add(r -&gt; r.go(<span class="number">1</span>));</span><br><span class="line">                        <span class="keyword">return</span> commands;</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        commands.add(r -&gt; r.turnTo(Math.PI));</span><br><span class="line">                        commands.add(r -&gt; r.say(terrain.getData().toString()));</span><br><span class="line">                        commands.add(r -&gt; r.go(<span class="number">1</span>));</span><br><span class="line">                        dir = <span class="number">3</span>;</span><br><span class="line">                        <span class="keyword">return</span> commands;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">1</span>:</span><br><span class="line">                <span class="keyword">if</span> (<span class="string">'#'</span> != robot.getWorld().getTerrain(position.x, position.y + <span class="number">1</span>)) &#123;</span><br><span class="line">                    commands.add(r -&gt; r.turnTo(Math.PI * <span class="number">0.5</span>));</span><br><span class="line">                    commands.add(r -&gt; r.say(terrain.getData().toString()));</span><br><span class="line">                    commands.add(r -&gt; r.go(<span class="number">1</span>));</span><br><span class="line">                    dir = <span class="number">2</span>;</span><br><span class="line">                    <span class="keyword">return</span> commands;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">if</span> (<span class="string">'#'</span> != robot.getWorld().getTerrain(position.x + <span class="number">1</span>, position.y)) &#123;</span><br><span class="line">                        commands.add(r -&gt; r.turnTo(<span class="number">0</span>));</span><br><span class="line">                        commands.add(r -&gt; r.say(terrain.getData().toString()));</span><br><span class="line">                        commands.add(r -&gt; r.go(<span class="number">1</span>));</span><br><span class="line">                        <span class="keyword">return</span> commands;</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        commands.add(r -&gt; r.turnTo(<span class="number">1.5</span> * Math.PI));</span><br><span class="line">                        commands.add(r -&gt; r.say(terrain.getData().toString()));</span><br><span class="line">                        commands.add(r -&gt; r.go(<span class="number">1</span>));</span><br><span class="line">                        dir = <span class="number">0</span>;</span><br><span class="line">                        <span class="keyword">return</span> commands;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">2</span>:</span><br><span class="line">                <span class="keyword">if</span> (<span class="string">'#'</span> != robot.getWorld().getTerrain(position.x - <span class="number">1</span>, position.y)) &#123;</span><br><span class="line">                    commands.add(r -&gt; r.turnTo(Math.PI));</span><br><span class="line">                    commands.add(r -&gt; r.say(terrain.getData().toString()));</span><br><span class="line">                    commands.add(r -&gt; r.go(<span class="number">1</span>));</span><br><span class="line">                    dir = <span class="number">3</span>;</span><br><span class="line">                    <span class="keyword">return</span> commands;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">if</span> (<span class="string">'#'</span> != robot.getWorld().getTerrain(position.x, position.y + <span class="number">1</span>)) &#123;</span><br><span class="line">                        commands.add(r -&gt; r.turnTo(Math.PI * <span class="number">0.5</span>));</span><br><span class="line">                        commands.add(r -&gt; r.say(terrain.getData().toString()));</span><br><span class="line">                        commands.add(r -&gt; r.go(<span class="number">1</span>));</span><br><span class="line">                        <span class="keyword">return</span> commands;</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        commands.add(r -&gt; r.turnTo(<span class="number">0</span>));</span><br><span class="line">                        commands.add(r -&gt; r.say(terrain.getData().toString()));</span><br><span class="line">                        commands.add(r -&gt; r.go(<span class="number">1</span>));</span><br><span class="line">                        dir = <span class="number">1</span>;</span><br><span class="line">                        <span class="keyword">return</span> commands;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">3</span>:</span><br><span class="line">                <span class="keyword">if</span> (<span class="string">'#'</span> != robot.getWorld().getTerrain(position.x, position.y - <span class="number">1</span>)) &#123;</span><br><span class="line">                    commands.add(r -&gt; r.turnTo(<span class="number">1.5</span> * Math.PI));</span><br><span class="line">                    commands.add(r -&gt; r.say(terrain.getData().toString()));</span><br><span class="line">                    commands.add(r -&gt; r.go(<span class="number">1</span>));</span><br><span class="line">                    dir = <span class="number">0</span>;</span><br><span class="line">                    <span class="keyword">return</span> commands;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">if</span> (<span class="string">'#'</span> != robot.getWorld().getTerrain(position.x - <span class="number">1</span>, position.y)) &#123;</span><br><span class="line">                        commands.add(r -&gt; r.turnTo(Math.PI));</span><br><span class="line">                        commands.add(r -&gt; r.say(terrain.getData().toString()));</span><br><span class="line">                        commands.add(r -&gt; r.go(<span class="number">1</span>));</span><br><span class="line">                        <span class="keyword">return</span> commands;</span><br><span class="line">                    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                        commands.add(r -&gt; r.turnTo(Math.PI * <span class="number">0.5</span>));</span><br><span class="line">                        commands.add(r -&gt; r.say(terrain.getData().toString()));</span><br><span class="line">                        commands.add(r -&gt; r.go(<span class="number">1</span>));</span><br><span class="line">                        dir = <span class="number">2</span>;</span><br><span class="line">                        <span class="keyword">return</span> commands;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> commands;</span><br><span class="line">    &#125;);</span><br><span class="line">    <span class="keyword">return</span> panicPenguin;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>下面来一起看一下各种好玩的效果图吧。</p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/cb6bbb97fa7e49f587711a508f7ed9ec~tplv-k3u1fbpfcp-watermark.image?" alt="中秋.gif"></p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9624ee795bdd45e8a94b1f12279320c4~tplv-k3u1fbpfcp-watermark.image?" alt="中秋3.gif"></p>
+<h3 id="源码链接"><a href="#源码链接" class="headerlink" title="源码链接"></a>源码链接</h3><p><a href="https://github.com/liujiang157/Maze" target="_blank" rel="noopener">源码链接</a>，祝大家🥮节快乐~</p>
+
+                
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    
+                    <li class="next">
+                        <a href="/2021/04/20/Quarkus与Spring-boot性能对比/" data-toggle="tooltip" data-placement="top" title="Quarkus与Spring boot性能对比">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Music start-->
+                
+                
+<link rel="stylesheet" href="/css/music-player/fonts/iconfont.css">
+
+
+<link rel="stylesheet" href="/css/music-player/css/reset.css">
+
+
+<link rel="stylesheet" href="/css/music-player/css/player.css">
+
+
+<div class="music-player">
+    <audio class="music-player__audio" ></audio>
+    <div class="music-player__main">
+        <div class="music-player__blur"></div>
+        <div class="music-player__disc">
+            <div class="music-player__image">
+                <img width="100%" src="" alt="">
+            </div>
+            <div class="music-player__pointer"><img width="100%" src="/img/cd_tou.png" alt=""></div>
+        </div>
+        <div class="music-player__controls">
+            <div class="music__info">
+                <h3 class="music__info--title">...</h3>
+                <p class="music__info--singer">...</p>
+            </div>
+            <div class="player-control">
+                <div class="player-control__content">
+                    <div class="player-control__btns">
+                        <div class="player-control__btn player-control__btn--prev"><i class="iconfont icon-prev"></i></div>
+                        <div class="player-control__btn player-control__btn--play"><i class="iconfont icon-play"></i></div>
+                        <div class="player-control__btn player-control__btn--next"><i class="iconfont icon-next"></i></div>
+                        <div class="player-control__btn player-control__btn--mode"><i class="iconfont icon-loop"></i></div>
+                    </div>
+                    <div class="player-control__volume">
+                        <div class="control__volume--icon player-control__btn"><i class="iconfont icon-volume"></i></div>
+                        <div class="control__volume--progress player_progress"></div>
+                    </div>
+                </div>
+                <div class="player-control__content">
+                    <div class="player__song--progress player_progress"></div>
+                    <div class="player__song--timeProgess nowTime">00:00</div>
+                    <div class="player__song--timeProgess totalTime">00:00</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="/js/music-player/utill.js"></script>
+
+
+<script src="/js/music-player/jquery.min.js"></script>
+
+<!-- netease; qqkg -->
+<!--
+<script src="/js/music-player/player.js?library=config.music.library.js"></script>
+-->
+<script src="../../../../js/music-player/player.js?library=netease&music=https://music.163.com/#/song?id=1325896303"></script>
+                
+                <!-- Music end -->
+
+                <!-- Sharing -->
+                
+                <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                <!--  css & js -->
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            
+              <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#地图绘制"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">地图绘制</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#迷宫机器人"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">迷宫机器人</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#源码链接"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">源码链接</span></a></li></ol>
+            
+          
+          </div>
+        </aside>
+      
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#Java" title="Java">Java</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="http://meandni.com/" target="_blank">Joker&#39;s Blog</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+
+
+<style  type="text/css">
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/liujiang157">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://www.zhihu.com/people/maybelence">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">知</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; maybelence 2021 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/dusign/hexo-theme-snail" target="_blank" rel="noopener">
+                        <i>hexo-theme-snail</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=dusign&repo=hexo-theme-snail&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://maybelence.cn/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+
+        
+            <script type="text/javascript" src="/js/mouse-click.js" content='[&quot;🌱&quot;,&quot;just do it&quot;,&quot;🍀&quot;,&quot;waiting for you&quot;]' color='[&quot;rgb(121,93,179)&quot; ,&quot;rgb(76,180,231)&quot; ,&quot;rgb(184,90,154)&quot;]'></script>
+        
+
+        <!-- background effects end -->
+    
+
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>
