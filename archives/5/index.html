@@ -300,9 +300,166 @@
 
     
 
+    
+
+    
+
+    
+
+    
+
 
 
 <!-- Main Content -->
+
+    
+
+        <div class="post-preview">
+
+            <a href="/2021/01/06/简单聊一下volatile/">
+                <h2 class="post-title">
+                    简单聊一下volatile
+                </h2>
+                <h3 class="post-subtitle">
+                    今天也要跟面试官优雅对线
+                </h3>
+                <div class="post-content-preview">
+                    开始讲这个题目之前，先来聊一下什么是线程安全。多个线程访问同一个对象时，如果不用考虑这些线程在运行时环境下的调度和交替执行，也不需要进行额外的同步，或者在调用方进行任何其他操作，调用这个对象的行为都可以获得正确的结果，那么这个对象就是线程安全的。
+这是一个很常见的面试题，再接着往下深入一点，如何保证线程安全呢？线程安全一般是从三个方面考虑：
+
+原子性: synchronized确保同一时间只......
+                </div>
+            </a>
+            
+                <p class="post-meta" style="margin: 10px 0;">
+                    Posted by maybelence on
+                    2021-01-06
+                </p>
+                <div class="tags">
+                    
+                      <a href="/tags/#多线程" title="多线程">多线程</a>
+                    
+                </div>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+        <div class="post-preview">
+
+            <a href="/2020/11/05/浅谈红黑树/">
+                <h2 class="post-title">
+                    浅谈红黑树
+                </h2>
+                <h3 class="post-subtitle">
+                    面试拦路虎，对方不想和你说话并向你丢了一个红黑树，让你写代码实现
+                </h3>
+                <div class="post-content-preview">
+                    在网上很多博客上面看到有些讲红黑树的文章都不能完整描述它的体系，对于树的调平染色也没有很详细的介绍，因此让很多人觉得红黑树很难理解。但红黑树的应用场景还是很常见的。
+JAVA8中HashMap的底层实现，就为了解决过度哈希冲突而造成的长链表，从而将链表转换为红黑树；Linux中的CFS进程调度算法，vruntime利用红黑树来存储；多路复用EPoll核心结构也是采用红黑树和双向链表来存储。
+......
+                </div>
+            </a>
+            
+                <p class="post-meta" style="margin: 10px 0;">
+                    Posted by maybelence on
+                    2020-11-05
+                </p>
+                <div class="tags">
+                    
+                      <a href="/tags/#红黑树" title="红黑树">红黑树</a>
+                    
+                      <a href="/tags/#HashMap" title="HashMap">HashMap</a>
+                    
+                </div>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+        <div class="post-preview">
+
+            <a href="/2020/10/30/一道算法题引发的惯性思维/">
+                <h2 class="post-title">
+                    记一下最近刷题的一些小想法
+                </h2>
+                <h3 class="post-subtitle">
+                    刷leetcode时遇到的一些小想法
+                </h3>
+                <div class="post-content-preview">
+                    事情的起因还是要从我昨天上班赚（mo）钱（yu）开始说起，最近项目比较闲，于是我在intelij上面装了一个leetcode插件，每天日常刷一刷leetcode题。就在昨天，我刷到了这样一题
+
+给定一个较长字符串big和一个包含较短字符串的数组smalls，设计一个方法，根据smalls中的每一个较短字符串，对big进行搜索。输出smalls中的字符串在big里出现的所有位置position......
+                </div>
+            </a>
+            
+                <p class="post-meta" style="margin: 10px 0;">
+                    Posted by maybelence on
+                    2020-10-30
+                </p>
+                <div class="tags">
+                    
+                      <a href="/tags/#算法" title="算法">算法</a>
+                    
+                      <a href="/tags/#leetcode" title="leetcode">leetcode</a>
+                    
+                      <a href="/tags/#algorithm" title="algorithm">algorithm</a>
+                    
+                </div>
+            
+
+        </div>
+        <hr>
+
+    
+
+    
+
+        <div class="post-preview">
+
+            <a href="/2020/09/27/JVM垃圾回收与内存分配/">
+                <h2 class="post-title">
+                    JVM垃圾回收与内存分配
+                </h2>
+                <h3 class="post-subtitle">
+                    记一次被面试官击穿的经历
+                </h3>
+                <div class="post-content-preview">
+                    Java与C++之间有一堵由内存动态分配和垃圾收集技术所围成的高墙，外面的人想进来，里面的人想出去。
+
+引用. 《深入理解JAVA虚拟机》 &#8617;
+
+JAVA相对于C/C++而言引入了GC机制，使程序员更加去关注程序本身，不需要再对每个new的对象去进行delete/free操作。C++就好像你在家里自己恰饭，需要去自己做好。吃完之后还要自己收拾。而JAVA更像是在餐厅中吃饭，你不需......
+                </div>
+            </a>
+            
+                <p class="post-meta" style="margin: 10px 0;">
+                    Posted by maybelence on
+                    2020-09-27
+                </p>
+                <div class="tags">
+                    
+                      <a href="/tags/#JVM" title="JVM">JVM</a>
+                    
+                      <a href="/tags/#GC" title="GC">GC</a>
+                    
+                      <a href="/tags/#垃圾回收" title="垃圾回收">垃圾回收</a>
+                    
+                </div>
+            
+
+        </div>
+        <hr>
+
+    
 
     
 
@@ -441,7 +598,17 @@
             
         
             
+        
+            
+        
+            
             <a href="/tags/#Java" title="Java" rel="2">Java</a>
+            
+        
+            
+            <a href="/tags/#JAVA8" title="JAVA8" rel="3">JAVA8</a>
+            
+        
             
         
             
@@ -524,23 +691,23 @@
     <ul>
       
         <li>
+          <a href="/2021/12/31/%E4%B8%8D%E8%A6%81%E5%86%8D%E7%9B%B2%E7%9B%AE%E4%BD%BF%E7%94%A8parallelStream%E5%95%A6/">不要再盲目使用parallelStream啦</a>
+        </li>
+      
+        <li>
+          <a href="/2021/12/31/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%8B%E6%96%AD%E7%82%B9%E7%BB%AD%E4%BC%A0/">简单实现一下断点续传</a>
+        </li>
+      
+        <li>
+          <a href="/2021/12/31/%E5%90%83%E9%80%8F-JAVA8-Optional-%E7%89%B9%E6%80%A7%E5%85%A8%E9%83%A8%E7%94%A8%E6%B3%95/">吃透 JAVA8 -- Optional 特性全部用法</a>
+        </li>
+      
+        <li>
+          <a href="/2021/12/31/%E8%BF%98%E5%9C%A8%E8%BF%87%E6%BB%A4%E6%9B%BF%E6%8D%A2%E5%AD%97%E7%AC%A6%E6%9D%A5%E9%98%B2%E6%AD%A2-XSS-%E6%B3%A8%E5%85%A5%EF%BC%9F%E5%88%A9%E7%94%A8%E4%B8%80%E4%B8%8B%E6%B5%8F%E8%A7%88%E5%99%A8%E7%89%B9%E6%80%A7%EF%BC%81/">还在过滤替换字符来防止 XSS 注入？利用一下浏览器特性！</a>
+        </li>
+      
+        <li>
           <a href="/2021/12/31/%E8%AF%91-%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E7%AE%97%E6%B3%95-ZGC/">[译]垃圾收集器算法--ZGC</a>
-        </li>
-      
-        <li>
-          <a href="/2021/09/23/%E5%8A%A8%E6%89%8B%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E8%BF%B7%E5%AE%AB%E6%9C%BA%E5%99%A8%E4%BA%BA/">动手实现一个迷宫机器人</a>
-        </li>
-      
-        <li>
-          <a href="/2021/04/20/Quarkus%E4%B8%8ESpring-boot%E6%80%A7%E8%83%BD%E5%AF%B9%E6%AF%94/">Quarkus与Spring boot性能对比</a>
-        </li>
-      
-        <li>
-          <a href="/2021/04/20/%E8%AF%91-%E5%BF%AB%E9%80%9F%E7%90%86%E8%A7%A3%E5%BC%80%E9%97%AD%E5%8E%9F%E5%88%99/">[译] 快速理解开闭原则</a>
-        </li>
-      
-        <li>
-          <a href="/2021/04/19/%E6%8B%A5%E6%8A%B1Restful-Jersey%E6%A1%86%E6%9E%B6/">拥抱Restful--Jersey框架</a>
         </li>
       
     </ul>
@@ -551,7 +718,7 @@
         
     <h5>ARCHIVES</h5>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">十二月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/12/">十二月 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/09/">九月 2021</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a><span class="archive-list-count">9</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">三月 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">一月 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">十一月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">十月 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a><span class="archive-list-count">2</span></li></ul>
     </div>
 
         <hr>
@@ -571,6 +738,8 @@
           <a href="categories/#JAVA"><li>JAVA</li></a>
         
           <a href="categories/#Frameworks"><li>Frameworks</li></a>
+        
+          <a href="categories/#Fronted"><li>Fronted</li></a>
         
       </ul>
     </div>
