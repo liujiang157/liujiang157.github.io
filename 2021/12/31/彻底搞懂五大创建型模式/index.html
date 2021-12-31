@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="一个用来絮絮叨叨的地方">
+    <meta name="keyword"  content="maybelence, 学习, 生活">
+    <link rel="shortcut icon" href="/img/ironman-draw.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          彻底搞懂五大创建型模式 - Maybelence&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://maybelence.cn/2021/12/31/彻底搞懂五大创建型模式/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+        
+<link rel="stylesheet" href="/css/dusign-light.css">
+
+        
+<link rel="stylesheet" href="/css/dusign-common-light.css">
+
+        
+<link rel="stylesheet" href="/css/font-awesome.css">
+
+        
+<link rel="stylesheet" href="/css/toc.css">
+
+        <!-- background effects end -->
+    
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+    <!-- photography -->
+    
+<link rel="stylesheet" href="/css/photography.css">
+
+
+    <!-- ga & ba script hoook -->
+    <script data-ad-client="ca-pub-9951682438363353" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- background effects start -->
+    
+    <!-- background effects end -->
+
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('../../../../img/default.jpg')
+                /*post*/
+            
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/maybelence.png');
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#设计模式" title="设计模式">设计模式</a>
+                            
+                        </div>
+                        <h1>彻底搞懂五大创建型模式</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by maybelence on
+                            2021-12-31
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">4.7k</span> and
+                                Reading Time <span class="post-count">18</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+    <div class="waveWrapper">
+        <div class="wave wave_before" style="background-image: url('/img/wave-light.png')"></div>
+        <div class="wave wave_after" style="background-image: url('/img/wave-light.png')"></div>
+    </div>
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Maybelence&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">首页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">目录</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/photography/">随手拍</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">分类</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">标签</a>
+                        </li>
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>在很多人的认知里，算法就像是单兵的作战能力和武器装备，而设计模式更像打仗列的阵型。而且随着工作时间的推移，很多开发者长时间浸淫在繁杂的业务之中，担心自己技术跟不上时代的时候，都会去看一些框架源码来拓展自己的技术深度。但基本所有的框架里面都应用了很多的设计模式，如果你对设计模式不理解的话，往往会有这种感觉 — 这段代码，我好像看懂了，又好像没看懂。</p>
+<p>学好设计模式，不光是对我们阅读源码的时候有帮助，在面对复杂业务逻辑的时候，也可以更好的去设计代码，而不是用一堆 <code>if-else</code> 去实现各种场景的业务功能。试想一下，你工作之中，你写好的设计模式被其他同事用的时候，只需要传递简单的参数就能实现业务拓展，是不是又低调的装了X又造福了后人。</p>
+<p>最近我也在重新学习设计模式，所有的样例代码都整理在我的 <a href="https://github.com/liujiang157/design-pattern-study" target="_blank" rel="noopener">仓库链接</a> 中，在最近几天学习完所有的创建者模式后，整理了一下。</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/73c7764ca9e64ab89ba2300a4d75e05e~tplv-k3u1fbpfcp-watermark.image" alt="创建者模式.png"></p>
+<h2 id="六大原则"><a href="#六大原则" class="headerlink" title="六大原则"></a>六大原则</h2><p>设计模式遵循六⼤原则；单⼀职责( ⼀个类和⽅法只做⼀件事 )、⾥⽒替换原则( 多态，⼦类可扩展⽗类 )、依赖倒置( 细节依赖抽象，下层依赖上层 )、接⼝隔离( 建⽴单⼀接⼝ )、迪⽶特原则( 最少知道，降低耦合 )、开闭原则( 抽象架构，扩展实现 )。</p>
+<blockquote>
+<p>引用自《重学Java设计模式》</p>
+</blockquote>
+<h2 id="工厂模式"><a href="#工厂模式" class="headerlink" title="工厂模式"></a>工厂模式</h2><p>工厂模式主要分为三种：</p>
+<ul>
+<li>简单工厂模式</li>
+<li>工厂方法模式</li>
+<li>抽象工厂模式</li>
+</ul>
+<h3 id="简单工厂"><a href="#简单工厂" class="headerlink" title="简单工厂"></a>简单工厂</h3><p>简单工厂主要是屏蔽对象的对实现逻辑，并且通过对公共的接口提供对象的实例化的服务，这样添加新类的时候，只需要在工厂类中修改一点代码即可。</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d76ca9da92ee48208344f6b054dd6a5f~tplv-k3u1fbpfcp-watermark.image" alt="未命名文件 (1).png"></p>
+<p>在这个简单工厂里面，如果要创建商品 PC、商品 Mouse 以及商品 KeyBoard，我们要创建商品的时候只要调用简单工厂里面的创建商品方法，根据类型创建出不同的商品然后实列化返回就可以了。</p>
+<p>现在来直接看一下简单工厂的例子</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProductFactory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> IProduct <span class="title">createProduct</span><span class="params">(ProductEnum productEnum)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (ProductEnum.MOUSE == productEnum) <span class="keyword">return</span> <span class="keyword">new</span> MouseProduct();</span><br><span class="line">        <span class="keyword">if</span> (ProductEnum.KEYBOARD == productEnum) <span class="keyword">return</span> <span class="keyword">new</span> KeyBoardProduct();</span><br><span class="line">        <span class="keyword">if</span> (ProductEnum.PC == productEnum) <span class="keyword">return</span> <span class="keyword">new</span> PCProdcuct();</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"没有这种商品类型"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>现在来测试一下:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testSimpleFactory</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 1. 鼠标</span></span><br><span class="line">    ProductFactory.IProduct mouseProduct = ProductFactory.createProduct(ProductFactory.ProductEnum.MOUSE);</span><br><span class="line">    Assert.assertEquals(<span class="string">"我是鼠标"</span>, mouseProduct.printMessage());</span><br><span class="line">    <span class="comment">// 2. 键盘</span></span><br><span class="line">    ProductFactory.IProduct keyboardProduct = ProductFactory.createProduct(ProductFactory.ProductEnum.KEYBOARD);</span><br><span class="line">    Assert.assertEquals(<span class="string">"我是键盘"</span>, keyboardProduct.printMessage());</span><br><span class="line">    <span class="comment">// 3. 电脑</span></span><br><span class="line">    ProductFactory.IProduct pcProduct = ProductFactory.createProduct(ProductFactory.ProductEnum.PC);</span><br><span class="line">    Assert.assertEquals(<span class="string">"我是电脑"</span>, pcProduct.printMessage());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>这种实现方式可以良好的实现避免创建者与具体的产品逻辑耦合、满足单一职责，每⼀个业务逻辑实现都在所属⾃⼰的类中完成。但是如果需要新增产品的时候，就要去修改 createProduct 这个方法，每次新增一个产品，都需要添加一个 <code>if</code> 判断。而且随着商品类的增加，看起来这样就不满足开闭原则了。</p>
+<p>如果非要满足开闭原则的话，可以将 productEnum 改成传递类名,这里我都没有传递参数，如果需要传递参数的话 getConstructor 可以添加每个参数的参数类型，newInstance 中可以添加所有的参数。但是反射不当是容易导致线上机器出问题的，因为我们反射创建的对象属性是被 SoftReference 软引用的,所以当 <code>-XX:SoftRefLRUPolicyMSPerMB</code> 没有设置好的话会一直让机器CPU很高。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> IProduct <span class="title">createProduct</span><span class="params">(String className)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (IProduct) Class.forName(className).getConstructor().newInstance();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>工厂方法模式是直接将工厂类抽象化，需要具体特定化的逻辑代码转移到实现抽象方法的子类中，这样就不要再去修改工厂类，省去了 <code>if-else</code> 的修改，也是另一种满足开闭原则的实现。</p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/304922fe6a1a49f1862e6c8c90de6516~tplv-k3u1fbpfcp-watermark.image" alt="未命名文件 (3).png"></p>
+<p>这样当出现其他类型的时候，也只要去继承我们创建的工厂方法可以了。</p>
+<h3 id="抽象工厂"><a href="#抽象工厂" class="headerlink" title="抽象工厂"></a>抽象工厂</h3><p>抽象工厂很像工厂方法的延伸，工厂方法类中只有一个抽象方法，要想实现多种不同的类对象，只能去创建不同的具体工厂方法的子类来实列化，而抽象工厂则是让一个工厂负责创建多个不同类型的对象。</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9ff45358b1634ae5bfd59920ebda7696~tplv-k3u1fbpfcp-watermark.image" alt="未命名文件 (6).png"></p>
+<p>这样我们就可以直接通过抽象工厂，获取不同类型的商品对象了。在抽象工厂可以定义获取不同类型商品的方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">AbstractFactory</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> IFlower <span class="title">getFlower</span><span class="params">(Enum&lt;FlowerEnum&gt; productEnum)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> IMelon <span class="title">getMelon</span><span class="params">(Enum&lt;MelonEnum&gt; productEnum)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样每个子工厂只要专注于实现自己负责的产品即可。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FlowerFactory</span> <span class="keyword">extends</span> <span class="title">AbstractFactory</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> FlowerFactory.<span class="function">IFlower <span class="title">getFlower</span><span class="params">(Enum&lt;FlowerEnum&gt;  productEnum)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (FlowerEnum.ROSE == productEnum) <span class="keyword">return</span> <span class="keyword">new</span> Rose();</span><br><span class="line">        <span class="keyword">if</span> (FlowerEnum.LILY == productEnum) <span class="keyword">return</span> <span class="keyword">new</span> Lily();</span><br><span class="line">        <span class="keyword">if</span> (FlowerEnum.TULIP == productEnum) <span class="keyword">return</span> <span class="keyword">new</span> Tulip();</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> MelonFactory.<span class="function">IMelon <span class="title">getMelon</span><span class="params">(Enum&lt;MelonEnum&gt;  productEnum)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"无法通过本工厂获取该类型对象"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>抽象工厂还有一个生成器类。如果把每个子工厂都看做一个商品的话，这个类就有点类似于简单工厂的工厂类，如果通过这个生成器类可以获取具体的子工厂类，然后创建对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">FactoryProducer</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> AbstractFactory <span class="title">getFactory</span><span class="params">(FactoryEnum factoryEnum)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (factoryEnum == FactoryEnum.FLOWER) <span class="keyword">return</span> <span class="keyword">new</span> FlowerFactory();</span><br><span class="line">        <span class="keyword">if</span> (factoryEnum == FactoryEnum.MELON) <span class="keyword">return</span> <span class="keyword">new</span> MelonFactory();</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">enum</span> FactoryEnum &#123;</span><br><span class="line">    FLOWER, MELON</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>下面也展示一下抽象工厂的使用方法。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testAbstractFactory</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="comment">// 通过生成器获取鲜花工厂</span></span><br><span class="line">    AbstractFactory flowerFactory = FactoryProducer.getFactory(FactoryEnum.FLOWER);</span><br><span class="line">    <span class="comment">// 构造蓝色妖姬</span></span><br><span class="line">    AbstractFactory.IFlower flower = flowerFactory.getFlower(FlowerFactory.FlowerEnum.ROSE);</span><br><span class="line">    Assert.assertEquals(<span class="string">"我是蓝色妖姬"</span>, flower.getColor());</span><br><span class="line">    <span class="comment">// 通过生成器获取瓜工厂</span></span><br><span class="line">    AbstractFactory melonFactory = FactoryProducer.getFactory(FactoryEnum.MELON);</span><br><span class="line">    <span class="comment">//构造西瓜</span></span><br><span class="line">    AbstractFactory.IMelon melon = melonFactory.getMelon(MelonFactory.MelonEnum.WATER);</span><br><span class="line">    Assert.assertEquals(<span class="string">"我是西瓜"</span>, melon.getVariety());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a>单例模式</h2><p>单例模式是指在内存中只会创建且仅创建一次对象的设计模式。在程序中多次使用同一个对象且作用相同时，为了防止频繁地创建对象使得内存飙升，单例模式可以让程序仅在内存中创建一个对象，让所有需要调用的地方都共享这一单例对象。</p>
+<p>常见的单例模式主要有4种类型：</p>
+<ul>
+<li>懒汉式单例模式</li>
+<li>饿汉式单例模式</li>
+<li>静态内部类单例模式</li>
+<li>枚举的单例模式</li>
+</ul>
+<h3 id="懒汉式的单例模式"><a href="#懒汉式的单例模式" class="headerlink" title="懒汉式的单例模式"></a>懒汉式的单例模式</h3><p>懒汉式只在程序第一次调用的时候创建对象，所以需要调用的时候需要判断是否已经实例化该对象，如果未实例化，则实例化该对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LazySingleTon</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> LazySingleTon singleTon;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">LazySingleTon</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LazySingleTon <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (singleTon == <span class="keyword">null</span>) &#123;</span><br><span class="line">            singleTon = <span class="keyword">new</span> LazySingleTon();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> singleTon;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>懒汉的构建方式如果在同时存在多个线程的情况下，线程1在判断了 singleTon==null 后让出了 cpu 的使用权，而线程二这时候获取到了 cpu 的使用权，也判断了一次 singleTon==null 那么线程2就会执行 singleTon = new LazySingleTon()，当线程1重新获取到 cpu 的使用权之后，因为他刚判断了 singleTon 是 null ，所以线程1也会创建一个 LazySingleTon 的实例。所以就存在了 <code>线程安全</code> 的问题。</p>
+<p>下面写个测试用例来测试懒汉的线程不安全,这个用例不是百分百成功的，但是我试了一下，基本都是成功的，而且只要成功一次就能说明懒汉不是线程安全的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testLazyThread</span><span class="params">()</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    ExecutorService threadpool = Executors.newFixedThreadPool(<span class="number">50</span>);</span><br><span class="line">    List&lt;Integer&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">        threadpool.execute(() -&gt; list.add(LazySingleTon.getInstance().hashCode()));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//如果不止有一个hashcode 说明线程不安全</span></span><br><span class="line">    Assert.assertNotEquals(<span class="number">1</span>, list.stream().distinct().count());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="饿汉式的单例模式"><a href="#饿汉式的单例模式" class="headerlink" title="饿汉式的单例模式"></a>饿汉式的单例模式</h3><p>饿汉式在类加载的时候就已经初始化好该对象，后续程序调用的都是该对象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HungrySingleTon</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> HungrySingleTon singleTon = <span class="keyword">new</span> HungrySingleTon();</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">HungrySingleTon</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> HungrySingleTon <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> singleTon;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样类在加载时会在堆内存中创建一个 HungrySingleTon 对象，当类被卸载时，HungrySingleTon 对象也就会被随之死亡了。</p>
+<h3 id="懒汉单例优化"><a href="#懒汉单例优化" class="headerlink" title="懒汉单例优化"></a>懒汉单例优化</h3><p>上面已经提过了，懒汉式的单例存在线程安全问题，那最简单的方法就是加锁，给类对象加锁或者给方法加锁。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//给方法加锁</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">static</span> LazySycnMethodSingleTon <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (singleTon == <span class="keyword">null</span>) &#123;</span><br><span class="line">            singleTon = <span class="keyword">new</span> LazySycnMethodSingleTon();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> singleTon;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//给类对象加锁</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LazySycnClaszSingleTon <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">synchronized</span> (LazySycnClaszSingleTon<span class="class">.<span class="keyword">class</span>) </span>&#123;</span><br><span class="line">            <span class="keyword">if</span> (singleTon == <span class="keyword">null</span>) &#123;</span><br><span class="line">                singleTon = <span class="keyword">new</span> LazySycnClaszSingleTon();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> singleTon;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>但上面两种方法都存在一个问题，在获取对象之前都要先获取锁，所以并发性能就显得尤其的低下。比较典型的方案是双重校验加锁（Double Check and Lock）。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LazySingleTon</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">volatile</span> LazySingleTon singleTon;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">LazySingleTon</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> LazySingleTon <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(singleTon ==<span class="keyword">null</span>)</span><br><span class="line">            <span class="keyword">synchronized</span> (LazySingleTon<span class="class">.<span class="keyword">class</span>) </span>&#123;</span><br><span class="line">                <span class="keyword">if</span> (singleTon == <span class="keyword">null</span>) &#123;</span><br><span class="line">                    singleTon = <span class="keyword">new</span> LazySingleTon();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        <span class="keyword">return</span> singleTon;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>第一个 if(singleTon ==null) ，当对象已经被实例化之后，直接获取对象。如果第一个 if(singleTon ==null) 为 true 时，也就是没有实例化对象时，为避免此时有多个线程来实例这个资源，对类对象施加锁。</p>
+<p>在 DCL 中声明 singleTon 对象的时候，添加了 volatile 修饰词。原因是因为 JVM 在创建对象的时候，可以对指令进行重排序以提高程序性能。JVM 在创建对象的时候，一般会经过以下三个步骤：</p>
+<ol>
+<li>分配内存空间</li>
+<li>初始化对象</li>
+<li>将对象指向分配好的内存空间</li>
+</ol>
+<p>但是在 2 和 3 的时候有可能出现指令重排。比如多个线程，当线程1执行了 1-3 而正在初始化对象，而线程2获取对象时，就获取到了一个未初始化的对象。就会出现空指针异常了。而 volatile 就是为了在 JVM 创建对象的时候进行禁止指令重排的。</p>
+<h3 id="静态内部类单例模式"><a href="#静态内部类单例模式" class="headerlink" title="静态内部类单例模式"></a>静态内部类单例模式</h3><p>静态内部类相对于 DCL 模式实现更简单，对 <code>静态域</code> 使用延迟初始化，应使用这种方式而不是双检锁方式。这种方式只适用于静态域的情况，双检锁方式可在 <code>实例域</code> 需要延迟初始化时使用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SingleTon</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">SingletonHolder</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> SingleTon INSTANCE = <span class="keyword">new</span> SingleTon();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">SingleTon</span> <span class="params">()</span></span>&#123;&#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> SingleTon <span class="title">getInstance</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> SingletonHolder.INSTANCE;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="枚举的单例模式"><a href="#枚举的单例模式" class="headerlink" title="枚举的单例模式"></a>枚举的单例模式</h3><p>在 JDK1.5 中，java 引入了枚举类型。枚举是实现单例模式的最佳方法。它更简洁，自动支持序列化机制，绝对防止多次实例化。这种方式是《Effective Java》作者 Josh Bloch 提倡的方式，它不仅能避免多线程同步问题，而且还自动支持序列化机制，防止反序列化重新创建新的对象。</p>
+<p>优点不言而喻：</p>
+<ul>
+<li>实现更简单</li>
+<li>天然的线程安全</li>
+<li>可以防止反射、反序列化创建多个枚举对象</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">enum</span> Singleton &#123;  </span><br><span class="line">    INSTANCE;  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">whateverMethod</span><span class="params">()</span> </span>&#123;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="反射和序列化破坏单例"><a href="#反射和序列化破坏单例" class="headerlink" title="反射和序列化破坏单例"></a>反射和序列化破坏单例</h3><p>枚举本身自带防止反射和反序列化的特性，而懒汉和饿汉式的单例，可以通过反射直接访问私有构造器，生成新的对象，这里我也写了一个反射破坏单例的用例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testReflectDestoryInstance</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">    <span class="comment">// 获取类的显式构造器</span></span><br><span class="line">    Constructor&lt;HungrySingleTon&gt; construct = HungrySingleTon<span class="class">.<span class="keyword">class</span>.<span class="title">getDeclaredConstructor</span>()</span>;</span><br><span class="line">    <span class="comment">// 可访问私有构造器</span></span><br><span class="line">    construct.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">    <span class="comment">// 利用反射构造新对象</span></span><br><span class="line">    HungrySingleTon obj1 = construct.newInstance();</span><br><span class="line">    <span class="comment">// 通过正常方式获取单例对象</span></span><br><span class="line">    HungrySingleTon obj2 = HungrySingleTon.getInstance();</span><br><span class="line">    <span class="comment">// 判断对象不是单例对象</span></span><br><span class="line">    Assert.assertNotSame(obj1, obj2);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>解决反射破坏单例模式的方法也比较简单，对于饿汉式，因为在类加载的时候就已经实例化了对象，所以我们可以直接在私有构造器内部判断对象是不是为空，如果对象不为空，说明正在通过反射来构造对象，我们直接抛出一个异常。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HungrySingleTon</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> HungrySingleTon singleTon = <span class="keyword">new</span> HungrySingleTon();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">HungrySingleTon</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != singleTon)</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"禁止通过反射来实例化对象"</span>);</span><br><span class="line">        <span class="comment">//其他参数赋值等等</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> HungrySingleTon <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> singleTon;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>下面是一个序列化和反序列化去破坏单例的例子，但是使用序列化和反序列化破坏单例时，单例对象的类必须实现 Serializable 接口，所以需要防止序列化破坏单例的时候可以让单例类避免实现 Serializable 接口。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HungrySingleTon</span> <span class="keyword">implements</span>  <span class="title">Serializable</span></span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception</span>&#123;</span><br><span class="line">        <span class="comment">// 创建输出流</span></span><br><span class="line">        ObjectOutputStream oos = <span class="keyword">new</span> ObjectOutputStream(<span class="keyword">new</span> FileOutputStream(<span class="string">"Singleton.file"</span>));</span><br><span class="line">        <span class="comment">// 将单例对象写到文件中</span></span><br><span class="line">        oos.writeObject(HungrySingleTon.getInstance());</span><br><span class="line">        <span class="comment">// 从文件中读取单例对象</span></span><br><span class="line">        File file = <span class="keyword">new</span> File(<span class="string">"Singleton.file"</span>);</span><br><span class="line">        ObjectInputStream ois =  <span class="keyword">new</span> ObjectInputStream(<span class="keyword">new</span> FileInputStream(file));</span><br><span class="line">        HungrySingleTon newInstance = (HungrySingleTon) ois.readObject();</span><br><span class="line">        <span class="comment">// 判断是否是同一个对象</span></span><br><span class="line">        System.out.println(newInstance == HungrySingleTon.getInstance()); <span class="comment">// false</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> HungrySingleTon singleTon = <span class="keyword">new</span> HungrySingleTon();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="title">HungrySingleTon</span><span class="params">()</span></span>&#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> HungrySingleTon <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">return</span> singleTon;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="建造者模式"><a href="#建造者模式" class="headerlink" title="建造者模式"></a>建造者模式</h2><p>建造者模式所完成的内容就是通过将多个简单对象通过⼀步步的组装构建出⼀个复杂对象的过程。先来看一下大致类图结构。</p>
+<p><img src="https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/07dd22cff6274ecd92045ca9660fc7b6~tplv-k3u1fbpfcp-watermark.image" alt="未命名文件 (7).png"></p>
+<p>我本人是一个水族爱好者，这里我用一个鱼缸套件来说明这个例子，当去选配鱼缸的时候，你可以选经济实惠的淡水草缸套缸，也可以选择炫丽的珊瑚海景套缸。直接来看一下抽象建造者的实现逻辑：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Builder</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">protected</span> EcoTank item = <span class="keyword">new</span> EcoTank();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">abstract</span> Builder <span class="title">buildTank</span><span class="params">(Tank tank)</span></span>; <span class="comment">// 鱼缸</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">abstract</span> Builder <span class="title">buildFilter</span><span class="params">(Filter filter)</span></span>; <span class="comment">// 过滤</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">abstract</span> Builder <span class="title">buildFish</span><span class="params">(Fish fish)</span></span>; <span class="comment">// 鱼</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">abstract</span> Builder <span class="title">buildLand</span><span class="params">(Land land)</span></span>; <span class="comment">// 造景</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> EcoTank <span class="title">returnEcoTank</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> item;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>创建具体建造者类。对抽象建造者类的抽象方法进行实现赋值：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">public class ConCreteBuilder extends Builder &#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    Builder buildTank(Tank tank) &#123;</span><br><span class="line">        item.setTank(tank);</span><br><span class="line">        return this;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    Builder buildFilter(Filter filter) &#123;</span><br><span class="line">        item.setFilter(filter);</span><br><span class="line">        return this;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    Builder buildFish(Fish fish) &#123;</span><br><span class="line">        item.setFish(fish);</span><br><span class="line">        return this;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    Builder buildLand(Land land) &#123;</span><br><span class="line">        item.setLand(land);</span><br><span class="line">        return this;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其实到这里就已经可以获取我们所需要的对象了，比如我要获取一个小缸-草缸布景-鲤鱼的搭配，我可以这么生成对象：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span> <span class="keyword">new</span> ConCreteBuilder().buildTank(Builder.Tank.SMALL)</span><br><span class="line">                .buildFish(Builder.Fish.CARP)</span><br><span class="line">                .buildLand(Builder.Land.GRASS)</span><br><span class="line">                .returnEcoTank();</span><br></pre></td></tr></table></figure>
+<p>但是为了封装具体类型，有些场景会设置一个导演类，比如类型1 、类型2 、类型3 等等，然后通过导演类来构造具体对象。这个可以视具体场景选用吧。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Director</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> EcoTank <span class="title">TypeOne</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ConCreteBuilder().buildTank(Builder.Tank.SMALL)</span><br><span class="line">                .buildFilter(Builder.Filter.FALL)</span><br><span class="line">                .buildFish(Builder.Fish.CARP)</span><br><span class="line">                .buildLand(Builder.Land.GRASS)</span><br><span class="line">                .returnEcoTank();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> EcoTank <span class="title">TypeTwo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> ConCreteBuilder().buildTank(Builder.Tank.BIG)</span><br><span class="line">                .buildFilter(Builder.Filter.OXYGEN)</span><br><span class="line">                .buildFish(Builder.Fish.DRAGON)</span><br><span class="line">                .buildLand(Builder.Land.SEA)</span><br><span class="line">                .returnEcoTank();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>通过上面的代码也可以看出，当一些基础组件确定，但是组合不确定的时候，我们可以选用建造者模式。</p>
+<h2 id="原型模式"><a href="#原型模式" class="headerlink" title="原型模式"></a>原型模式</h2><p>原型模式主要解决的问题就是创建重复对象，⽽这部分对象内容本身⽐较复杂，因此采⽤克隆的⽅式提高性能/节省时间。比如你每次获取数据都需要从数据库中获取，很浪费时间，但是如果加载到缓存中，每次需要获取当前对象并且做一些临时操作的时候，都通过原型模式返回一个对象就快很多。</p>
+<p>以日报、周报为例，每次重新填很烦，如果通过一个模板，每次都只修改简单的几个参数。是不是会方便很多。</p>
+<p>先创建一个实现 Cloneable 接口类的抽象类<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Report</span> <span class="keyword">implements</span> <span class="title">Cloneable</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String name;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String dept;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Date time;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String workInfo;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">printReport</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getDept</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> dept;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setDept</span><span class="params">(String dept)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.dept = dept;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getName</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setName</span><span class="params">(String name)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Date <span class="title">getTime</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> time;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setTime</span><span class="params">(Date time)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.time = time;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getWorkInfo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> workInfo;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setWorkInfo</span><span class="params">(String workInfo)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.workInfo = workInfo;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Object <span class="title">clone</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Object clone = <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            clone = <span class="keyword">super</span>.clone();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (CloneNotSupportedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> clone;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">enum</span> ReportType&#123;</span><br><span class="line">        WEEK, DAY</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>具体的日报、周报类继承 Report 实现 printReport() 具体逻辑。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WeekReport</span> <span class="keyword">extends</span> <span class="title">Report</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> SimpleDateFormat format = <span class="keyword">new</span> SimpleDateFormat(<span class="string">"yyyy-MM-dd"</span>);</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">printReport</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"==================工作周报====================="</span>);</span><br><span class="line">        System.out.println(<span class="string">"姓名："</span>+getName()+<span class="string">"   部门："</span>+getDept()+<span class="string">"   "</span>+<span class="string">"时间:"</span>+format.format(getTime()));</span><br><span class="line">        System.out.println(<span class="string">"工作内容：本周摸鱼"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>定义工厂类，来获取指定子类。这里要说一下，真正场景中很少单独使用原型模式，基本都是结合其他模式一起使用。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReportTemplate</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> HashMap&lt;Report.ReportType, Report&gt; reportMap = <span class="keyword">new</span> HashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Report <span class="title">getTemplate</span><span class="params">(Enum shapeType)</span> </span>&#123;</span><br><span class="line">        Report tempReport = reportMap.get(shapeType);</span><br><span class="line">        <span class="keyword">return</span> (Report) tempReport.clone();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">loadTemplate</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        WeekReport weekReport = <span class="keyword">new</span> WeekReport();</span><br><span class="line">        weekReport.setName(<span class="string">"Maybelence"</span>);</span><br><span class="line">        weekReport.setDept(<span class="string">"软件"</span>);</span><br><span class="line">        weekReport.setWorkInfo(<span class="string">"本周摸鱼"</span>);</span><br><span class="line">        reportMap.put(Report.ReportType.WEEK,weekReport);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里我也写了个用例来测试一下<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testPrototype</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    ReportTemplate.loadTemplate();</span><br><span class="line">    Report report = ReportTemplate.getTemplate(Report.ReportType.WEEK);</span><br><span class="line">    <span class="comment">//修改周报时间为本周</span></span><br><span class="line">    report.setTime(<span class="keyword">new</span> Date());</span><br><span class="line">    <span class="comment">//敷衍的上传报告</span></span><br><span class="line">    report.printReport();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ec31d12138a84f808b969b6ca94537c4~tplv-k3u1fbpfcp-watermark.image" alt="image.png"></p>
+<p>原型模式的好处在于一个对象需要提供给其他对象访问，而且各个调用者可能都需要修改其值时，选用这种模式可以优雅的解决，资源优化场景的时候也可以多考虑一下这种模式。缺点在于被创建的对象类必须实现 Cloneable 接口。</p>
+<p>在《重学 Java 设计模式》中，用了在线考试作为示例，模拟给不同的⽤户创建相同的试卷，题目的顺序各不相同，但这些试卷的题⽬不便于每次都从库中获取，甚⾄有时候需要从远程的 RPC 中获取。⽽且随着创建对象的增多将严重影响效率。因此通过原型模式来实现资源优化。</p>
+<h2 id="参考列表"><a href="#参考列表" class="headerlink" title="参考列表"></a>参考列表</h2><ol>
+<li><a href="https://juejin.cn/post/6953034193928454175" target="_blank" rel="noopener">互联网电商都是怎么用工厂模式的</a></li>
+<li>《设计模式之禅》</li>
+<li>《重学Java设计模式》</li>
+</ol>
+<blockquote>
+<p>以上所有的学习代码都整理在我的 <a href="https://github.com/liujiang157/design-pattern-study" target="_blank" rel="noopener">仓库链接</a> 中。</p>
+</blockquote>
+
+                
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    
+                    <li class="next">
+                        <a href="/2021/12/31/年终总结，我的2021/" data-toggle="tooltip" data-placement="top" title="年终总结，我的2021">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Music start-->
+                
+                
+<link rel="stylesheet" href="/css/music-player/fonts/iconfont.css">
+
+
+<link rel="stylesheet" href="/css/music-player/css/reset.css">
+
+
+<link rel="stylesheet" href="/css/music-player/css/player.css">
+
+
+<div class="music-player">
+    <audio class="music-player__audio" ></audio>
+    <div class="music-player__main">
+        <div class="music-player__blur"></div>
+        <div class="music-player__disc">
+            <div class="music-player__image">
+                <img width="100%" src="" alt="">
+            </div>
+            <div class="music-player__pointer"><img width="100%" src="/img/cd_tou.png" alt=""></div>
+        </div>
+        <div class="music-player__controls">
+            <div class="music__info">
+                <h3 class="music__info--title">...</h3>
+                <p class="music__info--singer">...</p>
+            </div>
+            <div class="player-control">
+                <div class="player-control__content">
+                    <div class="player-control__btns">
+                        <div class="player-control__btn player-control__btn--prev"><i class="iconfont icon-prev"></i></div>
+                        <div class="player-control__btn player-control__btn--play"><i class="iconfont icon-play"></i></div>
+                        <div class="player-control__btn player-control__btn--next"><i class="iconfont icon-next"></i></div>
+                        <div class="player-control__btn player-control__btn--mode"><i class="iconfont icon-loop"></i></div>
+                    </div>
+                    <div class="player-control__volume">
+                        <div class="control__volume--icon player-control__btn"><i class="iconfont icon-volume"></i></div>
+                        <div class="control__volume--progress player_progress"></div>
+                    </div>
+                </div>
+                <div class="player-control__content">
+                    <div class="player__song--progress player_progress"></div>
+                    <div class="player__song--timeProgess nowTime">00:00</div>
+                    <div class="player__song--timeProgess totalTime">00:00</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="/js/music-player/utill.js"></script>
+
+
+<script src="/js/music-player/jquery.min.js"></script>
+
+<!-- netease; qqkg -->
+<!--
+<script src="/js/music-player/player.js?library=config.music.library.js"></script>
+-->
+<script src="../../../../js/music-player/player.js?library=netease&music=https://music.163.com/#/song?id=1325896303"></script>
+                
+                <!-- Music end -->
+
+                <!-- Sharing -->
+                
+                <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                <!--  css & js -->
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            
+              <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#背景"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">背景</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#六大原则"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">六大原则</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#工厂模式"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">工厂模式</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#简单工厂"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">简单工厂</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#抽象工厂"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">抽象工厂</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#单例模式"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">单例模式</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#懒汉式的单例模式"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">懒汉式的单例模式</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#饿汉式的单例模式"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">饿汉式的单例模式</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#懒汉单例优化"><span class="toc-nav-number">4.3.</span> <span class="toc-nav-text">懒汉单例优化</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#静态内部类单例模式"><span class="toc-nav-number">4.4.</span> <span class="toc-nav-text">静态内部类单例模式</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#枚举的单例模式"><span class="toc-nav-number">4.5.</span> <span class="toc-nav-text">枚举的单例模式</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#反射和序列化破坏单例"><span class="toc-nav-number">4.6.</span> <span class="toc-nav-text">反射和序列化破坏单例</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#建造者模式"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">建造者模式</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#原型模式"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">原型模式</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#参考列表"><span class="toc-nav-number">7.</span> <span class="toc-nav-text">参考列表</span></a></li></ol>
+            
+          
+          </div>
+        </aside>
+      
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#设计模式" title="设计模式">设计模式</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+
+
+<style  type="text/css">
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/liujiang157">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://weibo.com/u/3185622790">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">微</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; maybelence 2021 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/dusign/hexo-theme-snail" target="_blank" rel="noopener">
+                        <i>hexo-theme-snail</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=dusign&repo=hexo-theme-snail&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://maybelence.cn/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+
+        
+            <script type="text/javascript" src="/js/mouse-click.js" content='[&quot;🌱&quot;,&quot;just do it&quot;,&quot;🍀&quot;,&quot;waiting for you&quot;]' color='[&quot;rgb(121,93,179)&quot; ,&quot;rgb(76,180,231)&quot; ,&quot;rgb(184,90,154)&quot;]'></script>
+        
+
+        <!-- background effects end -->
+    
+
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>

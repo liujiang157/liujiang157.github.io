@@ -20,7 +20,7 @@
         
     </title>
 
-    <link rel="canonical" href="https://maybelence.cn/archives/2/">
+    <link rel="canonical" href="https://maybelence.cn/archives/6/">
 
     <!-- Bootstrap Core CSS -->
     
@@ -320,73 +320,33 @@
 
         <div class="post-preview">
 
-            <a href="/2021/12/31/还在过滤替换字符来防止-XSS-注入？利用一下浏览器特性！/">
+            <a href="/2020/09/27/JVM垃圾回收与内存分配/">
                 <h2 class="post-title">
-                    还在过滤替换字符来防止 XSS 注入？利用一下浏览器特性！
+                    JVM垃圾回收与内存分配
                 </h2>
                 <h3 class="post-subtitle">
-                    
+                    记一次被面试官击穿的经历
                 </h3>
                 <div class="post-content-preview">
-                    什么是 XSS 攻击在跨站脚本（XSS）攻击中，攻击者可以在受害者的浏览器中执行恶意脚本。这种攻击通常是通过在网页中插入恶意代码 (JavaScript) 来完成的。攻击者在使用攻击后一般能够：
+                    Java与C++之间有一堵由内存动态分配和垃圾收集技术所围成的高墙，外面的人想进来，里面的人想出去。
 
-修改网页内容
-将用户重定向到其他网站
-访问用户的 Cookie 并利用此信息来冒充用户
-访问有关用户系统的关键信息，例如地理位置，网络摄像头，文件系统
-将木马功能注入应用程序
+引用. 《深入理解JAVA虚拟机》 &#8617;
 
-如果被攻击的用户在......
+JAVA相对于C/C++而言引入了GC机制，使程序员更加去关注程序本身，不需要再对每个new的对象去进行delete/free操作。C++就好像你在家里自己恰饭，需要去自己做好。吃完之后还要自己收拾。而JAVA更像是在餐厅中吃饭，你不需......
                 </div>
             </a>
             
                 <p class="post-meta" style="margin: 10px 0;">
                     Posted by maybelence on
-                    2021-12-31
+                    2020-09-27
                 </p>
                 <div class="tags">
                     
-                      <a href="/tags/#JAVA" title="JAVA">JAVA</a>
-                    
-                      <a href="/tags/#XSS" title="XSS">XSS</a>
-                    
-                </div>
-            
-
-        </div>
-        <hr>
-
-    
-
-    
-
-        <div class="post-preview">
-
-            <a href="/2021/12/31/译-垃圾收集器算法-ZGC/">
-                <h2 class="post-title">
-                    [译]垃圾收集器算法--ZGC
-                </h2>
-                <h3 class="post-subtitle">
-                    
-                </h3>
-                <div class="post-content-preview">
-                    
-原文地址：The Z Garbage Collector algorithm原文作者：Jesús Navarrete译者：maybelence
-
-介绍ZGC 最早作为 JDK11 中的预览特性发布， 去年 9 月 15 号，随着 JDK 15 的正式发布，也带来了 ZGC 的正式版本。
-ZGC 是可伸缩的低延迟垃圾收集器，最大 GC 暂停时间为 10 毫秒，能够处理从几兆字节到几 TB 的......
-                </div>
-            </a>
-            
-                <p class="post-meta" style="margin: 10px 0;">
-                    Posted by maybelence on
-                    2021-12-31
-                </p>
-                <div class="tags">
+                      <a href="/tags/#JVM" title="JVM">JVM</a>
                     
                       <a href="/tags/#GC" title="GC">GC</a>
                     
-                      <a href="/tags/#JAVA8" title="JAVA8">JAVA8</a>
+                      <a href="/tags/#垃圾回收" title="垃圾回收">垃圾回收</a>
                     
                 </div>
             
@@ -400,95 +360,29 @@ ZGC 是可伸缩的低延迟垃圾收集器，最大 GC 暂停时间为 10 毫�
 
         <div class="post-preview">
 
-            <a href="/2021/09/23/动手实现一个迷宫机器人/">
+            <a href="/2020/09/25/那些年我们学过的设计模式，你还记得几个（一）/">
                 <h2 class="post-title">
-                    动手实现一个迷宫机器人
+                    那些年我们学过的设计模式，你还记得几个（一）
                 </h2>
                 <h3 class="post-subtitle">
-                    
+                    单例模式
                 </h3>
                 <div class="post-content-preview">
-                    很久没有产出，回过头来看看这些日子，好像又没有什么有趣的技术积累。突然想起来之前帮朋友做了个小作业做的一个迷宫机器人。虽然不高级但是还是挺好玩的。下面就给大家分享一下过程。
-地图绘制首先定义出地图的宽和高，利用一个二维数组来保存地图的地形。 spawnMarker 用于存储机器人出生点位置。 robots 用于存放迷宫中机器人的当前状态。 controller 用于接收键盘/鼠标事件并传给 ......
+                    最近在忙着面试，趁着没工作的空闲期，想把设计模式好好整理一遍。话不多说，我们直接上第一个设计模式—-单例模式
+什么是单例模式这也是面试时面试官经常问我的问题，什么是单例模式？脑海中是不是立即浮现出两种单例模式。然后准备滔滔不绝的说给面试官听？面试官在问我们这个问题的时候，我们最好不要答非所问。最好根据单例模式的定义去正面回答面试官。
+单例模式是指在内存中只会创建且仅创建一次对象的设计模式。在......
                 </div>
             </a>
             
                 <p class="post-meta" style="margin: 10px 0;">
                     Posted by maybelence on
-                    2021-09-23
+                    2020-09-25
                 </p>
                 <div class="tags">
                     
-                      <a href="/tags/#Java" title="Java">Java</a>
+                      <a href="/tags/#设计模式" title="设计模式">设计模式</a>
                     
-                </div>
-            
-
-        </div>
-        <hr>
-
-    
-
-    
-
-        <div class="post-preview">
-
-            <a href="/2021/04/20/Quarkus与Spring-boot性能对比/">
-                <h2 class="post-title">
-                    Quarkus与Spring boot性能对比
-                </h2>
-                <h3 class="post-subtitle">
-                    spring,Quarkus
-                </h3>
-                <div class="post-content-preview">
-                    目前市场上主流的框架基本都是 Spring 全家桶系列， Srping 的生态完善也是众多开发者非常青睐这个框架的原因之一。但是我们今天主要从内存管理和性能方面看一下 Quarkus 和 Spring Boot 的区别。
-什么是 Quarkus ？官网是这样定义的，Quarkus 是针对 Java 虚拟机 (JVM) 和本机编译的全栈 Kubernetes 本地 Java 框架，专门针对容器......
-                </div>
-            </a>
-            
-                <p class="post-meta" style="margin: 10px 0;">
-                    Posted by maybelence on
-                    2021-04-20
-                </p>
-                <div class="tags">
-                    
-                </div>
-            
-
-        </div>
-        <hr>
-
-    
-
-    
-
-        <div class="post-preview">
-
-            <a href="/2021/04/20/译-快速理解开闭原则/">
-                <h2 class="post-title">
-                    [译] 快速理解开闭原则
-                </h2>
-                <h3 class="post-subtitle">
-                    
-                </h3>
-                <div class="post-content-preview">
-                    
-原文地址：The Open-Closed principle made simple原文作者：Mihai Sandu译者：maybelence
-
-
-原文的示例代码都是采用的 Scala 语言，其实 Scala 本身和 java 的语法非常像，考虑到目前更多的开发者都是 java ，因此我把原文的代码都转成了 java 。一些和 java 语法有冲突的地方也都做了中文注释。
-
-卡车是一种多功......
-                </div>
-            </a>
-            
-                <p class="post-meta" style="margin: 10px 0;">
-                    Posted by maybelence on
-                    2021-04-20
-                </p>
-                <div class="tags">
-                    
-                      <a href="/tags/#Java" title="Java">Java</a>
+                      <a href="/tags/#单例模式" title="单例模式">单例模式</a>
                     
                 </div>
             
@@ -505,13 +399,9 @@ ZGC 是可伸缩的低延迟垃圾收集器，最大 GC 暂停时间为 10 毫�
 <ul class="pager">
     
         <li class="previous">
-            <a href="/">&larr; Newer Posts</a>
+            <a href="/archives/5/">&larr; Newer Posts</a>
         </li>
     
-    
-        <li class="next">
-            <a href="/archives/3/">Older Posts &rarr;</a>
-        </li>
     
 </ul>
 
