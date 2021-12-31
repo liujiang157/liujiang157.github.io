@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="一个用来絮絮叨叨的地方">
+    <meta name="keyword"  content="maybelence, 学习, 生活">
+    <link rel="shortcut icon" href="/img/ironman-draw.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          [译]垃圾收集器算法--ZGC - Maybelence&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://maybelence.cn/2021/12/31/译-垃圾收集器算法-ZGC/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+        
+<link rel="stylesheet" href="/css/dusign-light.css">
+
+        
+<link rel="stylesheet" href="/css/dusign-common-light.css">
+
+        
+<link rel="stylesheet" href="/css/font-awesome.css">
+
+        
+<link rel="stylesheet" href="/css/toc.css">
+
+        <!-- background effects end -->
+    
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+    <!-- photography -->
+    
+<link rel="stylesheet" href="/css/photography.css">
+
+
+    <!-- ga & ba script hoook -->
+    <script data-ad-client="ca-pub-9951682438363353" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- background effects start -->
+    
+    <!-- background effects end -->
+
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('../../../../img/default.jpg')
+                /*post*/
+            
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/maybelence.png');
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#GC" title="GC">GC</a>
+                            
+                              <a class="tag" href="/tags/#JAVA8" title="JAVA8">JAVA8</a>
+                            
+                        </div>
+                        <h1>[译]垃圾收集器算法--ZGC</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by maybelence on
+                            2021-12-31
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">1.9k</span> and
+                                Reading Time <span class="post-count">6</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+    <div class="waveWrapper">
+        <div class="wave wave_before" style="background-image: url('/img/wave-light.png')"></div>
+        <div class="wave wave_after" style="background-image: url('/img/wave-light.png')"></div>
+    </div>
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Maybelence&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">首页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">目录</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/photography/">随手拍</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">分类</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">标签</a>
+                        </li>
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <blockquote>
+<p>原文地址：<a href="https://medium.com/globant/the-z-garbage-collector-algorithm-jdk-15-version-ca6da00b5281" target="_blank" rel="noopener">The Z Garbage Collector algorithm</a><br>原文作者：<a href="https://medium.com/@jenaiz" target="_blank" rel="noopener">Jesús Navarrete</a><br>译者：<a href="https://juejin.cn/user/3175045312547640" target="_blank" rel="noopener">maybelence</a></p>
+</blockquote>
+<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p><a href="https://openjdk.java.net/jeps/333" target="_blank" rel="noopener">ZGC</a> 最早作为 JDK11 中的预览特性发布， 去年 9 月 15 号，<br>随着 JDK 15 的正式发布，也带来了 ZGC 的<a href="https://openjdk.java.net/jeps/377" target="_blank" rel="noopener">正式版本</a>。</p>
+<p>ZGC 是可伸缩的低延迟垃圾收集器，最大 GC 暂停时间为 10 毫秒，能够处理从几兆字节到几 TB 的堆，最大吞吐量降低了 15％。</p>
+<h2 id="JVM-垃圾收集器"><a href="#JVM-垃圾收集器" class="headerlink" title="JVM 垃圾收集器"></a>JVM 垃圾收集器</h2><p>截止目前，JVM 已经引入了一系列有趣的垃圾收集算法。下面列出了几个最重要的垃圾收集算法:</p>
+<ul>
+<li>串行（低内存占用）：使用单线程来工作，适用于单处理器计算机，并且针对内存不足（嵌入式系统）进行了优化。</li>
+<li>并行（吞吐量收集器）：并行进行次要收集，以减少垃圾收集的开销。适用于多处理器硬件上运行的中型到大型数据集应用程序。</li>
+<li>CMS（并发标记扫描收集器）：具有较短的垃圾收集器暂停时间。专为具有大量长寿命对象或大量使用期限的应用程序而设计。</li>
+<li>G1（吞吐量/等待时间平衡）：Garbage-First 是服务器样式的垃圾收集器，适用于具有大内存的多处理器计算机。它试图以高概率满足 GC 暂停时间目标，同时实现高吞吐量。全堆操作（例如全局标记）与应用程序线程同时执行。这样可以防止与堆或活动数据大小成比例的中断。</li>
+<li>ZGC（低延迟）</li>
+</ul>
+<blockquote>
+<p>串行和并行称为 <em>stop of the world</em> 算法。 CMS 在 JDK 9 中已弃用，用 G1 代替。</p>
+</blockquote>
+<p>这里要强调 ZGC 可以并行处理所有繁重的操作，而其他算法却无法做到（具体细节见下文）。</p>
+<hr>
+<h2 id="深入了解-ZGC"><a href="#深入了解-ZGC" class="headerlink" title="深入了解 ZGC"></a>深入了解 ZGC</h2><p>ZGC 是一种并发的低延迟算法，除了线程堆栈扫描外，它所有其他操作（标记，压缩，参考处理，重定位集选择，StringTable 清理，JNI WeakRef 清理，JNI GlobalRefs 扫描和类卸载）都是并行的。所以该算法对于低延迟确实非常有用。</p>
+<p>ZGC 暂停时间并不随堆或活动大小而增加，而是与根集合的一个子集的大小相关（您的应用程序正在使用的Java线程数）。也就是仍然在 <em>Stop-The-World</em> 阶段扫描线程栈。<code>但是从 JDK 16 开始，对线程栈的扫描是并行处理的，也就是说在扫描栈的时候应用程序可以同时运行。</code></p>
+<blockquote>
+<p>原作者写的时候是 JDK15 ,这里我补充了一下 JDK 16 对 ZGC 的变化</p>
+</blockquote>
+<p>从算法的角度来看，它是一个并发收集器，它在 Java 线程继续执行的同时完成了所有繁重的工作。它是一个基于区域的收集器，这意味着将堆划分为较小的区域，并且压缩工作将集中于这些区域的子集，即那些垃圾最多的区域。它是 <a href="https://www.ibm.com/docs/zh/sdk-java-technology/7?topic=bgcp-numa-awareness" target="_blank" rel="noopener">NUMA感知</a> 的，由于 CPU 具有本地内存，因此可以减少延迟。它使用彩色指针和负载屏障，将在以下各节中进行详细介绍。而且它是一个单一的一代收集器，它没有以前回收机制的年轻代或老年代。</p>
+<h3 id="ZGC-阶段"><a href="#ZGC-阶段" class="headerlink" title="ZGC 阶段"></a>ZGC 阶段</h3><p>ZGC 的 GC 周期分为三个阶段。</p>
+<p>在第一阶段（暂停标记开始）中，ZGC遍历对象图以将对象标记为活动或无用。此阶段还包括重新映射实时数据。</p>
+<p>第二阶段是“暂停标记结束”，此阶段完成参考预处理。在该阶段还完成了类卸载和重定位集的选择。</p>
+<p>暂停重定位启动是最后一个阶段，在此阶段要进行大量的压缩堆工作。</p>
+<h3 id="彩色指针"><a href="#彩色指针" class="headerlink" title="彩色指针"></a>彩色指针</h3><p>这是 ZGC 中的核心设计概念。该算法使用 64 位对象指针中的一些未使用的位来存储一些元数据，从而可以查找，标记，定位和重新映射对象。下图显示了 64 位对象指针和每个位的含义。</p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/50bbf2c577e34151a2ea76a20125e718~tplv-k3u1fbpfcp-watermark.image" alt="Colored pointers diagram"></p>
+<h3 id="内存屏障"><a href="#内存屏障" class="headerlink" title="内存屏障"></a>内存屏障</h3><p>它是 JAVA 即时编译器在某些重要位置注入的代码。目的是检查加载的对象引用是否具有不良的颜色。当线程从堆中加载对象引用时，将运行负载屏障代码。</p>
+<p><img src="https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5a63e77d1acc4b868406d3b857afa7e2~tplv-k3u1fbpfcp-watermark.image" alt="Load Barrier example"></p>
+<h3 id="调优选项"><a href="#调优选项" class="headerlink" title="调优选项"></a>调优选项</h3><p>从 JDK 11 到 JDK 15 发行版，如果要使用 ZGC 算法，必须解锁实验选项：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-XX:+UnlockExperimentalVMOptions -XX:+UseZGC</span><br></pre></td></tr></table></figure>
+<p>如果是 JDK 15 之后的版本，只需要指定一下内容：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-XX:+UseZGC</span><br></pre></td></tr></table></figure></p>
+<p>ZGC 的设计易于调整。下面是特定的 ZGC 选项的列表：</p>
+<p><img src="https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5bf5068e18b9427a9d8fe09d361759ed~tplv-k3u1fbpfcp-watermark.image" alt="1_EoA3uGFcAOlXnFz2DddfJg.png"></p>
+<p>为了知道使用的时间并查看有关算法行为的一些数字，我们可以打印一些垃圾收集器日志，选择 ZGC 来查看简单日志时，只需添加以下命令即可：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-XX:+UseZGC -Xmx&lt;size&gt; -Xlog:gc</span><br></pre></td></tr></table></figure>
+<p>如果您想打印带有更多详细信息的垃圾收集器日志，可以执行以下操作：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-XX:+UseZGC -Xmx&lt;size&gt; -Xlog:gc*</span><br></pre></td></tr></table></figure><br>接下来让我们看看其他有趣的调优选项。</p>
+<h3 id="设置堆大小"><a href="#设置堆大小" class="headerlink" title="设置堆大小"></a>设置堆大小</h3><p>ZGC 中最重要的调整选项之一是设置最大堆大小 (<code>-Xmx&lt;size&gt;</code>) 。我们必须为我们的应用程序找到正确的值，因为我们不想丢失内存，并且希望在 GC 运行时允许我们的应用程序有足够的空间用于活动对象和分配。以下是使用示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-XX:+UseZGC Xmx&lt;size&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="设置-GC-并发线程"><a href="#设置-GC-并发线程" class="headerlink" title="设置 GC 并发线程"></a>设置 GC 并发线程</h3><p>尽管 ZGC 具有启发式功能，可以自动选择此数字，但有时，根据我们的应用程序，指定并发 GC 线程数可能会很有趣。此选项确定 GC 将占用多少 CPU，因此您必须小心要提供的容量。</p>
+<h3 id="将未使用的内存返回到操作系统"><a href="#将未使用的内存返回到操作系统" class="headerlink" title="将未使用的内存返回到操作系统"></a>将未使用的内存返回到操作系统</h3><p>区别于其他的 GC 算法，ZGC 取消提交未使用的内存，将其返回给操作系统。对于可能会占用内存的应用程序，这可能是必需的。如果要禁用此选项，则可以使用 <code>-XX：-ZUncommit</code>。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-XX:+UseZGC -Xmx&lt;size&gt; -XX:-ZUncommit</span><br></pre></td></tr></table></figure>
+<h3 id="在-Linux-上启用大页面"><a href="#在-Linux-上启用大页面" class="headerlink" title="在 Linux 上启用大页面"></a>在 Linux 上启用大页面</h3><p>此选项可提高性能，而且没有任何隐患。唯一的问题是它需要 root 授权，这就是为什么它不是默认选项，并且可能无法为您的应用程序启用它的原因。查看文档以正确设置此选项。它需要准备一些东西，选项如下所示：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-XX:+UseZGC -Xms16G -Xmx16G -XX:+UseLargePages</span><br></pre></td></tr></table></figure></p>
+<h3 id="在-Linux-上启用透明的大页面"><a href="#在-Linux-上启用透明的大页面" class="headerlink" title="在 Linux 上启用透明的大页面"></a>在 Linux 上启用透明的大页面</h3><p>不建议将 Huges 页面用于对延迟敏感的应用程序，尽管它可以替代以前的调整选项。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-XX:+UseZGC -… -XX:+UseLargePages -XX:+UseTransparentHugePages</span><br></pre></td></tr></table></figure>
+<p>在这种情况下，我强烈建议您在应用程序中进行试验，并注意峰值，如果出现峰值，那么您可能就无法选择这种情况。</p>
+<h3 id="启用-NUMA-支持"><a href="#启用-NUMA-支持" class="headerlink" title="启用 NUMA 支持"></a>启用 NUMA 支持</h3><p>ZGC 在默认情况下启用 NUMA 支持。这会将 Java 堆分配定向到 NUMA 本地内存。JVM 可以自动禁用它，如果您需要显式覆盖行为，则可以使用选项 -XX：+ UseNUMA或-XX：-UseNUMA。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-XX:+UseZGC -Xmx&lt;size&gt; -XX:+UseNUMA</span><br></pre></td></tr></table></figure>
+<p>或者<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-XX:+UseZGC -Xmx&lt;size&gt; -XX:-UseNUMA</span><br></pre></td></tr></table></figure></p>
+<p>该算法的 <a href="https://wiki.openjdk.java.net/display/zgc/Main" target="_blank" rel="noopener">Wiki</a> 页面上还有更多详细的信息。</p>
+
+                
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    
+                    <li class="next">
+                        <a href="/2021/09/23/动手实现一个迷宫机器人/" data-toggle="tooltip" data-placement="top" title="动手实现一个迷宫机器人">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Music start-->
+                
+                
+<link rel="stylesheet" href="/css/music-player/fonts/iconfont.css">
+
+
+<link rel="stylesheet" href="/css/music-player/css/reset.css">
+
+
+<link rel="stylesheet" href="/css/music-player/css/player.css">
+
+
+<div class="music-player">
+    <audio class="music-player__audio" ></audio>
+    <div class="music-player__main">
+        <div class="music-player__blur"></div>
+        <div class="music-player__disc">
+            <div class="music-player__image">
+                <img width="100%" src="" alt="">
+            </div>
+            <div class="music-player__pointer"><img width="100%" src="/img/cd_tou.png" alt=""></div>
+        </div>
+        <div class="music-player__controls">
+            <div class="music__info">
+                <h3 class="music__info--title">...</h3>
+                <p class="music__info--singer">...</p>
+            </div>
+            <div class="player-control">
+                <div class="player-control__content">
+                    <div class="player-control__btns">
+                        <div class="player-control__btn player-control__btn--prev"><i class="iconfont icon-prev"></i></div>
+                        <div class="player-control__btn player-control__btn--play"><i class="iconfont icon-play"></i></div>
+                        <div class="player-control__btn player-control__btn--next"><i class="iconfont icon-next"></i></div>
+                        <div class="player-control__btn player-control__btn--mode"><i class="iconfont icon-loop"></i></div>
+                    </div>
+                    <div class="player-control__volume">
+                        <div class="control__volume--icon player-control__btn"><i class="iconfont icon-volume"></i></div>
+                        <div class="control__volume--progress player_progress"></div>
+                    </div>
+                </div>
+                <div class="player-control__content">
+                    <div class="player__song--progress player_progress"></div>
+                    <div class="player__song--timeProgess nowTime">00:00</div>
+                    <div class="player__song--timeProgess totalTime">00:00</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="/js/music-player/utill.js"></script>
+
+
+<script src="/js/music-player/jquery.min.js"></script>
+
+<!-- netease; qqkg -->
+<!--
+<script src="/js/music-player/player.js?library=config.music.library.js"></script>
+-->
+<script src="../../../../js/music-player/player.js?library=netease&music=https://music.163.com/#/song?id=1325896303"></script>
+                
+                <!-- Music end -->
+
+                <!-- Sharing -->
+                
+                <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                <!--  css & js -->
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            
+              <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#介绍"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">介绍</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#JVM-垃圾收集器"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">JVM 垃圾收集器</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#深入了解-ZGC"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">深入了解 ZGC</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#ZGC-阶段"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">ZGC 阶段</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#彩色指针"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">彩色指针</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#内存屏障"><span class="toc-nav-number">3.3.</span> <span class="toc-nav-text">内存屏障</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#调优选项"><span class="toc-nav-number">3.4.</span> <span class="toc-nav-text">调优选项</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#设置堆大小"><span class="toc-nav-number">3.5.</span> <span class="toc-nav-text">设置堆大小</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#设置-GC-并发线程"><span class="toc-nav-number">3.6.</span> <span class="toc-nav-text">设置 GC 并发线程</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#将未使用的内存返回到操作系统"><span class="toc-nav-number">3.7.</span> <span class="toc-nav-text">将未使用的内存返回到操作系统</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#在-Linux-上启用大页面"><span class="toc-nav-number">3.8.</span> <span class="toc-nav-text">在 Linux 上启用大页面</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#在-Linux-上启用透明的大页面"><span class="toc-nav-number">3.9.</span> <span class="toc-nav-text">在 Linux 上启用透明的大页面</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#启用-NUMA-支持"><span class="toc-nav-number">3.10.</span> <span class="toc-nav-text">启用 NUMA 支持</span></a></li></ol></li></ol>
+            
+          
+          </div>
+        </aside>
+      
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#GC" title="GC">GC</a>
+                        
+                          <a class="tag" href="/tags/#JAVA8" title="JAVA8">JAVA8</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+
+
+<style  type="text/css">
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/liujiang157">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://weibo.com/u/3185622790">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">微</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; maybelence 2021 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/dusign/hexo-theme-snail" target="_blank" rel="noopener">
+                        <i>hexo-theme-snail</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=dusign&repo=hexo-theme-snail&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://maybelence.cn/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+
+        
+            <script type="text/javascript" src="/js/mouse-click.js" content='[&quot;🌱&quot;,&quot;just do it&quot;,&quot;🍀&quot;,&quot;waiting for you&quot;]' color='[&quot;rgb(121,93,179)&quot; ,&quot;rgb(76,180,231)&quot; ,&quot;rgb(184,90,154)&quot;]'></script>
+        
+
+        <!-- background effects end -->
+    
+
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>
