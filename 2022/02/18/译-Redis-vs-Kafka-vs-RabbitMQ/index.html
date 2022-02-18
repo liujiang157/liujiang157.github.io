@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI" />
+    <meta name="baidu-site-verification" content="093lY4ziMu" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="description" content="一个用来絮絮叨叨的地方">
+    <meta name="keyword"  content="maybelence, 学习, 生活">
+    <link rel="shortcut icon" href="/img/ironman-draw.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <!--<link href='http://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>-->
+    <title>
+        
+          [译]Redis vs Kafka vs RabbitMQ - Maybelence&#39;s Blog
+        
+    </title>
+
+    <link rel="canonical" href="https://maybelence.cn/2022/02/18/译-Redis-vs-Kafka-vs-RabbitMQ/">
+
+    <!-- Bootstrap Core CSS -->
+    
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+
+
+    <!-- Custom CSS --> 
+    
+        
+<link rel="stylesheet" href="/css/dusign-light.css">
+
+        
+<link rel="stylesheet" href="/css/dusign-common-light.css">
+
+        
+<link rel="stylesheet" href="/css/font-awesome.css">
+
+        
+<link rel="stylesheet" href="/css/toc.css">
+
+        <!-- background effects end -->
+    
+    
+    <!-- Pygments Highlight CSS -->
+    
+<link rel="stylesheet" href="/css/highlight.css">
+
+
+    
+<link rel="stylesheet" href="/css/widget.css">
+
+
+    
+<link rel="stylesheet" href="/css/rocket.css">
+
+
+    
+<link rel="stylesheet" href="/css/signature.css">
+
+
+    
+<link rel="stylesheet" href="/css/fonts.googleapis.css">
+
+
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css">
+
+    <!-- photography -->
+    
+<link rel="stylesheet" href="/css/photography.css">
+
+
+    <!-- ga & ba script hoook -->
+    <script data-ad-client="ca-pub-9951682438363353" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script></script>
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+
+    <!-- background effects start -->
+    
+    <!-- background effects end -->
+
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            
+                background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('../../../../img/default.jpg')
+                /*post*/
+            
+        
+    }
+    
+    #signature{
+        background-image: url('/img/signature/maybelence.png');
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#JAVA" title="JAVA">JAVA</a>
+                            
+                              <a class="tag" href="/tags/#消息代理" title="消息代理">消息代理</a>
+                            
+                              <a class="tag" href="/tags/#后端" title="后端">后端</a>
+                            
+                        </div>
+                        <h1>[译]Redis vs Kafka vs RabbitMQ</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by maybelence on
+                            2022-02-18
+                        </span>
+
+                        
+                            <div class="blank_box"></div>
+                            <span class="meta">
+                                Words <span class="post-count">1.8k</span> and
+                                Reading Time <span class="post-count">6</span> Minutes
+                            </span>
+                            <div class="blank_box"></div>
+                            <!-- 不蒜子统计 start -->
+                            <span class="meta">
+                                Viewed <span id="busuanzi_value_page_pv"><i class="fa fa-spinner fa-spin"></i></span> Times
+                            </span>
+                            <!-- 不蒜子统计 end -->
+                        
+
+                    </div>
+                
+
+                </div>
+            </div>
+        </div>      
+    </div>
+
+    
+    <div class="waveWrapper">
+        <div class="wave wave_before" style="background-image: url('/img/wave-light.png')"></div>
+        <div class="wave wave_after" style="background-image: url('/img/wave-light.png')"></div>
+    </div>
+    
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Maybelence&#39;s Blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">首页</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">关于我</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">目录</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/photography/">随手拍</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/categories/">分类</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">标签</a>
+                        </li>
+                        
+                    
+
+                        
+                    
+
+                        
+                    
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <blockquote>
+<p>原文地址：<a href="https://medium.com/@mertcanarguc/redis-vs-kafka-vs-rabbitmq-e935ebbc7ec" target="_blank" rel="noopener">Redis vs Kafka vs RabbitMQ</a><br>原文作者：<a href="https://medium.com/@mertcanarguc" target="_blank" rel="noopener">Mertcan Arguç</a><br>译者：<a href="https://juejin.cn/user/3175045312547640" target="_blank" rel="noopener">maybelence</a></p>
+</blockquote>
+<p>当在微服务架构中需要使用异步通信时，最常见的通信手段就是使用<code>消息代理</code>,代理的作用是让消息在系统的管理和监控下，确保不同服务之间能够进行可靠且稳定的通信。你可以为你的服务选择合适的消息代理框架，因为每种框架的规模和数据能力都不一样。这篇文件将会展示当下三种比较流行的消息代理框架的比较结果：Redis、Kafka、RabbitMQ。</p>
+<h2 id="微服务通信：同步与异步"><a href="#微服务通信：同步与异步" class="headerlink" title="微服务通信：同步与异步"></a>微服务通信：同步与异步</h2><p>在微服务中有两种常见的通信方式：同步与异步。在同步通信方式中，调用端在发起下一条请求之前需要等待响应，它作为 HTTP 之上的 REST 协议运行。而异步通信是在发起下一条请求时，不需要等待当前请求响应。在分布式系统中有些场景一般都是采用的异步通信，对这些消息的管理则是采用消息代理框架。</p>
+<p>在选择通信类型时应该考虑多种因素，例如如何构建微服务、项目环境、延迟、规模、依赖关系和通信的目的。</p>
+<p>异步通信在引入和使用上要比同步通信更加复杂，并且需要在当前技术栈中添加更多组件，但在微服务中引入异步通信还是利大于弊。</p>
+<h2 id="异步通信的优点"><a href="#异步通信的优点" class="headerlink" title="异步通信的优点"></a>异步通信的优点</h2><p>通过异步通信的定义来看，异步通信是非阻塞的。并且他还支持比同步操作更好的线程缩放。其次，在微服务崩溃的情况下，异步通信机制提供了各种恢复技术，并能更好地处理与崩溃有关的错误。此外，当使用代理而不是 REST 协议进行通信时，接收通信的几个服务并不需要相互了解。甚至可以在旧服务上线很久之后引入新服务。即可以更好的实现解耦。</p>
+<p>最后，选择异步操作可以可以提高在未来创建注册中心、监控中心、负载平衡甚至策略执行器的能力。这将为代码和系统构建提供更灵活性、高扩展性等功能特性。</p>
+<h2 id="选择合适的消息代理"><a href="#选择合适的消息代理" class="headerlink" title="选择合适的消息代理"></a>选择合适的消息代理</h2><p>异步通信通常是通过消息代理进行管理。当然还有其他方式，例如 <code>aysncio</code>，但它们相对而言更加冷门而且使用场景受限颇多。</p>
+<p>当为异步操作选择代理时，应该考虑以下几个方面：</p>
+<ul>
+<li>代理规模 — 系统中每秒发送的消息数</li>
+<li>数据持久性 — 恢复消息的能力</li>
+<li>消费者能力 — 代理是否能够管理一对一和/或一对多的消费者</li>
+</ul>
+<h3 id="一对一"><a href="#一对一" class="headerlink" title="一对一"></a>一对一</h3><p><img src="1.png" alt="1.png"></p>
+<h3 id="一对多"><a href="#一对多" class="headerlink" title="一对多"></a>一对多</h3><p><img src="2.png" alt="2.png"></p>
+<p>下面我们来对比一下题中提及的三种消息代理哪种更好一点。</p>
+<h2 id="消息代理比较"><a href="#消息代理比较" class="headerlink" title="消息代理比较"></a>消息代理比较</h2><h3 id="RabbitMQ-AMQP"><a href="#RabbitMQ-AMQP" class="headerlink" title="RabbitMQ (AMQP)"></a>RabbitMQ (AMQP)</h3><p>规模：根据配置和资源，这里的大约是每秒 5w 条消息。</p>
+<p>持久性：支持持久和瞬态消息。</p>
+<p>消费者能力：支持一对一和一对多。</p>
+<p>RabbitMQ 于 2007 年发布，是最早创建的通用消息代理之一。它是一个开源的，通过实现高级消息队列协议 (AMQP) 通过点对点和发布订阅方法传递消息。它旨在支持复杂的路由逻辑。</p>
+<p>有一些托管服务允许将其用作 SaaS，但它不是本地主要云提供商堆栈的一部分。 RabbitMQ 支持大部分主流编程语言，包括 Python、Java、.NET、PHP、Ruby、JavaScript、Go、Swift 等。</p>
+<p>在持久模式下会出现一些性能问题。</p>
+<h3 id="Kafka"><a href="#Kafka" class="headerlink" title="Kafka"></a>Kafka</h3><p>规模：每秒大约可以发送 100w 条消息。</p>
+<p>持久性：支持持久性。</p>
+<p>消费者能力：只支持一对多。</p>
+<p>Kafka 由 Linkedin 于 2011 年创建，用于处理高吞吐量、低延迟的处理。作为分布式流媒体平台，Kafka 复制了发布-订阅服务。它提供数据持久性并存储记录流，使其能够交换质量消息。</p>
+<p>Kafka 在 Azure、AWS 和 Confluent 上管理过 SaaS。他们都是 Kafka 项目的创造者和主要贡献者。 Kafka 支持大部分主流编程语言，包括 Python、Java、C/C++、Clojure、.NET、PHP、Ruby、JavaScript、Go、Swift 等。</p>
+<h3 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h3><p>规模：每秒大约可以发送 100w 条消息。</p>
+<p>持久性：不具备，因为它其实只是一个内容数据存储。</p>
+<p>消费者能力：支持一对一和一对多。</p>
+<p>Redis 与其他消息代理有点不同。 Redis 的核心是一种内存数据存储，可用作高性能键值存储或消息代理。另一个区别是 Redis 没有持久性，而是将其内存转储到磁盘/数据库中。它也非常适合实时数据处理。</p>
+<p>最初，Redis 并不是一对一和一对多的。然而，自从 Redis 5.0 引入了 pub-sub，功能得到了提升，一对多成为了一个真正的选择。</p>
+<h2 id="消息代理结合使用场景"><a href="#消息代理结合使用场景" class="headerlink" title="消息代理结合使用场景"></a>消息代理结合使用场景</h2><p>本文介绍了 RabbitMQ、Kafka 和 Redis 的一些特性。这三者都是同类中的佼佼者，但像上文提及的，它们的运作方式截然不同。所以需要我们根据不同使用场景使用正确的消息代理。</p>
+<h3 id="短保留消息-Redis"><a href="#短保留消息-Redis" class="headerlink" title="短保留消息:Redis"></a>短保留消息:Redis</h3><p>Redis 的内存数据库几乎完美适用于不需要持久性的短消息消息的用例。因为它提供了极快的服务和内存中的功能，Redis 是短保留消息的完美候选者，在这种情况下持久性并不那么重要。由于限制和旧的 pub-sub 功能, Redis 流在 5.0 中的发布，它也是一对多用例的候选者。</p>
+<h3 id="高吞吐量：Kafka"><a href="#高吞吐量：Kafka" class="headerlink" title="高吞吐量：Kafka"></a>高吞吐量：Kafka</h3><p>Kafka 是一个高吞吐量的分布式队列，专为长时间存储大量数据而构建。 Kafka 非常适合需要持久性的一对多用例。</p>
+<h3 id="复杂路由：RabbitMQ"><a href="#复杂路由：RabbitMQ" class="headerlink" title="复杂路由：RabbitMQ"></a>复杂路由：RabbitMQ</h3><p>RabbitMQ 是一个较老但成熟的代理，具有许多支持复杂路由的特性和功能。甚至在要求的速率不高（几万个msg/sec以上）的情况下，它甚至可以支持复杂的路由通信。</p>
+<h2 id="考虑您软件的技术栈"><a href="#考虑您软件的技术栈" class="headerlink" title="考虑您软件的技术栈"></a>考虑您软件的技术栈</h2><p>当然，最后的考虑因素还是当前的软件所使用的技术栈。如果一个相对简单的集成过程而且不想在技术栈中维护不同的代理，则更倾向于使用当前技术栈已经支持的代理。</p>
+<p>例如，如果在 RabbitMQ 之上的系统中将 Celery 用于任务队列，那么您将有动力使用 RabbitMQ 或 Redis，而不是使用不受支持且需要重写的 Kafka。</p>
+<p>最重要的是要记住，每种框架都有自己的优点和缺点，所以需要结合当前多种因素选择合适的框架。</p>
+
+                
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    
+                    <li class="next">
+                        <a href="/2021/12/31/总结一下我的2021/" data-toggle="tooltip" data-placement="top" title="总结一下我的2021">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                <!-- tip start -->
+                
+
+                
+                <!-- tip end -->
+
+                <!-- Music start-->
+                
+                
+<link rel="stylesheet" href="/css/music-player/fonts/iconfont.css">
+
+
+<link rel="stylesheet" href="/css/music-player/css/reset.css">
+
+
+<link rel="stylesheet" href="/css/music-player/css/player.css">
+
+
+<div class="music-player">
+    <audio class="music-player__audio" ></audio>
+    <div class="music-player__main">
+        <div class="music-player__blur"></div>
+        <div class="music-player__disc">
+            <div class="music-player__image">
+                <img width="100%" src="" alt="">
+            </div>
+            <div class="music-player__pointer"><img width="100%" src="/img/cd_tou.png" alt=""></div>
+        </div>
+        <div class="music-player__controls">
+            <div class="music__info">
+                <h3 class="music__info--title">...</h3>
+                <p class="music__info--singer">...</p>
+            </div>
+            <div class="player-control">
+                <div class="player-control__content">
+                    <div class="player-control__btns">
+                        <div class="player-control__btn player-control__btn--prev"><i class="iconfont icon-prev"></i></div>
+                        <div class="player-control__btn player-control__btn--play"><i class="iconfont icon-play"></i></div>
+                        <div class="player-control__btn player-control__btn--next"><i class="iconfont icon-next"></i></div>
+                        <div class="player-control__btn player-control__btn--mode"><i class="iconfont icon-loop"></i></div>
+                    </div>
+                    <div class="player-control__volume">
+                        <div class="control__volume--icon player-control__btn"><i class="iconfont icon-volume"></i></div>
+                        <div class="control__volume--progress player_progress"></div>
+                    </div>
+                </div>
+                <div class="player-control__content">
+                    <div class="player__song--progress player_progress"></div>
+                    <div class="player__song--timeProgess nowTime">00:00</div>
+                    <div class="player__song--timeProgess totalTime">00:00</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="/js/music-player/utill.js"></script>
+
+
+<script src="/js/music-player/jquery.min.js"></script>
+
+<!-- netease; qqkg -->
+<!--
+<script src="/js/music-player/player.js?library=config.music.library.js"></script>
+-->
+<script src="../../../../js/music-player/player.js?library=netease&music=https://music.163.com/#/song?id=1325896303"></script>
+                
+                <!-- Music end -->
+
+                <!-- Sharing -->
+                
+                <div class="social-share"  data-wechat-qrcode-helper="" align="center"></div>
+                <!--  css & js -->
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/css/share.min.css">
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/social-share.js/1.0.16/js/social-share.min.js"></script>
+                
+                <!-- Sharing -->
+
+                <!-- gitment start -->
+                
+                <!-- gitment end -->
+
+                <!-- 来必力City版安装代码 -->
+                
+                <!-- City版安装代码已完成 -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      
+        <aside id="sidebar">
+          <div id="toc" class="toc-article">
+          <strong class="toc-title">Contents</strong>
+          
+            
+              <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#微服务通信：同步与异步"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">微服务通信：同步与异步</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#异步通信的优点"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">异步通信的优点</span></a></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#选择合适的消息代理"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">选择合适的消息代理</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#一对一"><span class="toc-nav-number">3.1.</span> <span class="toc-nav-text">一对一</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#一对多"><span class="toc-nav-number">3.2.</span> <span class="toc-nav-text">一对多</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#消息代理比较"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">消息代理比较</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#RabbitMQ-AMQP"><span class="toc-nav-number">4.1.</span> <span class="toc-nav-text">RabbitMQ (AMQP)</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Kafka"><span class="toc-nav-number">4.2.</span> <span class="toc-nav-text">Kafka</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#Redis"><span class="toc-nav-number">4.3.</span> <span class="toc-nav-text">Redis</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#消息代理结合使用场景"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">消息代理结合使用场景</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#短保留消息-Redis"><span class="toc-nav-number">5.1.</span> <span class="toc-nav-text">短保留消息:Redis</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#高吞吐量：Kafka"><span class="toc-nav-number">5.2.</span> <span class="toc-nav-text">高吞吐量：Kafka</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#复杂路由：RabbitMQ"><span class="toc-nav-number">5.3.</span> <span class="toc-nav-text">复杂路由：RabbitMQ</span></a></li></ol></li><li class="toc-nav-item toc-nav-level-2"><a class="toc-nav-link" href="#考虑您软件的技术栈"><span class="toc-nav-number">6.</span> <span class="toc-nav-text">考虑您软件的技术栈</span></a></li></ol>
+            
+          
+          </div>
+        </aside>
+      
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#JAVA" title="JAVA">JAVA</a>
+                        
+                          <a class="tag" href="/tags/#消息代理" title="消息代理">消息代理</a>
+                        
+                          <a class="tag" href="/tags/#后端" title="后端">后端</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+
+
+<style  type="text/css">
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/liujiang157">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank" href="https://weibo.com/u/3185622790">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa  fa-stack-1x fa-inverse">微</i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; maybelence 2022 
+                    <br>
+                    Powered by 
+                    <a href="https://github.com/dusign/hexo-theme-snail" target="_blank" rel="noopener">
+                        <i>hexo-theme-snail</i>
+                    </a> | 
+                    <iframe name="star" style="margin-left: 2px; margin-bottom:-5px;" frameborder="0" scrolling="0"
+                        width="100px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=dusign&repo=hexo-theme-snail&type=star&count=true">
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+
+</footer>
+
+<!-- jQuery -->
+
+<script src="/js/jquery.min.js"></script>
+
+
+<!-- Bootstrap Core JavaScript -->
+
+<script src="/js/bootstrap.min.js"></script>
+
+
+<!-- Custom Theme JavaScript -->
+
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- Search -->
+
+<script src="/js/search.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://maybelence.cn/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+<script>
+    // dynamic User by Hux
+    var _gaId = 'UA-XXXXXXXX-X';
+    var _gaDomain = 'yoursite';
+
+    // Originial
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', _gaId, _gaDomain);
+    ga('send', 'pageview');
+</script>
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- Search -->
+
+    <script type="text/javascript">      
+        var search_path = "search.xml";
+        if (search_path.length == 0) {
+            search_path = "search.xml";
+        }
+    var path = "/" + search_path;
+    searchFunc(path, 'local-search-input', 'local-search-result');
+    </script>
+
+
+<!-- busuanzi -->
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+
+    
+        <!-- background effects line -->
+        
+
+        
+            <script type="text/javascript" src="/js/mouse-click.js" content='[&quot;🌱&quot;,&quot;just do it&quot;,&quot;🍀&quot;,&quot;waiting for you&quot;]' color='[&quot;rgb(121,93,179)&quot; ,&quot;rgb(76,180,231)&quot; ,&quot;rgb(184,90,154)&quot;]'></script>
+        
+
+        <!-- background effects end -->
+    
+
+    <!--<script size="50" alpha='0.3' zIndex="-999" src="/js/ribbonStatic.js"></script>-->
+    
+        <script src="/js/ribbonDynamic.js"></script>
+    
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        tex2jax: {
+            inlineMath: [ ["$","$"], ["\\(","\\)"] ],
+            skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            processEscapes: true
+        }
+    });
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax();
+        for (var i = 0; i < all.length; ++i)
+            all[i].SourceElement().parentNode.className += ' has-jax';
+    });
+</script>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</body>
+
+</html>
