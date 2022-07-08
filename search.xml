@@ -4,6 +4,60 @@
   
     
     <entry>
+      <title>2022，我的年中总结</title>
+      <link href="2022/07/08/2022%EF%BC%8C%E6%88%91%E7%9A%84%E5%B9%B4%E4%B8%AD%E6%80%BB%E7%BB%93/"/>
+      <url>2022/07/08/2022%EF%BC%8C%E6%88%91%E7%9A%84%E5%B9%B4%E4%B8%AD%E6%80%BB%E7%BB%93/</url>
+      
+        <content type="html"><![CDATA[<h2 id="一地鸡毛"><a href="#一地鸡毛" class="headerlink" title="一地鸡毛"></a>一地鸡毛</h2><p>我总结了一下上半年的关键词，大概就是 <code>一地鸡毛</code> 吧。不知不觉现在已经 7 月份了，距离 <a href="/2021/12/31/总结一下我的2021/">2021 年的年终 flag</a>。 定下的时间只剩下半年了，好多目标都还没实现。之前觉得自己出门太少，定下了读万卷书，行万里路的 <code>艰难</code> 目标。</p><p>看起来旅游似乎是最简单的一个目标了，不需要自制力，出去完全放空自己，去触摸，去经历，去逃离。但是因为疫情，上半年的假期都是在家里隔离度过的。所以看似最简单的目标反而也没有实现。</p><p>读书坚持了一段时间，还和老姐专门搭了一个<a href="http://124.223.9.186:9999/" target="_blank" rel="noopener">网站</a>，用来交流彼此的读书笔记。但也三分热度。好不容易能偷得浮生半日闲的时候，又抵不住游戏的诱惑。</p><p>4 月份的时候还报名了编制考试，因为疫情，也没有回去考。其实复习的也并不理想。疫情只是逃避责任的一个借口罢了。</p><p>之前因为斑秃和身体健康问题，还立下了早睡的 flag 。但是也只有最近复工之后，才开始坚持早睡。</p><h2 id="下半年目标"><a href="#下半年目标" class="headerlink" title="下半年目标"></a>下半年目标</h2><ul><li>🏃仍然要坚持运动，每天有氧 20 min - 30 min。一次性4小时真的为难</li><li>💰虽然涨了一点工资，但是还是要好好理财，存钱。</li><li>📖每天200页实在很难做到，争取每天阅读20 min - 30 min</li><li>🌏不知道国庆还能出去不，实在不行就只能找个周末去周围小城市转转啦，前提是疫情允许的情况下</li><li>🛫飞机还是没做过，哈哈哈，虽然现在飞机安全事故很多，还是想看看天空的景色</li><li>⏰早睡早起，至少周一、周五绝对不能迟到了</li></ul><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>目标根据自己当前的情况稍微调整一下，希望降低了要求，自己能够严格遵守到年底吧！！！</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 杂记 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 杂记 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>谈谈MYSQL的MVCC的实现</title>
+      <link href="2022/03/04/%E8%B0%88%E8%B0%88MYSQL%E7%9A%84MVCC%E7%9A%84%E5%AE%9E%E7%8E%B0/"/>
+      <url>2022/03/04/%E8%B0%88%E8%B0%88MYSQL%E7%9A%84MVCC%E7%9A%84%E5%AE%9E%E7%8E%B0/</url>
+      
+        <content type="html"><![CDATA[<p>在将这篇文章之前，我们先来讲一下 JAVA 的 <code>CAS</code>。 CAS 本身的一种乐观锁的实现，可以看一下之前的文章<a href="/2021/01/28/百问不厌的乐观锁和悲观锁/">百问不厌的乐观锁和悲观锁</a>。很有趣</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> MYSQL </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 锁 </tag>
+            
+            <tag> MYSQL </tag>
+            
+            <tag> 隔离性 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>[译]Redis vs Kafka vs RabbitMQ</title>
       <link href="2022/02/18/%E8%AF%91-Redis-vs-Kafka-vs-RabbitMQ/"/>
       <url>2022/02/18/%E8%AF%91-Redis-vs-Kafka-vs-RabbitMQ/</url>
