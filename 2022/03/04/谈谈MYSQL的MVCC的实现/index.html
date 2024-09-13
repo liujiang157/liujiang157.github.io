@@ -273,16 +273,28 @@
                 col-md-10 col-md-offset-1
                 post-container">
 
-                <p>在将这篇文章之前，我们先来讲一下 JAVA 的 <code>CAS</code>。 CAS 本身的一种乐观锁的实现，可以看一下之前的文章<a href="/2021/01/28/百问不厌的乐观锁和悲观锁/">百问不厌的乐观锁和悲观锁</a>。很有趣</p>
+                <p>在讲这篇文章之前，我们先来讲一下 JAVA 的 <code>CAS</code>。 CAS 本身的一种乐观锁的实现，可以看一下之前的文章<a href="/2021/01/28/百问不厌的乐观锁和悲观锁/">百问不厌的乐观锁和悲观锁</a>。</p>
+<p>JAVA 实现 CAS 实基于一个魔法类 <code>Unsafe</code> 来实现的。这个类里面的方法都是一些 <code>native</code> 方法。也就是说 JAVA 对于乐观锁的实现还是依靠于操作系统以及 CPU 。</p>
+<p><code>CAS</code> 里面我们有一个经典的问题，<code>ABA</code> 问题。如果一个变量 V 初次读取的时候是 A 值，并且在准备赋值的时候检查到它仍然是 A 值，那我们就能说明它的值没有被其他线程修改过吗？很明显是不能的，因为在这段时间它的值可能被改为其他值，然后又改回 A，那 CAS 操作就会误认为它从来没有被修改过。这个问题被称为 CAS 操作的 <code>ABA</code> 问题。</p>
+<p>ABA 问题的解决办法是在变量前面追加上版本号或者时间戳。JDK 1.5 以后的 AtomicStampedReference 类就是用来解决 ABA 问题的，其中的 compareAndSet() 方法就是首先检查当前引用是否等于预期引用，并且当前标志是否等于预期标志，如果全部相等，则以原子方式将该引用和该标志的值设置为给定的更新值。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">compareAndSet</span><span class="params">(V   expectedReference,</span></span></span><br><span class="line"><span class="function"><span class="params">                             V   newReference,</span></span></span><br><span class="line"><span class="function"><span class="params">                             <span class="keyword">int</span> expectedStamp,</span></span></span><br><span class="line"><span class="function"><span class="params">                             <span class="keyword">int</span> newStamp)</span> </span>&#123;</span><br><span class="line">    Pair&lt;V&gt; current = pair;</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">        expectedReference == current.reference &amp;&amp;</span><br><span class="line">        expectedStamp == current.stamp &amp;&amp;</span><br><span class="line">        ((newReference == current.reference &amp;&amp;</span><br><span class="line">          newStamp == current.stamp) ||</span><br><span class="line">         casPair(current, Pair.of(newReference, newStamp)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里我讲 <code>CAS</code> 是觉得变量前面追加上版本号或者时间戳与 <code>MVCC</code> 有异曲同工之处。虽然解决的问题不同，但是方法很相似。</p>
+<p><code>MVCC</code> 中对于数据可见性，基于 ReadView 和隐藏字段控制。本质也是相当于给数据头加上类似于版本号的形式。来保证每个事物只能看到其可见的版本。</p>
+<p>Mysql 中 InnoDb 存储引擎中实现 MVCC 主要依赖 <code>隐藏字段</code>、<code>Read View</code>、<code>undo log</code>。在内部实现中，InnoDB 通过数据行的 DB_TRX_ID 和 Read View 来判断数据的可见性，如不可见，则通过数据行的 DB_ROLL_PTR 找到 undo log 中的历史版本。每个事务读到的数据版本可能是不一样的，在同一个事务中，用户只能看到该事务创建 Read View 之前已经提交的修改和该事务本身做的修改。</p>
+<p>DB_TRX_ID 作为隐藏字段之一，表示最后一次插入或更新该行的事务 id。此外，delete 操作在内部被视为更新，只不过会在记录头 Record header 中的 deleted_flag 字段将其标记为已删除。</p>
+<p>隐藏字段中还有一个很重要的字段，DB_ROLL_PTR <strong>回滚指针</strong>，指向该行的 undo log 。如果该行未被更新，则为空。</p>
+<p>ReadView 主要做一些可见性判断，里面保存了创建该 ReadView 的事务Id ,以及不可见的其他活跃事务。我理解这里的事务Id算是一种版本标记。</p>
+<p>MVCC中还有一个比较重要的一个组成部分：<code>undo log</code>。当读取记录时，若该记录被其他事务占用或当前版本对该事务不可见，则可以通过 undo log 读取之前的版本数据，以此实现非锁定读。</p>
+<p>最后复习一下 Read View 在读取已提交和可重复读场景下的生成时机问题。</p>
+<ul>
+<li>在 RC 隔离级别下的 每次select 查询前都生成一个Read View (m_ids 列表)</li>
+<li>在 RR 隔离级别下只在事务开始后 第一次select 数据前生成一个Read View（m_ids 列表）</li>
+</ul>
 
                 
                 <hr>
                 <!-- Pager -->
                 <ul class="pager">
-                    
-                    <li class="previous">
-                        <a href="/2022/07/08/2022，我的年中总结/" data-toggle="tooltip" data-placement="top" title="2022，我的年中总结">&larr; Previous Post</a>
-                    </li>
                     
                     
                     <li class="next">
@@ -523,7 +535,7 @@
 
                 </ul>
                 <p class="copyright text-muted">
-                    Copyright &copy; maybelence 2022 
+                    Copyright &copy; maybelence 2024 
                     <br>
                     Powered by 
                     <a href="https://github.com/dusign/hexo-theme-snail" target="_blank" rel="noopener">
