@@ -4,19 +4,6 @@
   
     
     <entry>
-      <title>test</title>
-      <link href="2024/09/13/test/"/>
-      <url>2024/09/13/test/</url>
-      
-        <content type="html"><![CDATA[]]></content>
-      
-      
-      
-    </entry>
-    
-    
-    
-    <entry>
       <title>谈谈MYSQL的MVCC的实现</title>
       <link href="2022/03/04/%E8%B0%88%E8%B0%88MYSQL%E7%9A%84MVCC%E7%9A%84%E5%AE%9E%E7%8E%B0/"/>
       <url>2022/03/04/%E8%B0%88%E8%B0%88MYSQL%E7%9A%84MVCC%E7%9A%84%E5%AE%9E%E7%8E%B0/</url>
